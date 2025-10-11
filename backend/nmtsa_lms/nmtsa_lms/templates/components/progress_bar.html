@@ -1,0 +1,23 @@
+{# Reusable Progress Bar Component
+   Usage:
+   {% include 'components/progress_bar.html' with percentage=75 label='Course Progress' %}
+
+   Parameters:
+   - percentage: Progress percentage 0-100 (required)
+   - label: Descriptive label (optional)
+   - show_text: true|false - Show percentage text (default: true)
+#}
+
+{% if label %}
+<div style="margin-bottom: var(--spacing-sm); font-weight: 500; color: var(--text-primary);">
+    {{ label }}
+</div>
+{% endif %}
+
+<div class="progress-container">
+    <div class="progress-bar" style="width: {{ percentage|default:0 }}%;">
+    </div>
+    {% if show_text|default:True %}
+    <span class="progress-text">{{ percentage|default:0 }}% Complete</span>
+    {% endif %}
+</div>

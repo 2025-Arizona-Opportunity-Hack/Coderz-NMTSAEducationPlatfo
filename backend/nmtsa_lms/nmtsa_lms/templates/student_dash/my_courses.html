@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}My Courses - NMTSA Learning{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: var(--spacing-xl);">
+    <!-- Simple Navigation -->
+    <nav style="width: 250px; min-height: calc(100vh - 200px); background: var(--bg-card); border-right: 1px solid var(--border-color); padding: var(--spacing-lg);">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/courses/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: #7FA8C9; border-radius: 6px; background: #E8F1F8; font-weight: 600;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    <span>My Courses</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/catalog/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <span>Browse Catalog</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/auth/profile/settings/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m8.66-10a9 9 0 0 1 0 8m-17.32 0a9 9 0 0 1 0-8"/>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="flex: 1; max-width: 1200px;">
+        <!-- Page Header -->
+        <div style="margin-bottom: var(--spacing-2xl);">
+            <h1 style="margin-bottom: var(--spacing-sm);">My Courses</h1>
+            <p style="color: var(--text-secondary); font-size: calc(1.125rem * var(--font-scale));">
+                Track your progress and continue learning
+            </p>
+        </div>
+
+        <!-- Search and Sort Bar -->
+        <div style="background: var(--bg-card); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: var(--spacing-xl);">
+            <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
+                <!-- Search Box -->
+                <div style="flex: 1; min-width: 250px;">
+                    <input type="text"
+                           id="search-input"
+                           placeholder="Search your courses..."
+                           onkeyup="searchAndFilter()"
+                           style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
+                </div>
+
+                <!-- Sort Dropdown -->
+                <select id="sort-select"
+                        onchange="sortCourses()"
+                        style="padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-primary); color: var(--text-primary); cursor: pointer; min-width: 180px;">
+                    <option value="recent">Recent Activity</option>
+                    <option value="alphabetical">Alphabetical</option>
+                    <option value="progress">Progress %</option>
+                    <option value="enrolled">Enrollment Date</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div style="margin-bottom: var(--spacing-xl); border-bottom: 2px solid var(--border-color);">
+            <div style="display: flex; gap: var(--spacing-md);">
+                <button onclick="filterCourses('all')"
+                        id="filter-all"
+                        class="filter-btn active"
+                        style="padding: var(--spacing-md) var(--spacing-lg); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: var(--text-secondary); margin-bottom: -2px; transition: all 0.2s;">
+                    All Courses
+                </button>
+                <button onclick="filterCourses('in-progress')"
+                        id="filter-in-progress"
+                        class="filter-btn"
+                        style="padding: var(--spacing-md) var(--spacing-lg); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: var(--text-secondary); margin-bottom: -2px; transition: all 0.2s;">
+                    In Progress
+                </button>
+                <button onclick="filterCourses('completed')"
+                        id="filter-completed"
+                        class="filter-btn"
+                        style="padding: var(--spacing-md) var(--spacing-lg); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 600; color: var(--text-secondary); margin-bottom: -2px; transition: all 0.2s;">
+                    Completed
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses List -->
+        {% if enrollments %}
+        <div id="courses-container">
+            {% for enrollment in enrollments %}
+            <div class="course-item {% if enrollment.is_completed %}completed{% else %}in-progress{% endif %}"
+                 data-status="{% if enrollment.is_completed %}completed{% else %}in-progress{% endif %}"
+                 data-title="{{ enrollment.course.title|lower }}"
+                 data-progress="{{ enrollment.progress_percentage }}"
+                 data-enrolled="{{ enrollment.enrolled_at.timestamp }}"
+                 style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-xl); margin-bottom: var(--spacing-lg); box-shadow: var(--shadow-sm); transition: box-shadow 0.2s;">
+
+                <div style="display: flex; gap: var(--spacing-xl); align-items: start;">
+                    <!-- Course Thumbnail -->
+                    <div style="flex-shrink: 0; width: 200px; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); position: relative;">
+                        {% if enrollment.is_completed %}
+                        <div style="position: absolute; top: var(--spacing-sm); right: var(--spacing-sm); background: #66BB6A; color: white; padding: 4px 8px; border-radius: 4px; font-size: calc(0.75rem * var(--font-scale)); font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Completed
+                        </div>
+                        {% else %}
+                        <div style="position: absolute; bottom: var(--spacing-sm); left: var(--spacing-sm); right: var(--spacing-sm); background: rgba(255,255,255,0.95); padding: 4px 8px; border-radius: 4px; text-align: center; font-size: calc(0.75rem * var(--font-scale)); font-weight: 600; color: #333;">
+                            {{ enrollment.progress_percentage }}% Complete
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Course Details -->
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-sm);">
+                            <h2 style="margin: 0; font-size: calc(1.25rem * var(--font-scale));">
+                                {{ enrollment.course.title }}
+                            </h2>
+                            {% if enrollment.is_completed and enrollment.completed_at %}
+                            <span style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale));">
+                                Completed {{ enrollment.completed_at|date:"M d, Y" }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); line-height: 1.6;">
+                            {{ enrollment.course.description|truncatewords:30 }}
+                        </p>
+
+                        <!-- Course Meta -->
+                        <div style="display: flex; gap: var(--spacing-xl); margin-bottom: var(--spacing-md); font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                </svg>
+                                By {{ enrollment.course.published_by.get_full_name }}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                Enrolled {{ enrollment.enrolled_at|date:"M d, Y" }}
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        {% if not enrollment.is_completed %}
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            {% include 'components/progress_bar.html' with percentage=enrollment.progress_percentage %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: var(--spacing-md);">
+                            <a href="{% url 'student_course_detail' enrollment.course.id %}"
+                               style="padding: var(--spacing-sm) var(--spacing-lg); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: opacity 0.2s; display: inline-block;">
+                                {% if enrollment.is_completed %}
+                                    Review Course
+                                {% else %}
+                                    Continue Learning
+                                {% endif %}
+                            </a>
+
+                            {% if enrollment.is_completed %}
+                            <a href="{% url 'student_certificate' enrollment.course.id %}"
+                               style="padding: var(--spacing-sm) var(--spacing-lg); background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: var(--spacing-sm);">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="7"/>
+                                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                                </svg>
+                                View Certificate
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Enrolled Courses -->
+        <div style="background: var(--bg-card); padding: var(--spacing-2xl); border-radius: var(--radius-lg); border: 1px solid var(--border-color); text-align: center;">
+            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-lg); color: var(--text-muted);">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <h3 style="margin-bottom: var(--spacing-md);">No Courses Yet</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); max-width: 500px; margin-left: auto; margin-right: auto;">
+                You haven't enrolled in any courses yet. Browse our catalog to find courses that match your learning goals.
+            </p>
+            <a href="{% url 'student_catalog' %}"
+               style="display: inline-block; padding: var(--spacing-md) var(--spacing-xl); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: background 0.2s;">
+                Browse Course Catalog
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+let currentFilter = 'all';
+let currentSearchTerm = '';
+
+function filterCourses(status) {
+    currentFilter = status;
+    const courseItems = document.querySelectorAll('.course-item');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+
+    // Update button states
+    filterBtns.forEach(btn => {
+        btn.style.borderBottomColor = 'transparent';
+        btn.style.color = 'var(--text-secondary)';
+    });
+
+    const activeBtn = document.getElementById(`filter-${status}`);
+    activeBtn.style.borderBottomColor = 'var(--primary)';
+    activeBtn.style.color = 'var(--primary)';
+
+    // Apply filter and search
+    searchAndFilter();
+}
+
+function searchAndFilter() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    currentSearchTerm = searchTerm;
+    const courseItems = document.querySelectorAll('.course-item');
+    let visibleCount = 0;
+
+    courseItems.forEach(item => {
+        const itemStatus = item.getAttribute('data-status');
+        const itemTitle = item.getAttribute('data-title');
+
+        // Check if item matches both filter and search
+        const matchesFilter = currentFilter === 'all' || itemStatus === currentFilter;
+        const matchesSearch = !searchTerm || itemTitle.includes(searchTerm);
+
+        if (matchesFilter && matchesSearch) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    // Show message if no results
+    updateNoResultsMessage(visibleCount);
+}
+
+function sortCourses() {
+    const sortBy = document.getElementById('sort-select').value;
+    const container = document.getElementById('courses-container');
+    const items = Array.from(document.querySelectorAll('.course-item'));
+
+    items.sort((a, b) => {
+        switch(sortBy) {
+            case 'alphabetical':
+                const titleA = a.getAttribute('data-title');
+                const titleB = b.getAttribute('data-title');
+                return titleA.localeCompare(titleB);
+
+            case 'progress':
+                const progressA = parseInt(a.getAttribute('data-progress'));
+                const progressB = parseInt(b.getAttribute('data-progress'));
+                return progressB - progressA; // Descending
+
+            case 'enrolled':
+                const enrolledA = parseFloat(a.getAttribute('data-enrolled'));
+                const enrolledB = parseFloat(b.getAttribute('data-enrolled'));
+                return enrolledB - enrolledA; // Most recent first
+
+            case 'recent':
+            default:
+                // For now, use enrolled date for "recent activity"
+                // In production, this would track last access time
+                const recentA = parseFloat(a.getAttribute('data-enrolled'));
+                const recentB = parseFloat(b.getAttribute('data-enrolled'));
+                return recentB - recentA;
+        }
+    });
+
+    // Clear and re-append sorted items
+    container.innerHTML = '';
+    items.forEach(item => container.appendChild(item));
+
+    // Reapply search/filter to maintain visibility
+    searchAndFilter();
+}
+
+function updateNoResultsMessage(count) {
+    const container = document.getElementById('courses-container');
+    let noResultsMsg = document.getElementById('no-results-message');
+
+    if (count === 0 && !noResultsMsg) {
+        noResultsMsg = document.createElement('div');
+        noResultsMsg.id = 'no-results-message';
+        noResultsMsg.style.cssText = 'background: var(--bg-card); padding: var(--spacing-2xl); border-radius: var(--radius-lg); border: 1px solid var(--border-color); text-align: center; color: var(--text-muted);';
+        noResultsMsg.innerHTML = '<p style="margin: 0;">No courses found matching your criteria. Try adjusting your search or filters.</p>';
+        container.appendChild(noResultsMsg);
+    } else if (count > 0 && noResultsMsg) {
+        noResultsMsg.remove();
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const activeBtn = document.getElementById('filter-all');
+    activeBtn.style.borderBottomColor = 'var(--primary)';
+    activeBtn.style.color = 'var(--primary)';
+});
+</script>
+{% endblock %}

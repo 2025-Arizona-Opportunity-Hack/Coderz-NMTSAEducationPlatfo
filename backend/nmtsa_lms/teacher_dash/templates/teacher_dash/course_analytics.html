@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-link">← Back to Course</a>
+    <h1 class="page-title">Analytics</h1>
+    <p class="page-description">High-level metrics for {{ course.title }}.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--spacing-xl);">
+    <div class="card" style="text-align: center;">
+        <h2 style="margin: 0; font-size: calc(2.5rem * var(--font-scale));">{{ enrollments }}</h2>
+        <p style="margin: var(--spacing-sm) 0 0 0; color: var(--text-secondary);">Active Enrollments</p>
+    </div>
+    <div class="card" style="text-align: center;">
+        <h2 style="margin: 0; font-size: calc(2.5rem * var(--font-scale));">{{ completed_lessons }}</h2>
+        <p style="margin: var(--spacing-sm) 0 0 0; color: var(--text-secondary);">Lessons Completed</p>
+    </div>
+</div>
+
+<div class="card" style="margin-top: var(--spacing-2xl);">
+    <h2 style="margin-top: 0;">Next Steps</h2>
+    <ul>
+        <li>Create more engaging content to boost completion rates.</li>
+        <li>Share the course link with your audience to grow enrollments.</li>
+        <li>Export enrollments from the course detail page for roster management.</li>
+    </ul>
+</div>
+{% endblock %}

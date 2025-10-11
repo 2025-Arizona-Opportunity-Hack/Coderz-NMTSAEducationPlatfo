@@ -1,0 +1,153 @@
+{# Reusable Accordion/Collapsible Component
+   Usage:
+   {% include 'components/accordion.html' with
+      accordion_id='advanced-options'
+      title='Advanced Options'
+      content='<p>Your advanced content here</p>'
+      is_open=False
+   %}
+
+   Parameters:
+   - accordion_id: Unique ID for this accordion (required)
+   - title: Accordion header title (required)
+   - content: Accordion body content (required, can include HTML)
+   - is_open: true|false - Initially open or closed (default: false)
+   - icon: Show icon before title (optional)
+#}
+
+<div class="accordion-item"
+     style="
+         background: var(--bg-card);
+         border: 1px solid var(--border-color);
+         border-radius: var(--radius-md);
+         margin-bottom: var(--spacing-md);
+         overflow: hidden;
+     ">
+
+    <!-- Accordion Header (Clickable) -->
+    <button type="button"
+            onclick="toggleAccordion('{{ accordion_id }}')"
+            aria-expanded="{% if is_open %}true{% else %}false{% endif %}"
+            aria-controls="{{ accordion_id }}-content"
+            style="
+                width: 100%;
+                padding: var(--spacing-lg);
+                background: var(--bg-secondary);
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: var(--spacing-md);
+                font-size: calc(1rem * var(--font-scale));
+                font-weight: 600;
+                color: var(--text-primary);
+                transition: background 0.2s;
+            "
+            onmouseenter="this.style.background='var(--bg-primary)'"
+            onmouseleave="this.style.background='var(--bg-secondary)'">
+
+        <span style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            {% if icon %}
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    {% if icon == 'settings' %}
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                    {% elif icon == 'info' %}
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    {% else %}
+                        <path d="M9 18l6-6-6-6"/>
+                    {% endif %}
+                </svg>
+            {% endif %}
+            {{ title }}
+        </span>
+
+        <!-- Expand/Collapse Icon -->
+        <svg id="{{ accordion_id }}-icon"
+             width="20"
+             height="20"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             viewBox="0 0 24 24"
+             aria-hidden="true"
+             style="
+                 flex-shrink: 0;
+                 transition: transform 0.3s;
+                 {% if is_open %}transform: rotate(180deg);{% endif %}
+             ">
+            <polyline points="6 9 12 15 18 9"/>
+        </svg>
+    </button>
+
+    <!-- Accordion Content (Collapsible) -->
+    <div id="{{ accordion_id }}-content"
+         role="region"
+         style="
+             {% if is_open %}display: block;{% else %}display: none;{% endif %}
+             padding: var(--spacing-lg);
+             border-top: 1px solid var(--border-color);
+             color: var(--text-primary);
+             font-size: calc(0.875rem * var(--font-scale));
+             line-height: 1.6;
+         ">
+        {{ content|safe }}
+    </div>
+</div>
+
+<script>
+function toggleAccordion(accordionId) {
+    const content = document.getElementById(accordionId + '-content');
+    const icon = document.getElementById(accordionId + '-icon');
+    const button = document.querySelector('[aria-controls="' + accordionId + '-content"]');
+
+    if (content.style.display === 'none' || content.style.display === '') {
+        // Open
+        content.style.display = 'block';
+        icon.style.transform = 'rotate(180deg)';
+        button.setAttribute('aria-expanded', 'true');
+
+        // Save state to localStorage
+        localStorage.setItem('accordion-' + accordionId, 'open');
+    } else {
+        // Close
+        content.style.display = 'none';
+        icon.style.transform = 'rotate(0deg)';
+        button.setAttribute('aria-expanded', 'false');
+
+        // Save state to localStorage
+        localStorage.setItem('accordion-' + accordionId, 'closed');
+    }
+}
+
+// Restore accordion state from localStorage on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const accordionId = '{{ accordion_id }}';
+    const savedState = localStorage.getItem('accordion-' + accordionId);
+
+    if (savedState === 'open') {
+        const content = document.getElementById(accordionId + '-content');
+        const icon = document.getElementById(accordionId + '-icon');
+        const button = document.querySelector('[aria-controls="' + accordionId + '-content"]');
+
+        if (content && icon && button) {
+            content.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+            button.setAttribute('aria-expanded', 'true');
+        }
+    }
+});
+</script>
+
+<style>
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    #{{ accordion_id }}-icon {
+        transition: none !important;
+    }
+}
+</style>

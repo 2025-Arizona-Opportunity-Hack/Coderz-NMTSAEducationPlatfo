@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - NMTSA Learning{% endblock %}
+
+{% block content %}
+<div style="max-width: 450px; margin: var(--spacing-2xl) auto; padding: var(--spacing-xl);">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+            <h1 style="margin-bottom: var(--spacing-sm);">Welcome Back</h1>
+            <p style="color: var(--text-secondary);">
+                Login to continue your learning journey
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            {% include 'components/form_field.html' with label='Email Address' type='email' name='email' required=True placeholder='your.email@example.com' autocomplete='email' %}
+
+            {% include 'components/form_field.html' with label='Password' type='password' name='password' required=True autocomplete='current-password' %}
+
+            <!-- Remember Me -->
+            <div style="margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-sm);">
+                <input type="checkbox"
+                       id="remember_me"
+                       name="remember_me"
+                       style="width: 24px; height: 24px; cursor: pointer;">
+                <label for="remember_me" style="cursor: pointer; margin: 0;">
+                    Remember me for 30 days
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                Login to Your Account
+            </button>
+
+            <!-- Divider -->
+            <div style="margin: var(--spacing-xl) 0; text-align: center; color: var(--text-muted);">
+                or
+            </div>
+
+            <!-- OAuth Login (Auth0) -->
+            <a href="/login/auth0/" class="btn btn-outline" style="width: 100%; text-decoration: none;">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" style="margin-right: var(--spacing-sm);" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                </svg>
+                Continue with Single Sign-On
+            </a>
+        </form>
+
+        <!-- Helper Links -->
+        <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color); text-align: center;">
+            <p style="margin-bottom: var(--spacing-sm);">
+                <a href="/password-reset/">Forgot your password?</a>
+            </p>
+            <p style="color: var(--text-secondary);">
+                Don't have an account?
+                <a href="/signup/" style="font-weight: 600;">Sign up for free</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Accessibility Note -->
+    <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: #E8F1F8; border-radius: 6px; border-left: 4px solid #7FA8C9;">
+        <p style="margin: 0; font-size: calc(0.875rem * var(--font-scale)); color: #3A4A5A;">
+            <strong>Accessibility Tip:</strong> Use the theme controls in the top-right corner to adjust colors and text size to your preference.
+        </p>
+    </div>
+</div>
+{% endblock %}

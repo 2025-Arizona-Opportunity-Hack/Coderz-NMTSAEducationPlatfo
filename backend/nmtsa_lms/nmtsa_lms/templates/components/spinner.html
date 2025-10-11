@@ -1,0 +1,66 @@
+{# Reusable Loading Spinner Component
+   Usage:
+   {% include 'components/spinner.html' with size='medium' text='Loading...' %}
+
+   Parameters:
+   - size: small|medium|large (default: medium)
+   - text: Loading message text (default: "Loading...")
+   - inline: true|false - Display inline with content (default: false)
+#}
+
+{% if inline %}
+<span style="display: inline-flex; align-items: center; gap: var(--spacing-sm);" role="status" aria-live="polite">
+{% else %}
+<div style="display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm);" role="status" aria-live="polite">
+{% endif %}
+    <!-- Spinner SVG -->
+    <svg
+        width="{% if size == 'small' %}16{% elif size == 'large' %}32{% else %}24{% endif %}"
+        height="{% if size == 'small' %}16{% elif size == 'large' %}32{% else %}24{% endif %}"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="var(--primary)"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        style="
+            {% if not reduce_motion %}
+            animation: spin 2s linear infinite;
+            {% endif %}
+        ">
+        <circle cx="12" cy="12" r="10" opacity="0.25"/>
+        <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
+    </svg>
+
+    <!-- Loading Text -->
+    <span style="
+        color: var(--text-secondary);
+        font-size: {% if size == 'small' %}calc(0.875rem * var(--font-scale)){% elif size == 'large' %}calc(1.125rem * var(--font-scale)){% else %}calc(1rem * var(--font-scale)){% endif %};
+    ">
+        {{ text|default:"Loading..." }}
+    </span>
+
+{% if inline %}
+</span>
+{% else %}
+</div>
+{% endif %}
+
+<style>
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    svg {
+        animation: none !important;
+    }
+}
+</style>

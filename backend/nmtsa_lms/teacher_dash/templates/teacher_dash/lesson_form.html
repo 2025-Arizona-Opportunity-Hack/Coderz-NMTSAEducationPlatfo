@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if lesson %}Edit Lesson{% else %}Create Lesson{% endif %} - {{ module.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lesson-form.card {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: clamp(var(--spacing-xl), 3vw, var(--spacing-2xl));
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-2xl);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-lg);
+        background: var(--bg-card);
+    }
+
+    .lesson-form .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .lesson-form .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .lesson-form .form-field label {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .lesson-form .form-field input,
+    .lesson-form .form-field textarea,
+    .lesson-form .form-field select {
+        width: 100%;
+        padding: 12px 14px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: var(--radius-lg);
+        background: var(--bg-secondary, #fff);
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        color: inherit;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .lesson-form .form-field input[type="file"] {
+        padding: 10px;
+        background: rgba(148, 163, 184, 0.12);
+        border-style: dashed;
+    }
+
+    .lesson-form .form-field textarea {
+        min-height: 160px;
+        resize: vertical;
+    }
+
+    .lesson-form .form-field input:focus,
+    .lesson-form .form-field textarea:focus,
+    .lesson-form .form-field select:focus {
+    border-color: rgba(61, 132, 244, 0.6);
+    box-shadow: 0 0 0 4px rgba(61, 132, 244, 0.15);
+        outline: none;
+    }
+
+    .lesson-form fieldset {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: var(--radius-lg);
+        padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
+    background: rgba(148, 163, 184, 0.08);
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .lesson-form fieldset legend {
+        font-size: 1.05rem;
+        font-weight: 700;
+        padding: 0 var(--spacing-sm);
+        color: var(--text-primary);
+    }
+
+    .lesson-form .help-text {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .lesson-form .error-text {
+        color: var(--danger-color);
+        font-size: 0.85rem;
+    }
+
+    .lesson-form .form-field.has-error input,
+    .lesson-form .form-field.has-error textarea,
+    .lesson-form .form-field.has-error select {
+        border-color: var(--danger-color);
+    }
+
+    .lesson-form_actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+        justify-content: flex-start;
+    }
+
+    @media (max-width: 640px) {
+        .lesson-form.card {
+            padding: var(--spacing-xl);
+        }
+
+        .lesson-form fieldset {
+            padding: var(--spacing-lg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'teacher_module_detail' course.id module.id %}" class="btn btn-link">← Back to Module</a>
+    <h1 class="page-title">{% if lesson %}Edit Lesson{% else %}Create Lesson{% endif %}</h1>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="card lesson-form">
+    {% csrf_token %}
+    {{ lesson_form.non_field_errors }}
+
+    <div class="form-grid">
+        {% for field in lesson_form %}
+        {% if field.name == "duration" %}
+        <div class="form-field{% if field.errors %} has-error{% endif %}" data-lesson-duration>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+            {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+        </div>
+        {% else %}
+        <div class="form-field{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+            {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <fieldset data-lesson-fieldset="video">
+        <legend>Video Lesson</legend>
+        {{ video_form.non_field_errors }}
+        {% for field in video_form %}
+        <div class="form-field{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+        </div>
+        {% endfor %}
+    </fieldset>
+
+    <fieldset data-lesson-fieldset="blog">
+        <legend>Blog Lesson</legend>
+        {{ blog_form.non_field_errors }}
+        {% for field in blog_form %}
+        <div class="form-field{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+        </div>
+        {% endfor %}
+    </fieldset>
+
+    <div class="lesson-form_actions">
+        <button type="submit" class="btn btn-primary">Save Lesson</button>
+        <a href="{% url 'teacher_module_detail' course.id module.id %}" class="btn btn-outline">Cancel</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('id_lesson_type');
+        const durationFieldWrapper = document.querySelector('[data-lesson-duration]');
+        const durationInput = durationFieldWrapper ? durationFieldWrapper.querySelector('input, select, textarea') : null;
+        const videoFieldset = document.querySelector('[data-lesson-fieldset="video"]');
+        const blogFieldset = document.querySelector('[data-lesson-fieldset="blog"]');
+
+        // Collect all interactive elements inside each fieldset so we can
+        // toggle required/disabled on them when switching lesson type. This
+        // prevents browser validation errors for hidden, required controls
+        // (e.g. the blog "content" textarea) which are not focusable.
+        const videoInputs = videoFieldset ? Array.from(videoFieldset.querySelectorAll('input, select, textarea')) : [];
+        const blogInputs = blogFieldset ? Array.from(blogFieldset.querySelectorAll('input, select, textarea')) : [];
+
+        // Remember original required/disabled state so toggling restores them
+        const initialRequired = new Map();
+        const initialDisabled = new Map();
+        videoInputs.concat(blogInputs).forEach(el => {
+            initialRequired.set(el, !!el.required);
+            initialDisabled.set(el, !!el.disabled);
+        });
+
+        function toggleLessonFields() {
+            const value = typeSelect ? typeSelect.value : '';
+            if (!typeSelect) {
+                return;
+            }
+
+            if (videoFieldset) {
+                const showVideo = value === 'video';
+                videoFieldset.style.display = showVideo ? 'flex' : 'none';
+                videoFieldset.setAttribute('aria-hidden', showVideo ? 'false' : 'true');
+
+                // enable/disable inputs and restore required when visible
+                videoInputs.forEach(el => {
+                    el.disabled = !showVideo ? true : (initialDisabled.get(el) || false);
+                    el.required = showVideo ? (initialRequired.get(el) || false) : false;
+                });
+            }
+
+            if (blogFieldset) {
+                const showBlog = value === 'blog';
+                blogFieldset.style.display = showBlog ? 'flex' : 'none';
+                blogFieldset.setAttribute('aria-hidden', showBlog ? 'false' : 'true');
+
+                blogInputs.forEach(el => {
+                    el.disabled = !showBlog ? true : (initialDisabled.get(el) || false);
+                    el.required = showBlog ? (initialRequired.get(el) || false) : false;
+                });
+            }
+
+            if (durationFieldWrapper) {
+                const showDuration = value === 'blog';
+                durationFieldWrapper.style.display = showDuration ? 'flex' : 'none';
+                if (durationInput) {
+                    durationInput.disabled = !showDuration;
+                    durationInput.required = showDuration;
+                }
+            }
+        }
+
+        toggleLessonFields();
+        if (typeSelect) {
+            typeSelect.addEventListener('change', toggleLessonFields);
+        }
+    });
+</script>
+{% endblock %}

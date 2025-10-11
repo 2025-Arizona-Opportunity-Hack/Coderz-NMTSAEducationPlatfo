@@ -1,0 +1,166 @@
+{# Reusable Tooltip Component (Click-to-open, not hover)
+   Usage:
+   {% include 'components/tooltip.html' with
+      tooltip_id='price-help'
+      icon_label='Help with pricing'
+      content='Paid courses provide lifetime access and a certificate upon completion.'
+   %}
+
+   Parameters:
+   - tooltip_id: Unique ID for this tooltip (required)
+   - icon_label: Aria-label for the help icon (required)
+   - content: Tooltip content text (required)
+   - position: top|bottom|left|right (default: bottom)
+#}
+
+<span style="position: relative; display: inline-flex; align-items: center;">
+    <!-- Help Icon Button -->
+    <button type="button"
+            onclick="toggleTooltip('{{ tooltip_id }}')"
+            aria-label="{{ icon_label }}"
+            aria-describedby="{{ tooltip_id }}-content"
+            style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                color: var(--text-secondary);
+                transition: color 0.2s;
+            "
+            onmouseenter="this.style.color='var(--primary)'"
+            onmouseleave="this.style.color='var(--text-secondary)'">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+    </button>
+
+    <!-- Tooltip Content Box -->
+    <div id="{{ tooltip_id }}-content"
+         role="tooltip"
+         class="tooltip-box"
+         style="
+             display: none;
+             position: absolute;
+             {% if position == 'top' %}
+                 bottom: calc(100% + 8px);
+                 left: 50%;
+                 transform: translateX(-50%);
+             {% elif position == 'left' %}
+                 right: calc(100% + 8px);
+                 top: 50%;
+                 transform: translateY(-50%);
+             {% elif position == 'right' %}
+                 left: calc(100% + 8px);
+                 top: 50%;
+                 transform: translateY(-50%);
+             {% else %}
+                 top: calc(100% + 8px);
+                 left: 50%;
+                 transform: translateX(-50%);
+             {% endif %}
+             background: var(--bg-card);
+             border: 2px solid var(--border-color);
+             border-radius: var(--radius-md);
+             padding: var(--spacing-md);
+             box-shadow: var(--shadow-lg);
+             z-index: 1000;
+             min-width: 200px;
+             max-width: 300px;
+             font-size: calc(0.875rem * var(--font-scale));
+             color: var(--text-primary);
+             line-height: 1.5;
+         ">
+
+        <!-- Tooltip Arrow -->
+        <div style="
+            position: absolute;
+            {% if position == 'top' %}
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-top: 8px solid var(--border-color);
+            {% elif position == 'left' %}
+                left: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-left: 8px solid var(--border-color);
+            {% elif position == 'right' %}
+                right: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 8px solid var(--border-color);
+            {% else %}
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid var(--border-color);
+            {% endif %}
+            width: 0;
+            height: 0;
+        "></div>
+
+        <!-- Content -->
+        <div style="margin-bottom: var(--spacing-sm);">
+            {{ content|safe }}
+        </div>
+
+        <!-- Got it Button -->
+        <button type="button"
+                onclick="toggleTooltip('{{ tooltip_id }}')"
+                style="
+                    padding: 4px 12px;
+                    background: var(--primary);
+                    color: white;
+                    border: none;
+                    border-radius: var(--radius-sm);
+                    font-size: calc(0.75rem * var(--font-scale));
+                    cursor: pointer;
+                    font-weight: 600;
+                    width: 100%;
+                ">
+            Got it
+        </button>
+    </div>
+</span>
+
+<script>
+function toggleTooltip(tooltipId) {
+    const tooltip = document.getElementById(tooltipId + '-content');
+
+    if (tooltip.style.display === 'none' || tooltip.style.display === '') {
+        // Close all other tooltips first
+        document.querySelectorAll('.tooltip-box').forEach(t => {
+            t.style.display = 'none';
+        });
+        // Open this tooltip
+        tooltip.style.display = 'block';
+    } else {
+        // Close this tooltip
+        tooltip.style.display = 'none';
+    }
+}
+
+// Close tooltip when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.tooltip-box') && !event.target.closest('button[aria-describedby]')) {
+        document.querySelectorAll('.tooltip-box').forEach(t => {
+            t.style.display = 'none';
+        });
+    }
+});
+</script>

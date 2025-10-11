@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses Pending Review{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Courses Pending Review</h1>
+    <p class="page-description">Approve courses submitted by teachers before they go live.</p>
+</div>
+
+{% if courses %}
+<div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--shadow-sm);">
+    <table class="table" style="margin: 0;">
+        <thead>
+            <tr>
+                <th>Course Title</th>
+                <th>Teacher</th>
+                <th>Content</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>
+                    <strong>{{ course.title }}</strong>
+                    {% if course.is_paid %}
+                    <span style="display: inline-block; margin-left: var(--spacing-sm); padding: 2px 8px; background: var(--primary-light); color: var(--primary); border-radius: var(--radius-sm); font-size: calc(0.75rem * var(--font-scale)); font-weight: 600;">
+                        ${{ course.price }}
+                    </span>
+                    {% else %}
+                    <span style="display: inline-block; margin-left: var(--spacing-sm); padding: 2px 8px; background: #E8F5E9; color: #66BB6A; border-radius: var(--radius-sm); font-size: calc(0.75rem * var(--font-scale)); font-weight: 600;">
+                        FREE
+                    </span>
+                    {% endif %}
+                </td>
+                <td>{{ course.published_by.get_full_name|default:course.published_by.email }}</td>
+                <td>
+                    <div style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                        {{ course.modules.count }} module{{ course.modules.count|pluralize }}
+                    </div>
+                </td>
+                <td>{{ course.published_date|date:"M d, Y" }}</td>
+                <td>
+                    <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                        <a href="{% url 'admin_course_preview' course.id %}"
+                           class="btn btn-outline btn-sm"
+                           target="_blank"
+                           title="Preview course content in new tab">
+                            Preview
+                        </a>
+                        <a href="{% url 'admin_review_course_action' course.id %}"
+                           class="btn btn-primary btn-sm">
+                            Review
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: var(--spacing-sm);">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16v-4"/>
+        <path d="M12 8h.01"/>
+    </svg>
+    No courses awaiting review. Check back later!
+</div>
+{% endif %}
+{% endblock %}

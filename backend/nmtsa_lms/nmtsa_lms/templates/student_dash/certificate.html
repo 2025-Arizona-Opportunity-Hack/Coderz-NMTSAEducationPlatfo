@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate - {{ course.title }} - NMTSA Learning{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-2xl);">
+    <!-- Back Link -->
+    <a href="{% url 'student_courses' %}"
+       style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-2xl); font-size: calc(0.875rem * var(--font-scale)); transition: color 0.2s;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to My Courses
+    </a>
+
+    <!-- Certificate Container -->
+    <div id="certificate" style="background: white; border: 8px solid #7FA8C9; border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: var(--spacing-2xl); position: relative; overflow: hidden;">
+        <!-- Decorative Corner Elements -->
+        <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #E8F1F8 0%, transparent 100%);"></div>
+        <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(225deg, #E8F1F8 0%, transparent 100%);"></div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100px; height: 100px; background: linear-gradient(45deg, #E8F1F8 0%, transparent 100%);"></div>
+        <div style="position: absolute; bottom: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(315deg, #E8F1F8 0%, transparent 100%);"></div>
+
+        <!-- Content -->
+        <div style="position: relative; text-align: center; padding: var(--spacing-2xl);">
+            <!-- Logo/Icon -->
+            <div style="margin-bottom: var(--spacing-xl);">
+                <svg width="80" height="80" fill="none" stroke="#7FA8C9" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto;">
+                    <circle cx="12" cy="8" r="7"/>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                </svg>
+            </div>
+
+            <!-- Certificate Text -->
+            <h1 style="color: #333; margin-bottom: var(--spacing-md); font-size: 2.5rem; font-family: Georgia, serif;">
+                Certificate of Completion
+            </h1>
+
+            <p style="color: #666; margin-bottom: var(--spacing-2xl); font-size: 1.125rem;">
+                This is to certify that
+            </p>
+
+            <!-- Student Name -->
+            <h2 style="color: #7FA8C9; margin-bottom: var(--spacing-2xl); font-size: 2.25rem; font-family: Georgia, serif; border-bottom: 2px solid #7FA8C9; display: inline-block; padding-bottom: var(--spacing-sm);">
+                {{ request.session.user.first_name }} {{ request.session.user.last_name }}
+            </h2>
+
+            <p style="color: #666; margin-bottom: var(--spacing-lg); font-size: 1.125rem;">
+                has successfully completed the course
+            </p>
+
+            <!-- Course Title -->
+            <h3 style="color: #333; margin-bottom: var(--spacing-2xl); font-size: 1.75rem; font-weight: 700;">
+                {{ course.title }}
+            </h3>
+
+            <!-- Completion Info -->
+            <div style="display: flex; justify-content: center; gap: var(--spacing-2xl); margin-bottom: var(--spacing-2xl); color: #666;">
+                <div>
+                    <div style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Completed On</div>
+                    <div style="font-weight: 600; font-size: 1.125rem;">{{ enrollment.completed_at|date:"F d, Y" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Instructor</div>
+                    <div style="font-weight: 600; font-size: 1.125rem;">{{ course.published_by.get_full_name }}</div>
+                </div>
+            </div>
+
+            <!-- Signature Line -->
+            <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-2xl); border-top: 1px solid #ddd;">
+                <div style="display: inline-block; text-align: center;">
+                    <div style="width: 250px; border-top: 2px solid #333; padding-top: var(--spacing-sm); margin: 0 auto;">
+                        <div style="font-weight: 600; color: #333;">NMTSA Learning Platform</div>
+                        <div style="font-size: 0.875rem; color: #666; margin-top: 4px;">Neurologic Music Therapy & Autism Care</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate ID -->
+            <div style="margin-top: var(--spacing-2xl); color: #999; font-size: 0.75rem; font-family: monospace;">
+                Certificate ID: NMTSA-{{ enrollment.id }}-{{ enrollment.completed_at|date:"Ymd" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; display: flex; gap: var(--spacing-md); justify-content: center;">
+        <button onclick="window.print()"
+                style="padding: var(--spacing-md) var(--spacing-xl); background: var(--primary); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: var(--spacing-sm); transition: opacity 0.2s;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="6 9 6 2 18 2 18 9"/>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Print Certificate
+        </button>
+
+        <button onclick="downloadCertificate()"
+                style="padding: var(--spacing-md) var(--spacing-xl); background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: var(--spacing-sm); transition: background 0.2s;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download as PDF
+        </button>
+
+        <a href="{% url 'student_course_detail' course.id %}"
+           style="padding: var(--spacing-md) var(--spacing-xl); background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: var(--spacing-sm); transition: background 0.2s;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            Review Course
+        </a>
+    </div>
+</div>
+
+<style>
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Hide everything except certificate */
+    header, nav, footer, .theme-controls, a[href*="Back"] {
+        display: none !important;
+    }
+
+    #certificate {
+        border: 8px solid #7FA8C9;
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    /* Hide action buttons when printing */
+    button, a {
+        display: none !important;
+    }
+}
+</style>
+
+<script>
+function downloadCertificate() {
+    // In a production environment, this would generate a PDF on the backend
+    // For now, we'll use the browser's print-to-PDF functionality
+    alert('Please use the Print button and select "Save as PDF" as your printer to download the certificate.');
+    window.print();
+}
+</script>
+{% endblock %}

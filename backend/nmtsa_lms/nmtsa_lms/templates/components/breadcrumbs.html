@@ -1,0 +1,80 @@
+{# Reusable Breadcrumbs Navigation Component
+   Usage:
+   {% include 'components/breadcrumbs.html' with items=breadcrumb_items %}
+
+   Parameters:
+   - items: List of breadcrumb items (required)
+     Each item should be a dict with 'text' and optionally 'url'
+     Example:
+     [
+         {'text': 'Home', 'url': '/'},
+         {'text': 'Courses', 'url': '/courses/'},
+         {'text': 'Course Title'}  # Last item (current page) has no URL
+     ]
+#}
+
+<nav aria-label="Breadcrumb"
+     style="
+         margin-bottom: var(--spacing-lg);
+         padding: var(--spacing-md) 0;
+     ">
+    <ol style="
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--spacing-sm);
+        font-size: calc(0.875rem * var(--font-scale));
+    ">
+        {% for item in items %}
+        <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+            {% if item.url %}
+                <!-- Linked Breadcrumb Item -->
+                <a href="{{ item.url }}"
+                   style="
+                       color: var(--text-secondary);
+                       text-decoration: none;
+                       transition: color 0.2s;
+                   "
+                   onmouseenter="this.style.color='var(--primary)'"
+                   onmouseleave="this.style.color='var(--text-secondary)'">
+                    {{ item.text }}
+                </a>
+            {% else %}
+                <!-- Current Page (no link) -->
+                <span style="
+                    color: var(--text-primary);
+                    font-weight: 600;
+                " aria-current="page">
+                    {{ item.text }}
+                </span>
+            {% endif %}
+
+            <!-- Separator (not after last item) -->
+            {% if not forloop.last %}
+                <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+</nav>
+
+<style>
+/* Mobile responsive: truncate middle items on small screens */
+@media (max-width: 640px) {
+    nav[aria-label="Breadcrumb"] li:not(:first-child):not(:last-child) {
+        display: none;
+    }
+
+    /* Show ellipsis for hidden items */
+    nav[aria-label="Breadcrumb"] li:first-child:not(:last-child)::after {
+        content: "...";
+        margin-left: var(--spacing-sm);
+        color: var(--text-muted);
+    }
+}
+</style>
