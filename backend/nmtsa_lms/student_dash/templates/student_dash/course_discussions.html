@@ -30,8 +30,7 @@
                 </svg>
             </div>
             <div style="display:flex; gap: 8px;">
-                <a href="?sort=latest{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline btn-sm{% if sort == 'latest' or not sort %} is-active{% endif %}">Latest</a>
-                <a href="?sort=popular{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline btn-sm{% if sort == 'popular' %} is-active{% endif %}">Popular</a>
+                <a href="?sort=recent{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline btn-sm{% if sort == 'recent' %} is-active{% endif %}">Recent</a>
                 <a href="?sort=unanswered{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline btn-sm{% if sort == 'unanswered' %} is-active{% endif %}">Unanswered</a>
             </div>
         </form>

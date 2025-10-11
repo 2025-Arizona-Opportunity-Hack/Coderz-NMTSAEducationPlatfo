@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
@@ -561,7 +561,10 @@ def course_discussions(request, course_id):
     ).select_related('user').prefetch_related('replies')
 
     # Apply sorting
-    if sort == 'pinned':
+    if sort == 'unanswered':
+        # Annotate with reply_count and filter unanswered
+        posts_queryset = posts_queryset.annotate(reply_count=Count('replies')).filter(reply_count=0).order_by('-created_at')
+    elif sort == 'pinned':
         posts_queryset = posts_queryset.order_by('-is_pinned', '-created_at')
     else:  # recent
         posts_queryset = posts_queryset.order_by('-created_at')
@@ -719,8 +722,9 @@ def discussion_reply(request, course_id, post_id):
         reply.save()
         messages.success(request, "Your reply has been posted!")
     else:
-        for error in form.errors.values():
-            messages.error(request, error)
+        for field_errors in form.errors.values():
+            for err in field_errors:
+                messages.error(request, str(err))
 
     return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
 
@@ -787,7 +791,7 @@ def discussion_delete(request, course_id, post_id):
 
     # Remember if it was a reply
     was_reply = post.parent_post is not None
-    parent_id = post.parent_post.id if was_reply else None
+    parent_id = post.parent_post.id if was_reply and post.parent_post else None
 
     # Delete the post (replies will cascade)
     post.delete()
