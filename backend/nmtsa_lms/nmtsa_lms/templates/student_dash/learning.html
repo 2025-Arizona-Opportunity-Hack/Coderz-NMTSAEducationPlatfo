@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Learning - NMTSA{% endblock %}
+
+{% block content %}
+<div style="display: flex; height: calc(100vh - 100px); margin: calc(var(--spacing-xl) * -1) auto; padding-top: 0; max-width: none;">
+    <!-- Course Sidebar Navigation -->
+    <aside style="width: 320px; background: var(--bg-card); border-right: 1px solid var(--border-color); overflow-y: auto; flex-shrink: 0;">
+        <!-- Course Header -->
+        <div style="padding: var(--spacing-xl); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
+            <a href="{% url 'student_course_detail' course.id %}"
+               style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-md); font-size: calc(0.875rem * var(--font-scale)); transition: color 0.2s;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Exit Course
+            </a>
+
+            <h2 style="margin-bottom: var(--spacing-sm); font-size: calc(1.125rem * var(--font-scale)); line-height: 1.3;">
+                {{ course.title }}
+            </h2>
+
+            <!-- Overall Progress -->
+            <div style="margin-top: var(--spacing-md);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale));">
+                    <span style="color: var(--text-secondary);">Your Progress</span>
+                    <span style="font-weight: 600; color: var(--primary);">{{ enrollment.progress_percentage }}%</span>
+                </div>
+                {% include 'components/progress_bar.html' with percentage=enrollment.progress_percentage show_text=False %}
+            </div>
+        </div>
+
+        <!-- Modules and Lessons List -->
+        <nav style="padding: var(--spacing-lg);">
+            {% for module in modules %}
+            <div style="margin-bottom: var(--spacing-lg);">
+                <!-- Module Header -->
+                <div style="margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale)); text-transform: uppercase; letter-spacing: 0.5px;">
+                    Module {{ forloop.counter }}
+                </div>
+                <div style="margin-bottom: var(--spacing-md); font-weight: 600; font-size: calc(1rem * var(--font-scale));">
+                    {{ module.title }}
+                </div>
+
+                <!-- Lessons in Module -->
+                {% if module.lessons.all %}
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    {% for lesson in module.lessons.all %}
+                    <li style="margin-bottom: var(--spacing-sm);">
+                        <a href="{% url 'student_lesson' course.id module.id lesson.id %}"
+                           class="lesson-link {% if current_lesson.id == lesson.id %}active{% endif %}"
+                           data-lesson-id="{{ lesson.id }}"
+                           style="display: flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-sm); border-radius: var(--radius-md); text-decoration: none; color: var(--text-primary); transition: background 0.2s; {% if current_lesson.id == lesson.id %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+
+                            <!-- Lesson Status Icon -->
+                            <div style="width: 24px; height: 24px; flex-shrink: 0;">
+                                {% if lesson.id in completed_lesson_ids %}
+                                <svg width="24" height="24" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                {% elif lesson.lesson_type == 'video' %}
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polygon points="10 8 16 12 10 16 10 8"/>
+                                </svg>
+                                {% else %}
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                                {% endif %}
+                            </div>
+
+                            <!-- Lesson Title and Duration -->
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: calc(0.875rem * var(--font-scale)); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    {{ lesson.title }}
+                                </div>
+                                <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-muted); margin-top: 2px;">
+                                    {% if lesson.lesson_type == 'video' and lesson.watch_percentage and lesson.id not in completed_lesson_ids %}
+                                        {{ lesson.watch_percentage }}% watched
+                                    {% else %}
+                                        {{ lesson.duration }} min
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p style="color: var(--text-muted); font-style: italic; font-size: calc(0.875rem * var(--font-scale));">
+                    No lessons yet
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </nav>
+    </aside>
+
+    <!-- Main Lesson Content Area -->
+    <main style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <!-- Lesson Header -->
+        <div style="background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: var(--spacing-lg) var(--spacing-xl);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">
+                        {% if current_lesson.lesson_type == 'video' %}Video Lesson{% else %}Article{% endif %}
+                    </div>
+                    <h1 style="margin: 0; font-size: calc(1.5rem * var(--font-scale));">
+                        {{ current_lesson.title }}
+                    </h1>
+                </div>
+
+                <!-- Mark Complete Button -->
+                {% if current_lesson.id not in completed_lesson_ids %}
+                <form method="POST" action="{% url 'student_mark_lesson_complete' course.id module.id current_lesson.id %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit"
+                            style="padding: var(--spacing-md) var(--spacing-lg); background: #66BB6A; color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: var(--spacing-sm); transition: opacity 0.2s;">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        Mark as Complete
+                    </button>
+                </form>
+                {% else %}
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm); color: #66BB6A; font-weight: 600;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    Completed
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div id="lesson-content" style="flex: 1; overflow-y: auto; padding: var(--spacing-2xl); background: var(--bg-primary);">
+            {% if current_lesson.lesson_type == 'video' %}
+                <!-- Video Lesson -->
+                {% if current_lesson.video %}
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <!-- Video Player -->
+                    <div style="background: #000; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: var(--spacing-xl);">
+                        <video controls
+                               style="width: 100%; display: block;"
+                               id="lesson-video"
+                               data-lesson-id="{{ current_lesson.id }}"
+                               {% if video_progress %}data-resume-position="{{ video_progress.last_position_seconds }}"{% endif %}>
+                            <source src="{% url 'serve_video' current_lesson.video.video_file.name %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <!-- Video Transcript -->
+                    {% if current_lesson.video.transcript %}
+                    <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-xl);">
+                        <h3 style="margin-bottom: var(--spacing-md); font-size: calc(1.25rem * var(--font-scale));">Transcript</h3>
+                        <div style="color: var(--text-primary); line-height: 1.8; white-space: pre-line;">
+                            {{ current_lesson.video.transcript }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: var(--spacing-2xl); color: var(--text-muted);">
+                    <p>Video content not available for this lesson.</p>
+                </div>
+                {% endif %}
+
+            {% elif current_lesson.lesson_type == 'blog' %}
+                <!-- Blog/Article Lesson -->
+                {% if current_lesson.blog %}
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <article style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-2xl);">
+                        {% if current_lesson.blog.images %}
+                        <div style="margin-bottom: var(--spacing-xl); border-radius: var(--radius-md); overflow: hidden;">
+                            <img src="{{ current_lesson.blog.images.url }}"
+                                 alt="{{ current_lesson.title }}"
+                                 style="width: 100%; height: auto; display: block;">
+                        </div>
+                        {% endif %}
+
+                        <div style="color: var(--text-primary); line-height: 1.8; font-size: calc(1.0625rem * var(--font-scale));">
+                            {{ current_lesson.blog.content|linebreaks }}
+                        </div>
+                    </article>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: var(--spacing-2xl); color: var(--text-muted);">
+                    <p>Content not available for this lesson.</p>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Navigation Footer -->
+        <div style="background: var(--bg-card); border-top: 1px solid var(--border-color); padding: var(--spacing-lg) var(--spacing-xl);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- Previous Lesson -->
+                {% if previous_lesson %}
+                <a href="{% url 'student_lesson' course.id previous_lesson.module_id previous_lesson.id %}"
+                   style="display: inline-flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-md) var(--spacing-lg); background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: background 0.2s;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Previous Lesson
+                </a>
+                {% else %}
+                <div></div>
+                {% endif %}
+
+                <!-- Next Lesson -->
+                {% if next_lesson %}
+                <a href="{% url 'student_lesson' course.id next_lesson.module_id next_lesson.id %}"
+                   style="display: inline-flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-md) var(--spacing-lg); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: opacity 0.2s;">
+                    Next Lesson
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                </a>
+                {% else %}
+                <!-- Course Complete -->
+                {% if enrollment.progress_percentage == 100 %}
+                <a href="{% url 'student_certificate' course.id %}"
+                   style="display: inline-flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-md) var(--spacing-lg); background: #66BB6A; color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: opacity 0.2s;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="7"/>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                    </svg>
+                    Get Certificate
+                </a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// Add hover effect to lesson links
+document.addEventListener('DOMContentLoaded', () => {
+    const lessonLinks = document.querySelectorAll('.lesson-link:not(.active)');
+
+    lessonLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            link.style.background = 'var(--bg-secondary)';
+        });
+
+        link.addEventListener('mouseleave', () => {
+            link.style.background = 'transparent';
+        });
+    });
+
+    // Video progress tracking
+    const video = document.getElementById('lesson-video');
+    if (video) {
+        const lessonId = video.dataset.lessonId;
+        const resumePosition = video.dataset.resumePosition;
+        let progressSaveTimeout = null;
+
+        // Resume from last position if available
+        if (resumePosition && parseFloat(resumePosition) > 0) {
+            video.addEventListener('loadedmetadata', () => {
+                video.currentTime = parseFloat(resumePosition);
+            }, { once: true });
+        }
+
+        // Function to save progress
+        function saveProgress() {
+            const currentTime = video.currentTime;
+            const duration = video.duration;
+
+            if (!duration || isNaN(duration)) return;
+
+            // Get CSRF token
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Save progress to server
+            fetch('{% url "student_save_video_progress" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    lesson_id: lessonId,
+                    current_time: currentTime,
+                    duration: duration
+                })
+            }).catch(error => {
+                console.error('Error saving progress:', error);
+            });
+        }
+
+        // Save progress every 30 seconds while playing
+        video.addEventListener('timeupdate', () => {
+            if (progressSaveTimeout) {
+                clearTimeout(progressSaveTimeout);
+            }
+
+            progressSaveTimeout = setTimeout(() => {
+                saveProgress();
+            }, 30000); // 30 seconds
+        });
+
+        // Save progress when video is paused
+        video.addEventListener('pause', () => {
+            saveProgress();
+        });
+
+        // Save progress when user navigates away
+        window.addEventListener('beforeunload', () => {
+            saveProgress();
+        });
+    }
+});
+</script>
+{% endblock %}

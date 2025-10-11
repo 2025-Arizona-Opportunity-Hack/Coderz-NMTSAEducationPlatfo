@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ module.title }} - Module{% endblock %}
+
+{% block extra_css %}
+<style>
+    .module-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--spacing-2xl);
+    }
+
+    .lesson-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .lesson-card {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: var(--shadow-sm);
+        background: var(--bg-card);
+    }
+
+    .lesson-card_actions {
+        display: flex;
+        gap: var(--spacing-sm);
+        flex-wrap: wrap;
+    }
+
+    .module-form.card {
+        padding: clamp(var(--spacing-xl), 3vw, var(--spacing-2xl));
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: var(--shadow-md);
+        background: var(--bg-card);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xl);
+    }
+
+    .module-form .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .module-form .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .module-form .form-field label {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .module-form .form-field input,
+    .module-form .form-field textarea,
+    .module-form .form-field select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: var(--radius-lg);
+        background: var(--bg-secondary, #fff);
+        font-size: 0.95rem;
+        color: inherit;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .module-form .form-field textarea {
+        min-height: 160px;
+        resize: vertical;
+    }
+
+    .module-form .form-field input:focus,
+    .module-form .form-field textarea:focus,
+    .module-form .form-field select:focus {
+        border-color: rgba(61, 132, 244, 0.6);
+        box-shadow: 0 0 0 4px rgba(61, 132, 244, 0.15);
+        outline: none;
+    }
+
+    .module-form fieldset {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: var(--radius-lg);
+        padding: clamp(var(--spacing-lg), 3vw, var(--spacing-xl));
+        background: rgba(148, 163, 184, 0.08);
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .module-form fieldset legend {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        padding: 0 var(--spacing-sm);
+    }
+
+    .module-form .help-text {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .module-form .error-text {
+        color: var(--danger-color);
+        font-size: 0.85rem;
+    }
+
+    .module-form .form-field.has-error input,
+    .module-form .form-field.has-error textarea,
+    .module-form .form-field.has-error select {
+        border-color: var(--danger-color);
+    }
+
+    .module-form_actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-md);
+    }
+
+    @media (max-width: 720px) {
+        .lesson-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .lesson-card_actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-link">← Back to Course</a>
+    <h1 class="page-title">{{ module.title }}</h1>
+    <p class="page-description">Manage lessons within this module.</p>
+</div>
+
+<div class="module-layout">
+    <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+            <h2 style="margin: 0;">Lessons</h2>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">{{ module.lessons.count }} total</span>
+        </div>
+    {% if module.lessons.exists %}
+        <div class="lesson-list">
+        {% for lesson in module.lessons.all %}
+        <div class="lesson-card">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: var(--spacing-xs);">
+                <h3 style="margin: 0;">{{ lesson.title }}</h3>
+                <p style="color: var(--text-secondary); margin: 0;">{{ lesson.get_lesson_type_display }} · {{ lesson.duration }} min</p>
+                <small style="color: var(--text-muted); font-size: 0.85rem;">Created {{ lesson.created_at|date:"M d, Y" }}</small>
+            </div>
+            <div class="lesson-card_actions">
+                <a href="{% url 'teacher_lesson_edit' course.id module.id lesson.id %}" class="btn btn-outline btn-sm">Edit</a>
+                <form method="post" action="{% url 'teacher_lesson_delete' course.id module.id lesson.id %}" onsubmit="return confirm('Delete this lesson?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-muted">No lessons yet. Use the form below to add one.</div>
+    {% endif %}
+</section>
+
+<section>
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <h2 style="margin: 0;">Add Lesson</h2>
+        <small style="color: var(--text-muted);">Draft a new lesson below</small>
+    </div>
+    <form method="post" action="{% url 'teacher_lesson_create' course.id module.id %}" enctype="multipart/form-data" class="card module-form">
+        {% csrf_token %}
+        {{ lesson_form.non_field_errors }}
+        <div class="form-grid">
+            {% for field in lesson_form %}
+            {% if field.name == "duration" %}
+            <div class="form-field{% if field.errors %} has-error{% endif %}" data-lesson-duration>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+            </div>
+            {% else %}
+            <div class="form-field{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <fieldset data-lesson-fieldset="video">
+            <legend>Video Content</legend>
+            {{ video_form.non_field_errors }}
+            {% for field in video_form %}
+            <div class="form-field{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset data-lesson-fieldset="blog">
+            <legend>Blog Content</legend>
+            {{ blog_form.non_field_errors }}
+            {% for field in blog_form %}
+            <div class="form-field{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+        </fieldset>
+
+        <div class="module-form_actions">
+            <button type="submit" class="btn btn-primary">Create Lesson</button>
+        </div>
+    </form>
+</section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('id_lesson_type');
+        const durationFieldWrapper = document.querySelector('.module-form [data-lesson-duration]');
+        const durationInput = durationFieldWrapper ? durationFieldWrapper.querySelector('input, select, textarea') : null;
+        const videoFieldset = document.querySelector('.module-form [data-lesson-fieldset="video"]');
+        const blogFieldset = document.querySelector('.module-form [data-lesson-fieldset="blog"]');
+
+        // Collect all interactive elements inside each fieldset so we can
+        // toggle required/disabled when switching types to avoid hidden
+        // required controls blocking form submission.
+        const videoInputs = videoFieldset ? Array.from(videoFieldset.querySelectorAll('input, select, textarea')) : [];
+        const blogInputs = blogFieldset ? Array.from(blogFieldset.querySelectorAll('input, select, textarea')) : [];
+
+        const initialRequired = new Map();
+        const initialDisabled = new Map();
+        videoInputs.concat(blogInputs).forEach(el => {
+            initialRequired.set(el, !!el.required);
+            initialDisabled.set(el, !!el.disabled);
+        });
+
+        function toggleLessonFormSections() {
+            if (!typeSelect) {
+                return;
+            }
+            const value = typeSelect.value;
+
+            if (videoFieldset) {
+                const showVideo = value === 'video';
+                videoFieldset.style.display = showVideo ? 'flex' : 'none';
+                videoFieldset.setAttribute('aria-hidden', showVideo ? 'false' : 'true');
+                videoInputs.forEach(el => {
+                    el.disabled = !showVideo ? true : (initialDisabled.get(el) || false);
+                    el.required = showVideo ? (initialRequired.get(el) || false) : false;
+                });
+            }
+
+            if (blogFieldset) {
+                const showBlog = value === 'blog';
+                blogFieldset.style.display = showBlog ? 'flex' : 'none';
+                blogFieldset.setAttribute('aria-hidden', showBlog ? 'false' : 'true');
+                blogInputs.forEach(el => {
+                    el.disabled = !showBlog ? true : (initialDisabled.get(el) || false);
+                    el.required = showBlog ? (initialRequired.get(el) || false) : false;
+                });
+            }
+
+            if (durationFieldWrapper) {
+                const showDuration = value === 'blog';
+                durationFieldWrapper.style.display = showDuration ? 'flex' : 'none';
+                if (durationInput) {
+                    durationInput.disabled = !showDuration;
+                    durationInput.required = showDuration;
+                }
+            }
+        }
+
+        toggleLessonFormSections();
+        if (typeSelect) {
+            typeSelect.addEventListener('change', toggleLessonFormSections);
+        }
+    });
+</script>
+{% endblock %}

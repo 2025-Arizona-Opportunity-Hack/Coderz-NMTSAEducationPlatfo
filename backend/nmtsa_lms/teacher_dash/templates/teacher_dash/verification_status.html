@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Status{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Verification Status</h1>
+    <p class="page-description">Keep your credentials up to date to publish courses without review delays.</p>
+</div>
+
+<div class="card" style="max-width: 720px;">
+    {% if profile %}
+        <p><strong>Status:</strong> {{ profile.get_verification_status_display }}</p>
+        <p><strong>Submitted:</strong> {{ profile.created_at|date:"M d, Y" }}</p>
+        {% if profile.verification_notes %}
+        <p><strong>Admin Notes:</strong> {{ profile.verification_notes }}</p>
+        {% endif %}
+        <p style="margin-top: var(--spacing-lg);">If you need to update your documents, visit <a href="{% url 'teacher_onboarding' %}">Teacher Onboarding</a>.</p>
+    {% else %}
+        <p>You have not submitted your credentials yet. Complete onboarding to start publishing courses.</p>
+        <a href="{% url 'teacher_onboarding' %}" class="btn btn-primary">Complete Teacher Onboarding</a>
+    {% endif %}
+</div>
+{% endblock %}

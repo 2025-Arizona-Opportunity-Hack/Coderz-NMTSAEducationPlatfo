@@ -1,0 +1,15 @@
+{
+  "name": "nmtsa-lms-frontend",
+  "version": "1.0.0",
+  "description": "NMTSA Learning Management System Frontend",
+  "scripts": {
+    "dev": "tailwindcss -i ./nmtsa_lms/static/css/input.css -o ./nmtsa_lms/static/css/output.css --watch",
+    "build": "tailwindcss -i ./nmtsa_lms/static/css/input.css -o ./nmtsa_lms/static/css/output.css --minify"
+  },
+  "keywords": ["lms", "autism-friendly", "education"],
+  "author": "NMTSA",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

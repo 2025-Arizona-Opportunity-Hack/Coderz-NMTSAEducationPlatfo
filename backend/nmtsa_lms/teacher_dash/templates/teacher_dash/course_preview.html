@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+
+{% block title %}Preview: {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .preview-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .course-header-card {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+    }
+
+    .course-banner {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+    }
+
+    .price-badge {
+        position: absolute;
+        top: var(--spacing-lg);
+        right: var(--spacing-lg);
+        background: white;
+        padding: 12px 20px;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: calc(1.25rem * var(--font-scale));
+        box-shadow: var(--shadow-lg);
+    }
+
+    .course-info {
+        padding: var(--spacing-2xl);
+    }
+
+    .modules-section {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        padding: var(--spacing-2xl);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .module-details {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .module-details summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: calc(1.125rem * var(--font-scale));
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+    }
+
+    .module-details summary:hover {
+        background: var(--bg-card);
+    }
+
+    .module-details summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .module-arrow {
+        transition: transform 0.2s ease;
+    }
+
+    .module-details[open] .module-arrow {
+        transform: rotate(180deg);
+    }
+
+    .module-content {
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        border-top: 1px solid var(--border-color);
+    }
+
+    .lesson-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .lesson-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .lesson-item:hover {
+        background: var(--bg-card);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .lesson-icon {
+        flex-shrink: 0;
+        color: var(--primary);
+    }
+
+    .lesson-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .lesson-title {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .lesson-duration {
+        margin-left: auto;
+        color: var(--text-muted);
+        font-size: calc(0.875rem * var(--font-scale));
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-lg);
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--bg-card);
+        border-radius: var(--radius-xl);
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .modal-header {
+        padding: var(--spacing-xl);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-body {
+        padding: var(--spacing-xl);
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: calc(1.5rem * var(--font-scale));
+        cursor: pointer;
+        color: var(--text-secondary);
+        padding: var(--spacing-sm);
+        line-height: 1;
+        border-radius: var(--radius-md);
+    }
+
+    .modal-close:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .video-preview {
+        width: 100%;
+        border-radius: var(--radius-md);
+        background: var(--bg-secondary);
+    }
+
+    .blog-content {
+        line-height: 1.8;
+        color: var(--text-primary);
+    }
+
+    .blog-content img {
+        max-width: 100%;
+        border-radius: var(--radius-md);
+        margin: var(--spacing-lg) 0;
+    }
+
+    .lesson-meta {
+        display: flex;
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        border-top: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-size: calc(0.875rem * var(--font-scale));
+    }
+
+    .no-lessons-message {
+        color: var(--text-muted);
+        font-style: italic;
+        padding: var(--spacing-md);
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <!-- Back Button -->
+    <a href="{% url 'teacher_course_detail' course.id %}"
+       style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to Course Management
+    </a>
+
+    <!-- Course Header -->
+    <div class="course-header-card">
+        <!-- Banner -->
+        <div class="course-banner">
+            <div class="price-badge">
+                {% if course.price == 0 or not course.is_paid %}
+                    <span style="color: #66BB6A;">FREE</span>
+                {% else %}
+                    <span style="color: var(--primary);">${{ course.price }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Course Info -->
+        <div class="course-info">
+            <h1 style="margin-bottom: var(--spacing-md); font-size: calc(2rem * var(--font-scale)); margin-top: 0;">
+                {{ course.title }}
+            </h1>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
+                Preview Mode - This is how students will see your course
+            </p>
+        </div>
+    </div>
+
+    <!-- Course Description -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+        <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.5rem * var(--font-scale)); margin-top: 0;">About This Course</h2>
+        <p style="color: var(--text-primary); line-height: 1.8; white-space: pre-line;">{{ course.description }}</p>
+
+        <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color);">
+            <strong>Price:</strong>
+            {% if course.price == 0 or not course.is_paid %}
+                Free
+            {% else %}
+                ${{ course.price }}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modules & Lessons -->
+    {% if modules %}
+    <div class="modules-section">
+        <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.5rem * var(--font-scale)); margin-top: 0;">Course Content</h2>
+
+        <div style="display: flex; gap: var(--spacing-xl); margin-bottom: var(--spacing-xl); color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
+            <span>{{ modules|length }} module{{ modules|length|pluralize }}</span>
+            <span>{{ modules|length }} section{{ modules|length|pluralize }}</span>
+        </div>
+
+        <!-- Modules List -->
+        {% for module in modules %}
+        <details class="module-details" {% if forloop.first %}open{% endif %}>
+            <summary>
+                <span>{{ forloop.counter }}. {{ module.title }}</span>
+                <svg class="module-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </summary>
+
+            <div class="module-content">
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); line-height: 1.6;">
+                    {{ module.description }}
+                </p>
+
+                <!-- Lessons in Module -->
+                {% if module.lessons.all %}
+                <ul class="lesson-list">
+                    {% for lesson in module.lessons.all %}
+                    <li class="lesson-item" onclick="openLessonPreview({{ lesson.id }}, '{{ lesson.lesson_type }}', '{{ lesson.title|escapejs }}', {{ module.id }}, {{ course.id }})">
+                        <div class="lesson-icon">
+                            {% if lesson.lesson_type == 'video' %}
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            {% else %}
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        <div class="lesson-info">
+                            <span class="lesson-title">{{ lesson.title }}</span>
+                            <span class="lesson-duration">{{ lesson.duration|default:"--" }} min</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="no-lessons-message">No lessons in this module yet.</p>
+                {% endif %}
+            </div>
+        </details>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">No modules have been added yet. Add modules and lessons to preview your course content.</div>
+    {% endif %}
+</div>
+
+<!-- Lesson Preview Modal -->
+<div id="lessonModal" class="modal-overlay" onclick="closeLessonModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="modalTitle" style="margin: 0;">Lesson Preview</h3>
+            <button class="modal-close" onclick="closeLessonModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="modalContent">
+                <p style="color: var(--text-muted);">Loading lesson preview...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openLessonPreview(lessonId, lessonType, lessonTitle, moduleId, courseId) {
+    const modal = document.getElementById('lessonModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+
+    modalTitle.textContent = lessonTitle;
+    modalContent.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: var(--spacing-xl);">Loading lesson preview...</p>';
+
+    modal.classList.add('active');
+
+    // Fetch lesson content
+    fetch(`/teacher/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/preview/`)
+        .then(response => {
+            if (!response.ok) {
+                // If the preview endpoint doesn't exist, show a basic preview
+                throw new Error('Preview endpoint not available');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (lessonType === 'video') {
+                modalContent.innerHTML = `
+                    <div class="lesson-meta">
+                        <span><strong>Type:</strong> Video Lesson</span>
+                        <span><strong>Duration:</strong> ${data.duration || '--'} minutes</span>
+                    </div>
+                    ${data.video_url ? `
+                        <video class="video-preview" controls style="margin-top: var(--spacing-lg);">
+                            <source src="${data.video_url}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    ` : '<p style="color: var(--text-muted); margin-top: var(--spacing-lg);">Video file not available for preview.</p>'}
+                    ${data.transcript ? `
+                        <div style="margin-top: var(--spacing-lg);">
+                            <h4>Transcript</h4>
+                            <p style="line-height: 1.8; color: var(--text-secondary);">${data.transcript}</p>
+                        </div>
+                    ` : ''}
+                `;
+            } else {
+                modalContent.innerHTML = `
+                    <div class="lesson-meta">
+                        <span><strong>Type:</strong> Blog Lesson</span>
+                        <span><strong>Duration:</strong> ${data.duration || '--'} minutes</span>
+                    </div>
+                    <div class="blog-content" style="margin-top: var(--spacing-lg);">
+                        ${data.content || '<p style="color: var(--text-muted);">No content available.</p>'}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            // Show basic preview without server data
+            modalContent.innerHTML = `
+                <div class="lesson-meta">
+                    <span><strong>Type:</strong> ${lessonType === 'video' ? 'Video' : 'Blog'} Lesson</span>
+                </div>
+                <div style="margin-top: var(--spacing-lg); padding: var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-md); text-align: center;">
+                    <p style="color: var(--text-secondary);">
+                        ${lessonType === 'video'
+                            ? 'This video lesson will be available to students once the course is published.'
+                            : 'This blog lesson content will be available to students once the course is published.'}
+                    </p>
+                    <p style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-md);">
+                        To see the full lesson content, view it from the module detail page.
+                    </p>
+                </div>
+            `;
+        });
+}
+
+function closeLessonModal(event) {
+    if (event && event.target !== document.getElementById('lessonModal')) {
+        return;
+    }
+    const modal = document.getElementById('lessonModal');
+    modal.classList.remove('active');
+
+    // Stop any playing videos
+    const videos = modal.querySelectorAll('video');
+    videos.forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+    });
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLessonModal();
+    }
+});
+</script>
+{% endblock %}

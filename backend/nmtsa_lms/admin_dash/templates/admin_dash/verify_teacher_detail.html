@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Teacher Application - Admin Dashboard{% endblock %}
+
+{% block content %}
+<section style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
+    <div style="margin-bottom: var(--spacing-2xl);">
+        <a href="{% url 'admin_verify_teachers' %}" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Verification Queue
+        </a>
+
+        <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Review Teacher Application
+        </h1>
+    </div>
+
+    <!-- Teacher Information -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+        <h2 style="font-size: calc(1.75rem * var(--font-scale)); margin-bottom: var(--spacing-xl); color: var(--text-primary);">
+            {{ teacher_profile.user.get_full_name }}
+        </h2>
+
+        <div style="display: grid; gap: var(--spacing-xl);">
+            <div>
+                <strong style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-primary);">Email:</strong>
+                <p style="color: var(--text-secondary); margin: 0;">{{ teacher_profile.user.email }}</p>
+            </div>
+
+            <div>
+                <strong style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-primary);">Specialization:</strong>
+                <p style="color: var(--text-secondary); margin: 0;">{{ teacher_profile.specialization }}</p>
+            </div>
+
+            <div>
+                <strong style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-primary);">Years of Experience:</strong>
+                <p style="color: var(--text-secondary); margin: 0;">{{ teacher_profile.years_experience }} years</p>
+            </div>
+
+            <div>
+                <strong style="display: block; margin-bottom: var(--spacing-sm); color: var(--text-primary);">Application Date:</strong>
+                <p style="color: var(--text-secondary); margin: 0;">{{ teacher_profile.created_at|date:"F j, Y" }} at {{ teacher_profile.created_at|time:"g:i A" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Bio -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+        <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Professional Bio
+        </h3>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.bio }}</p>
+    </div>
+
+    <!-- Credentials -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+        <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Professional Credentials
+        </h3>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.credentials }}</p>
+    </div>
+
+    <!-- Supporting Documents -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+        <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Supporting Documents
+        </h3>
+
+        <div style="display: grid; gap: var(--spacing-lg);">
+            {% if teacher_profile.resume %}
+            <div style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                <svg width="40" height="40" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                <div style="flex: 1;">
+                    <p style="font-weight: 600; color: var(--text-primary); margin: 0 0 var(--spacing-xs) 0;">Resume / CV</p>
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin: 0;">{{ teacher_profile.resume.name }}</p>
+                </div>
+                <a href="{{ teacher_profile.resume.url }}" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                    View Document
+                </a>
+            </div>
+            {% else %}
+            <p style="color: var(--text-secondary); font-style: italic;">No resume uploaded</p>
+            {% endif %}
+
+            {% if teacher_profile.certifications %}
+            <div style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                <svg width="40" height="40" fill="none" stroke="var(--secondary)" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="7"/>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                </svg>
+                <div style="flex: 1;">
+                    <p style="font-weight: 600; color: var(--text-primary); margin: 0 0 var(--spacing-xs) 0;">Certifications & Licenses</p>
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin: 0;">{{ teacher_profile.certifications.name }}</p>
+                </div>
+                <a href="{{ teacher_profile.certifications.url }}" target="_blank" class="btn btn-primary" style="text-decoration: none;">
+                    View Document
+                </a>
+            </div>
+            {% else %}
+            <p style="color: var(--text-secondary); font-style: italic;">No certifications uploaded</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Verification Form -->
+    <form method="post" class="card" style="padding: var(--spacing-2xl);">
+        {% csrf_token %}
+
+        <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Verification Decision
+        </h3>
+
+        <!-- Admin Notes -->
+        <div style="margin-bottom: var(--spacing-xl);">
+            <label for="notes" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                Admin Notes (Optional)
+            </label>
+            <textarea
+                id="notes"
+                name="notes"
+                rows="4"
+                placeholder="Add any notes about this verification decision..."
+                style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
+            ></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+            <button type="submit" name="action" value="approve" class="btn btn-success btn-lg" style="min-width: 200px;">
+                ✓ Approve Teacher
+            </button>
+            <button type="submit" name="action" value="reject" class="btn btn-danger btn-lg" style="min-width: 200px;">
+                ✗ Reject Application
+            </button>
+        </div>
+
+        <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-lg); line-height: 1.7;">
+            <strong>Note:</strong> The teacher will be notified via email of your decision. Approved teachers will be able to create and publish courses immediately.
+        </p>
+    </form>
+</section>
+{% endblock %}

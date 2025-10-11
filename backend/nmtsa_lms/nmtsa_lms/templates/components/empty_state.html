@@ -1,0 +1,130 @@
+{# Reusable Empty State Component
+   Usage:
+   {% include 'components/empty_state.html' with
+      icon='book'
+      title='No courses yet'
+      message='You haven't enrolled in any courses yet. Browse our catalog to find courses that match your learning goals.'
+      action_text='Browse Course Catalog'
+      action_url='/catalog/'
+   %}
+
+   Parameters:
+   - icon: Icon name to display (required) - Options: book, search, file, users, plus, chart
+   - title: Empty state title (required)
+   - message: Explanatory message (required)
+   - action_text: Primary action button text (optional)
+   - action_url: Primary action button URL (optional)
+   - secondary_text: Secondary action link text (optional)
+   - secondary_url: Secondary action link URL (optional)
+#}
+
+<div style="
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    max-width: 600px;
+    margin: var(--spacing-xl) auto;
+">
+    <!-- Icon -->
+    <div style="margin-bottom: var(--spacing-lg);">
+        {% if icon == 'book' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+        {% elif icon == 'search' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+        {% elif icon == 'file' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+        {% elif icon == 'users' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        {% elif icon == 'plus' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+        {% elif icon == 'chart' %}
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+        {% else %}
+            <!-- Default: Folder icon -->
+            <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto; display: block;" aria-hidden="true">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+        {% endif %}
+    </div>
+
+    <!-- Title -->
+    <h2 style="
+        margin: 0 0 var(--spacing-md) 0;
+        font-size: calc(1.5rem * var(--font-scale));
+        color: var(--text-primary);
+    ">
+        {{ title }}
+    </h2>
+
+    <!-- Message -->
+    <p style="
+        color: var(--text-secondary);
+        font-size: calc(1rem * var(--font-scale));
+        line-height: 1.6;
+        margin: 0 0 var(--spacing-xl) 0;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    ">
+        {{ message }}
+    </p>
+
+    <!-- Actions -->
+    {% if action_text and action_url %}
+    <div style="display: flex; flex-direction: column; gap: var(--spacing-md); align-items: center;">
+        <!-- Primary Action -->
+        <a href="{{ action_url }}"
+           style="
+               display: inline-block;
+               padding: var(--spacing-md) var(--spacing-xl);
+               background: var(--primary);
+               color: white;
+               border-radius: var(--radius-md);
+               text-decoration: none;
+               font-weight: 600;
+               font-size: calc(1rem * var(--font-scale));
+               transition: filter 0.2s;
+           "
+           onmouseenter="this.style.filter='brightness(0.95)'"
+           onmouseleave="this.style.filter='brightness(1)'">
+            {{ action_text }}
+        </a>
+
+        <!-- Secondary Action -->
+        {% if secondary_text and secondary_url %}
+        <a href="{{ secondary_url }}"
+           style="
+               color: var(--text-secondary);
+               text-decoration: underline;
+               font-size: calc(0.875rem * var(--font-scale));
+           ">
+            {{ secondary_text }}
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
