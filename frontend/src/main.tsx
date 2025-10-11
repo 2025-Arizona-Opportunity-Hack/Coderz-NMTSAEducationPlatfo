@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
+import "@/styles/index.css";
 import "./i18n/config";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
