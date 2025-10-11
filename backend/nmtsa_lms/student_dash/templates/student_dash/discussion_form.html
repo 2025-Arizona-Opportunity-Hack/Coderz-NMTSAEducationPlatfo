@@ -1,148 +1,84 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block title %}{% if action == 'create' %}New Discussion{% else %}Edit Post{% endif %} - {{ course.title }}{% endblock %}
-
+{% block title %}
+{% if is_edit %}Edit Discussion{% else %}Start a Discussion{% endif %} - {{ course.title }}
+{% endblock %}
 {% block content %}
-<div class="container mx-auto px-4 py-6 max-w-3xl">
-    <!-- Breadcrumb -->
-    <nav class="text-sm mb-4 text-gray-600">
-        <a href="{% url 'student_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
-        <span class="mx-2">/</span>
-        <a href="{% url 'student_course_detail' course.id %}" class="hover:text-blue-600">{{ course.title }}</a>
-        <span class="mx-2">/</span>
-        <a href="{% url 'student_course_discussions' course.id %}" class="hover:text-blue-600">Discussions</a>
-        <span class="mx-2">/</span>
-        <span class="text-gray-900 font-medium">
-            {% if action == 'create' %}New Discussion{% else %}Edit Post{% endif %}
-        </span>
+<div>
+    <!-- Breadcrumbs -->
+    <nav style="display:flex; align-items:center; gap:8px; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: var(--spacing-lg);">
+        <a href="{% url 'student_dashboard' %}" style="color: inherit; text-decoration: none;">Dashboard</a>
+        <span style="color: var(--text-muted);">›</span>
+        <a href="{% url 'student_course_detail' course.id %}" style="color: inherit; text-decoration: none;">{{ course.title|truncatewords:3 }}</a>
+        <span style="color: var(--text-muted);">›</span>
+        <a href="{% url 'student_course_discussions' course.id %}" style="color: inherit; text-decoration: none;">Discussions</a>
+        <span style="color: var(--text-muted);">›</span>
+        <span style="color: var(--text-primary); font-weight: 600;">{% if is_edit %}Edit{% else %}New{% endif %} Post</span>
     </nav>
 
-    <!-- Header -->
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">
-            {% if action == 'create' %}
-                Start a New Discussion
-            {% else %}
-                Edit Your Post
-            {% endif %}
-        </h1>
-        <p class="text-gray-600">{{ course.title }}</p>
+    <div style="margin-bottom: var(--spacing-xl);">
+        <a href="{% url 'student_course_discussions' course.id %}" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Back to Discussions
+        </a>
     </div>
 
-    <!-- Form -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6">
+    <div class="card">
+        <h2 style="margin-top:0;">{% if is_edit %}Edit Discussion{% else %}Start a New Discussion{% endif %}</h2>
+        {% if form.non_field_errors %}
+            <div class="alert alert-info" style="margin-top: var(--spacing-sm); color:#B71C1C;">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
         <form method="post" id="discussionForm">
             {% csrf_token %}
 
-            <div class="mb-6">
-                <label for="id_content" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ form.content.label }}
-                </label>
-                {{ form.content }}
-                {% if form.content.errors %}
-                    <p class="mt-1 text-sm text-red-600">{{ form.content.errors.0 }}</p>
+            <div style="margin-bottom: var(--spacing-md);">
+                <label for="id_title" style="display:block; margin-bottom: var(--spacing-xs); font-weight:600;">Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="alert alert-info" style="margin-top: var(--spacing-xs); color:#B71C1C;">{{ form.title.errors.0 }}</div>
                 {% endif %}
-
-                <!-- Character Counter -->
-                <div class="mt-2 flex justify-between items-center text-sm">
-                    <span class="text-gray-500">
-                        Minimum 10 characters, maximum 2000 characters
-                    </span>
-                    <span id="charCount" class="font-medium text-gray-700">
-                        0 / 2000
-                    </span>
-                </div>
             </div>
 
-            {% if action == 'edit' %}
-                <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <p class="text-sm text-yellow-800">
-                        <strong>Note:</strong> You can edit your post within 24 hours of creation. After editing, the post will be marked as "edited".
-                    </p>
-                </div>
-            {% endif %}
+            <div style="margin-bottom: var(--spacing-md);">
+                <label for="id_content" style="display:block; margin-bottom: var(--spacing-xs); font-weight:600;">Content</label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                <div class="alert alert-info" style="margin-top: var(--spacing-xs); color:#B71C1C;">{{ form.content.errors.0 }}</div>
+                {% endif %}
+            </div>
 
-            <div class="flex gap-3">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium">
-                    {% if action == 'create' %}
-                        Post Discussion
-                    {% else %}
-                        Save Changes
-                    {% endif %}
-                </button>
-                <a href="{% if post %}{% url 'student_discussion_detail' course.id post.id %}{% else %}{% url 'student_course_discussions' course.id %}{% endif %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium">
-                    Cancel
-                </a>
+            <div class="alert" style="background:#E3F2FD; color:#0D47A1; border:1px solid #BBDEFB;">
+                <p style="margin:0; font-weight:600;">Tips for a great discussion post:</p>
+                <ul style="margin: var(--spacing-xs) 0 0 1.2rem;">
+                    <li>Be clear and concise</li>
+                    <li>Provide context to your question</li>
+                    <li>Include what you've tried so far</li>
+                    <li>Be respectful and follow community guidelines</li>
+                </ul>
+            </div>
+
+            <div style="display:flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                <button type="submit" class="btn btn-primary">{% if is_edit %}Update Post{% else %}Create Post{% endif %}</button>
+                <a href="{% url 'student_course_discussions' course.id %}" class="btn btn-outline">Cancel</a>
             </div>
         </form>
     </div>
-
-    <!-- Guidelines -->
-    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 class="font-semibold text-blue-900 mb-2">Discussion Guidelines</h3>
-        <ul class="text-sm text-blue-800 space-y-1">
-            <li>• Be respectful and constructive in your posts</li>
-            <li>• Stay on topic and relate to the course content</li>
-            <li>• Help create a positive learning environment</li>
-            <li>• Use clear and descriptive language</li>
-        </ul>
-    </div>
 </div>
 
-<script>
-    // Character counter
-    const textarea = document.getElementById('id_content');
-    const charCount = document.getElementById('charCount');
-
-    function updateCharCount() {
-        const length = textarea.value.length;
-        charCount.textContent = `${length} / 2000`;
-
-        // Change color based on length
-        if (length < 10) {
-            charCount.classList.add('text-red-600');
-            charCount.classList.remove('text-green-600', 'text-gray-700');
-        } else if (length > 1900) {
-            charCount.classList.add('text-orange-600');
-            charCount.classList.remove('text-green-600', 'text-gray-700');
-        } else {
-            charCount.classList.add('text-green-600');
-            charCount.classList.remove('text-red-600', 'text-orange-600', 'text-gray-700');
-        }
-    }
-
-    if (textarea) {
-        textarea.addEventListener('input', updateCharCount);
-        // Initialize on page load
-        updateCharCount();
-    }
-
-    // Auto-expand textarea
-    textarea.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    });
-</script>
-
 <style>
-    #id_content {
-        width: 100%;
-        min-height: 200px;
-        padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
-        font-family: inherit;
-        font-size: 1rem;
-        line-height: 1.5;
-        resize: vertical;
-    }
-
-    #id_content:focus {
-        outline: none;
-        border-color: #3b82f6;
-        ring: 2px;
-        ring-color: #3b82f680;
-    }
+/* Minimal fallback styles if form widgets are plain */
+#id_title, #id_content {
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font: inherit;
+}
+#id_content { min-height: 180px; resize: vertical; }
+#id_title:focus, #id_content:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
 </style>
 {% endblock %}
+        </ul>
