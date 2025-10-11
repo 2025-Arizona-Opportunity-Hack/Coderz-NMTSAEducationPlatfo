@@ -133,24 +133,15 @@ export function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <Link
-                className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-1"
-                to="/forgot-password"
-              >
-                Forgot your password?
-              </Link>
-            </div>
+          <div>
+            <button
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+              type="submit"
+            >
+              {isLoading ? "Signing in..." : "Sign in"}
+            </button>
           </div>
-
-          <button
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoading}
-            type="submit"
-          >
-            {isLoading ? "Signing in..." : "Sign in"}
-          </button>
         </form>
       </div>
     </div>

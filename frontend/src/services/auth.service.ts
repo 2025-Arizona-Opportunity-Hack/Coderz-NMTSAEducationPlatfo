@@ -14,6 +14,11 @@ export interface SignInData {
   password: string;
 }
 
+export interface AdminSignInData {
+  username: string;
+  password: string;
+}
+
 export const authService = {
   async signUp(data: SignUpData) {
     try {
@@ -47,6 +52,22 @@ export const authService = {
     }
   },
 
+  async adminSignIn(data: AdminSignInData) {
+    try {
+      const response = await api.post<AuthResponse>("/auth/admin/login", data);
+      const { token, user } = response.data;
+
+      // Store token
+      localStorage.setItem("auth-token", token);
+
+      return { profile: user, token };
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      throw new Error(apiError.message || "Failed to sign in");
+    }
+  },
+
   async signOut() {
     try {
       await api.post("/auth/logout");
@@ -55,29 +76,6 @@ export const authService = {
       const apiError = error as ApiError;
 
       throw new Error(apiError.message || "Failed to sign out");
-    }
-  },
-
-  async resetPassword(email: string) {
-    try {
-      await api.post("/auth/forgot-password", {
-        email,
-        redirectUrl: `${window.location.origin}/reset-password`,
-      });
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to send reset email");
-    }
-  },
-
-  async updatePassword(newPassword: string) {
-    try {
-      await api.post("/auth/update-password", { password: newPassword });
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to update password");
     }
   },
 

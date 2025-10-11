@@ -30,6 +30,8 @@ urlpatterns = [
     path("student/", include('student_dash.urls')),
     path("teacher/", include('teacher_dash.urls')),
     path("admin-dash/", include('admin_dash.urls')),
+    # REST API endpoints
+    path("api/", include('api.urls')),
 ]
 
 # Media files URL patterns (for file uploads)

@@ -16,6 +16,25 @@ class Course(models.Model):
     published_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     modules = models.ManyToManyField('Module', blank=True)
     tags = TaggableManager(blank=True)
+    
+    # API-related fields
+    thumbnail_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL to course thumbnail image")
+    difficulty = models.CharField(
+        max_length=20,
+        choices=[
+            ('beginner', 'Beginner'),
+            ('intermediate', 'Intermediate'),
+            ('advanced', 'Advanced')
+        ],
+        default='beginner',
+        help_text="Course difficulty level"
+    )
+    credits = models.IntegerField(default=0, help_text="Course credit hours or points")
+    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True, help_text="Average rating (0-5)")
+    category = models.CharField(max_length=100, default='General', help_text="Course category")
+    long_description = models.TextField(null=True, blank=True, help_text="Detailed course description")
+    prerequisites = models.JSONField(default=list, blank=True, help_text="List of prerequisite requirements")
+    learning_objectives = models.JSONField(default=list, blank=True, help_text="List of learning objectives")
 
     class Meta:
         db_table = 'courses'
@@ -29,9 +48,11 @@ class Module(models.Model):
     description = models.TextField()
     lessons = models.ManyToManyField('Lesson', blank=True)
     tags = TaggableManager(blank=True)
+    order = models.IntegerField(default=0, help_text="Display order within course")
 
     class Meta:
         db_table = 'modules'
+        ordering = ['order', 'id']
 
     def __str__(self):
         return self.title
@@ -47,9 +68,15 @@ class Lesson(models.Model):
     duration = models.IntegerField(help_text="Expected duration in minutes", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     tags = TaggableManager(blank=True)
+    
+    # API-related fields
+    description = models.TextField(default='', blank=True, help_text="Lesson description")
+    order = models.IntegerField(default=0, help_text="Display order within module")
+    content_url = models.URLField(null=True, blank=True, help_text="External content URL if applicable")
 
     class Meta:
         db_table = 'lessons'
+        ordering = ['order', 'id']
 
     def __str__(self):
         return self.title

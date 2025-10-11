@@ -225,6 +225,21 @@ class Enrollment(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
     progress_percentage = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    
+    # API-related fields
+    last_accessed_at = models.DateTimeField(
+        null=True, 
+        blank=True,
+        help_text="Last time the user accessed this course"
+    )
+    current_lesson = models.ForeignKey(
+        'teacher_dash.Lesson',
+        null=True, 
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='current_enrollments',
+        help_text="Current lesson the user is on"
+    )
 
     class Meta:
         db_table = 'enrollments'
