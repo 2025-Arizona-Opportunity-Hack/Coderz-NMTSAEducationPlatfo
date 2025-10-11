@@ -1,0 +1,23 @@
+{
+  "nav": {
+    "explore": "Explorar",
+    "myLearning": "Mi Aprendizaje",
+    "forum": "Foro",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "skipToContent": "Ir al contenido principal"
+  },
+  "footer": {
+    "about": "Acerca de NMTSA",
+    "contact": "Contacto",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "copyright": "© 2025 NMTSA Learn. Todos los derechos reservados."
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "welcome": "Bienvenido a NMTSA Learn"
+  }
+}
