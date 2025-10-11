@@ -5,7 +5,10 @@ import { Layout } from "./components/layout/Layout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { Home } from "./pages/Home";
 import { Explore } from "./pages/Explore";
+import { CourseDetail } from "./pages/courses/CourseDetail";
+import { Lesson } from "./pages/Lesson";
 import { Dashboard } from "./pages/Dashboard";
+import { Applications } from "./pages/Applications";
 import { Forum } from "./pages/Forum";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -19,6 +22,15 @@ function App() {
       <Route element={<Layout />} path="/">
         <Route index element={<Home />} />
         <Route element={<Explore />} path="explore" />
+        <Route element={<CourseDetail />} path="courses/:id" />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Lesson />
+            </ProtectedRoute>
+          }
+          path="courses/:courseId/lessons/:lessonId"
+        />
         <Route
           element={
             <ProtectedRoute>
@@ -26,6 +38,14 @@ function App() {
             </ProtectedRoute>
           }
           path="dashboard"
+        />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Applications />
+            </ProtectedRoute>
+          }
+          path="applications"
         />
         <Route
           element={

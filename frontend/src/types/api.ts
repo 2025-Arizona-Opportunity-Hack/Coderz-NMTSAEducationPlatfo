@@ -68,3 +68,257 @@ export interface Enrollment {
   enrolledAt: string;
   completedAt?: string;
 }
+
+export interface Lesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  type: "video" | "reading" | "quiz" | "assignment";
+  duration: number; // in minutes
+  order: number;
+  isCompleted?: boolean;
+  isLocked?: boolean;
+  contentUrl?: string;
+}
+
+export interface Module {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  order: number;
+  lessons: Lesson[];
+  isCompleted?: boolean;
+}
+
+export interface Review {
+  id: string;
+  courseId: string;
+  userId: string;
+  user: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+  };
+  rating: number; // 1-5
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CourseDetail extends Course {
+  longDescription?: string;
+  prerequisites?: string[];
+  learningObjectives?: string[];
+  instructor: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    bio?: string;
+    credentials?: string;
+    socialLinks?: {
+      linkedin?: string;
+      twitter?: string;
+      website?: string;
+    };
+  };
+  modules?: Module[];
+  reviews?: Review[];
+  averageRating?: number;
+  totalReviews?: number;
+  isEnrolled?: boolean;
+  progress?: number; // 0-100, enrollment progress percentage
+}
+
+export interface Resource {
+  id: string;
+  lessonId: string;
+  title: string;
+  type: string; // e.g., "pdf", "docx", "zip"
+  fileUrl: string;
+  fileSize?: number; // in bytes
+}
+
+export interface LessonContent extends Lesson {
+  content: string; // markdown or video URL
+  videoUrl?: string;
+  captions?: Array<{
+    src: string;
+    srclang?: string;
+    label?: string;
+    isDefault?: boolean;
+  }>;
+  resources?: Resource[];
+  nextLesson?: {
+    id: string;
+    title: string;
+  };
+  previousLesson?: {
+    id: string;
+    title: string;
+  };
+}
+
+export interface Note {
+  id: string;
+  lessonId: string;
+  userId: string;
+  content: string;
+  timestamp?: number; // video timestamp in seconds
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LessonProgress {
+  lessonId: string;
+  courseId: string;
+  isCompleted: boolean;
+  timeSpent: number; // in seconds
+  lastPosition?: number; // video position in seconds
+  completedAt?: string;
+}
+
+export interface EnrollmentWithProgress extends Enrollment {
+  course: Course;
+  lastAccessedAt?: string;
+  currentLesson?: {
+    id: string;
+    title: string;
+    moduleTitle: string;
+  };
+}
+
+export interface Certificate {
+  id: string;
+  courseId: string;
+  userId: string;
+  course: {
+    id: string;
+    title: string;
+    instructor: string;
+  };
+  completedAt: string;
+  certificateUrl: string;
+}
+
+export interface DashboardStats {
+  totalCourses: number;
+  inProgressCourses: number;
+  completedCourses: number;
+  totalCertificates: number;
+  totalLearningHours: number;
+  currentStreak: number; // days
+  longestStreak: number; // days
+}
+
+export interface ContinueLearningItem {
+  enrollment: EnrollmentWithProgress;
+  nextLesson: {
+    id: string;
+    title: string;
+    type: "video" | "reading" | "quiz" | "assignment";
+    duration: number;
+  };
+}
+
+export type ApplicationStatus =
+  | "pending"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "cancelled";
+
+export interface Application {
+  id: string;
+  userId: string;
+  courseId: string;
+  status: ApplicationStatus;
+  motivationStatement: string;
+  prerequisitesConfirmed: boolean;
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewFeedback?: string;
+  documents?: {
+    id: string;
+    name: string;
+    url: string;
+    uploadedAt: string;
+  }[];
+  course: {
+    id: string;
+    title: string;
+    thumbnailUrl?: string;
+    instructor: {
+      id: string;
+      fullName: string;
+      avatarUrl?: string;
+    };
+  };
+}
+
+export interface CreateApplicationDto {
+  courseId: string;
+  motivationStatement: string;
+  prerequisitesConfirmed: boolean;
+  documents?: File[];
+}
+
+export interface ForumPost {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  authorId: string;
+  author: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    role: "student" | "instructor" | "admin";
+  };
+  tags: string[];
+  likes: number;
+  commentsCount: number;
+  isLiked: boolean;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ForumComment {
+  id: string;
+  postId: string;
+  content: string;
+  authorId: string;
+  author: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    role: "student" | "instructor" | "admin";
+  };
+  parentId?: string;
+  replies?: ForumComment[];
+  likes: number;
+  isLiked: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePostDto {
+  title: string;
+  content: string;
+  tags: string[];
+}
+
+export interface UpdatePostDto {
+  title?: string;
+  content?: string;
+  tags?: string[];
+}
+
+export interface CreateCommentDto {
+  postId: string;
+  content: string;
+  parentId?: string;
+}
