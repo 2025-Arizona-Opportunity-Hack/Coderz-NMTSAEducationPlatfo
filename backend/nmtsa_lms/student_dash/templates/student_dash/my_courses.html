@@ -65,7 +65,10 @@
 
             <!-- Progress -->
             <div style="margin-bottom: var(--spacing-md);">
-                {% include 'components/progress_bar.html' with percentage=course.progress %}
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: {{ course.progress|default:0 }}%;"></div>
+                    <span class="progress-text">{{ course.progress|default:0 }}% Complete</span>
+                </div>
             </div>
 
             <!-- Meta Info -->

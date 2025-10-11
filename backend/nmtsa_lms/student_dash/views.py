@@ -215,17 +215,8 @@ def checkout_course(request, course_id):
         messages.warning(request, "You're already enrolled in this course!")
         return redirect('student_course_detail', course_id=course_id)
 
-    # Breadcrumbs
-    breadcrumbs = [
-        {'text': 'Home', 'url': '/student/'},
-        {'text': 'Course Catalog', 'url': '/student/catalog/'},
-        {'text': course.title, 'url': f'/student/courses/{course.id}/'},
-        {'text': 'Checkout'}
-    ]
-
     context = {
         'course': course,
-        'breadcrumbs': breadcrumbs,
     }
     return render(request, 'student_dash/checkout.html', context)
 

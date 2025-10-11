@@ -170,7 +170,10 @@
                         <!-- Progress Bar -->
                         {% if not enrollment.is_completed %}
                         <div style="margin-bottom: var(--spacing-lg);">
-                            {% include 'components/progress_bar.html' with percentage=enrollment.progress_percentage %}
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: {{ enrollment.progress_percentage|default:0 }}%;"></div>
+                                <span class="progress-text">{{ enrollment.progress_percentage|default:0 }}% Complete</span>
+                            </div>
                         </div>
                         {% endif %}
 

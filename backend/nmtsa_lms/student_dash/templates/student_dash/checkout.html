@@ -49,7 +49,31 @@
     <!-- Main Content -->
     <div style="flex: 1; max-width: 900px;">
         <!-- Breadcrumbs -->
-        {% include 'components/breadcrumbs.html' with items=breadcrumbs %}
+        <nav aria-label="Breadcrumb" style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md) 0;">
+            <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale));">
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="/student/" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Home</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="/student/catalog/" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Course Catalog</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="{% url 'student_course_detail' course.id %}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">{{ course.title }}</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <span style="color: var(--text-primary); font-weight: 600;" aria-current="page">Checkout</span>
+                </li>
+            </ol>
+        </nav>
 
         <!-- Back Link -->
         <a href="{% url 'student_course_detail' course.id %}"
