@@ -27,7 +27,6 @@ export function Lesson() {
   const [isMarkingComplete, setIsMarkingComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
-  const [showNotes, setShowNotes] = useState(false);
 
   useEffect(() => {
     if (!courseId || !lessonId) return;

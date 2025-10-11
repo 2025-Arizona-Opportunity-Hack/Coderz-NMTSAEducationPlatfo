@@ -8,6 +8,7 @@ import { Explore } from "./pages/Explore";
 import { CourseDetail } from "./pages/courses/CourseDetail";
 import { Lesson } from "./pages/Lesson";
 import { Dashboard } from "./pages/Dashboard";
+import { Applications } from "./pages/Applications";
 import { Forum } from "./pages/Forum";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -37,6 +38,14 @@ function App() {
             </ProtectedRoute>
           }
           path="dashboard"
+        />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Applications />
+            </ProtectedRoute>
+          }
+          path="applications"
         />
         <Route
           element={

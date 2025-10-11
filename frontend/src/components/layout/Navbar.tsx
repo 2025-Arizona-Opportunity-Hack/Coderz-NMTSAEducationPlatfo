@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, Globe, BookOpen } from "lucide-react";
+import { Menu, BookOpen } from "lucide-react";
 import { useState } from "react";
 
 import { useAuthStore } from "../../store/useAuthStore";
@@ -61,6 +61,12 @@ export function Navbar() {
                   </Link>
                   <Link
                     className="text-gray-700 hover:text-blue-600 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1"
+                    to="/applications"
+                  >
+                    {t("nav.applications")}
+                  </Link>
+                  <Link
+                    className="text-gray-700 hover:text-blue-600 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1"
                     to="/forum"
                   >
                     {t("nav.forum")}
@@ -76,7 +82,6 @@ export function Navbar() {
               className="p-2 text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
               onClick={toggleLanguage}
             >
-              <Globe aria-hidden="true" className="h-5 w-5" />
               <span className="ml-1 text-sm font-medium">
                 {i18n.language.toUpperCase()}
               </span>
@@ -87,7 +92,7 @@ export function Navbar() {
                 <>
                   {profile && (
                     <span className="text-sm text-gray-600">
-                      {profile.full_name || profile.email}
+                      {profile.fullName || profile.email}
                     </span>
                   )}
                   <button
@@ -148,6 +153,13 @@ export function Navbar() {
                   to="/dashboard"
                 >
                   {t("nav.myLearning")}
+                </Link>
+                <Link
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  role="menuitem"
+                  to="/applications"
+                >
+                  {t("nav.applications")}
                 </Link>
                 <Link
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
