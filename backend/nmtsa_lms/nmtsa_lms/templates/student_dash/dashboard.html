@@ -142,7 +142,9 @@
 
                         <!-- Progress Bar -->
                         <div style="margin-bottom: var(--spacing-md);">
-                            {% include 'components/progress_bar.html' with percentage=enrollment.progress_percentage show_text=False %}
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: {{ enrollment.progress_percentage|default:0 }}%;"></div>
+                            </div>
                         </div>
 
                         <!-- Continue Button -->
