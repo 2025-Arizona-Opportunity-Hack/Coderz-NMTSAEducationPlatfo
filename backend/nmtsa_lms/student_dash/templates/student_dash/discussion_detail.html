@@ -4,196 +4,182 @@
 {% block title %}Discussion - {{ course.title }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6 max-w-4xl">
+<div>
     <!-- Breadcrumb -->
-    <nav class="text-sm mb-4 text-gray-600">
-        <a href="{% url 'student_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
-        <span class="mx-2">/</span>
-        <a href="{% url 'student_course_detail' course.id %}" class="hover:text-blue-600">{{ course.title }}</a>
-        <span class="mx-2">/</span>
-        <a href="{% url 'student_course_discussions' course.id %}" class="hover:text-blue-600">Discussions</a>
-        <span class="mx-2">/</span>
-        <span class="text-gray-900 font-medium">Post</span>
+    <nav style="display:flex; align-items:center; gap:8px; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: var(--spacing-lg);">
+        <a href="{% url 'student_dashboard' %}" style="color: inherit; text-decoration: none;">Dashboard</a>
+        <span style="color: var(--text-muted);">›</span>
+        <a href="{% url 'student_course_detail' course.id %}" style="color: inherit; text-decoration: none;">{{ course.title|truncatewords:3 }}</a>
+        <span style="color: var(--text-muted);">›</span>
+        <a href="{% url 'student_course_discussions' course.id %}" style="color: inherit; text-decoration: none;">Discussions</a>
+        <span style="color: var(--text-muted);">›</span>
+        <span style="color: var(--text-primary); font-weight: 600;">Post</span>
     </nav>
 
     <!-- Back Button -->
-    <div class="mb-6">
-        <a href="{% url 'student_course_discussions' course.id %}" class="text-blue-600 hover:text-blue-700 font-medium">
-            ← Back to Discussions
+    <div style="margin-bottom: var(--spacing-xl);">
+        <a href="{% url 'student_course_discussions' course.id %}" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Back to Discussions
         </a>
     </div>
 
     <!-- Main Post -->
-    <div class="bg-white border {% if post.is_pinned %}border-yellow-400 border-2{% else %}border-gray-200{% endif %} rounded-lg p-6 mb-6">
-        <!-- Pinned Badge -->
+    <div class="card" style="margin-bottom: var(--spacing-2xl);">
         {% if post.is_pinned %}
-            <div class="flex items-center gap-2 mb-4">
-                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    📌 Pinned Post
-                </span>
-            </div>
+        <div style="margin-bottom: var(--spacing-md);">
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:2px 10px; background:#FFF8E1; color:#B58900; border:1px solid #F3E5AB; border-radius: 999px; font-size: calc(0.75rem * var(--font-scale)); font-weight: 700;">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"></path></svg>
+                Pinned by Instructor
+            </span>
+        </div>
         {% endif %}
 
-        <!-- Post Header -->
-        <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center text-gray-600 font-semibold text-lg">
+        <div style="display:flex; justify-content: space-between; gap: var(--spacing-lg);">
+            <div style="display:flex; gap: var(--spacing-md);">
+                <div style="width:56px; height:56px; border-radius:50%; background:#7FA8C9; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1rem;">
                     {{ post.user.first_name|first|upper }}{{ post.user.last_name|first|upper }}
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-semibold text-gray-900 text-lg">
-                            {{ post.user.get_full_name|default:post.user.username }}
-                        </span>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                        <span style="font-weight:700; color: var(--text-primary); font-size: calc(1.125rem * var(--font-scale));">{{ post.user.get_full_name|default:post.user.username }}</span>
                         {% if post.user == course.published_by %}
-                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Teacher</span>
+                        <span style="padding:2px 8px; background:#E8F5E9; color:#2E7D32; border:1px solid #C8E6C9; border-radius:999px; font-size:11px; font-weight:700;">Teacher</span>
                         {% elif post.user.is_admin_user %}
-                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Admin</span>
+                        <span style="padding:2px 8px; background:#F3E5F5; color:#6A1B9A; border:1px solid #E1BEE7; border-radius:999px; font-size:11px; font-weight:700;">Admin</span>
                         {% else %}
-                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">Student</span>
+                        <span style="padding:2px 8px; background:#E3F2FD; color:#1565C0; border:1px solid #BBDEFB; border-radius:999px; font-size:11px; font-weight:700;">Student</span>
                         {% endif %}
                     </div>
-                    <p class="text-sm text-gray-500">
-                        {{ post.created_at|date:"M d, Y - g:i A" }}
+                    <div style="display:flex; align-items:center; gap:6px; color: var(--text-secondary); font-size:12px;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>{{ post.created_at|date:"M d, Y - g:i A" }}</span>
                         {% if post.is_edited %}
-                            <span class="text-gray-400">(edited {{ post.edited_at|date:"M d, Y - g:i A" }})</span>
+                        <span style="color: var(--text-muted); font-style: italic;">(edited {{ post.edited_at|date:"M d, Y - g:i A" }})</span>
                         {% endif %}
-                    </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             {% if post.user == current_user or user_role == 'admin' or user_role == 'teacher' %}
-                <div class="flex gap-2">
-                    {% if post.user == current_user %}
-                        <a href="{% url 'student_discussion_edit' course.id post.id %}" class="text-gray-600 hover:text-blue-600 text-sm font-medium">
-                            Edit
-                        </a>
-                    {% endif %}
-                    <form method="post" action="{% url 'student_discussion_delete' course.id post.id %}" class="inline" onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
-                        {% csrf_token %}
-                        <button type="submit" class="text-gray-600 hover:text-red-600 text-sm font-medium">
-                            Delete
-                        </button>
-                    </form>
-                </div>
+            <div style="display:flex; gap: var(--spacing-sm);">
+                {% if post.user == current_user %}
+                <a href="{% url 'student_discussion_edit' course.id post.id %}" class="btn btn-outline btn-sm">Edit</a>
+                {% endif %}
+                <form method="post" action="{% url 'student_discussion_delete' course.id post.id %}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline btn-sm" style="color:#B71C1C; border-color:#F5C6CB;">Delete</button>
+                </form>
+            </div>
             {% endif %}
         </div>
 
-        <!-- Post Content -->
-        <div class="prose max-w-none">
-            <p class="text-gray-800 whitespace-pre-wrap">{{ post.content }}</p>
+        <div style="margin-top: var(--spacing-lg); background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: var(--spacing-lg);">
+            <p style="margin:0; color: var(--text-primary); line-height:1.6; white-space: pre-wrap;">{{ post.content }}</p>
         </div>
     </div>
 
     <!-- Replies Section -->
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">
-            Replies ({{ replies.count }})
-        </h2>
-
+    <div style="margin-bottom: var(--spacing-2xl);">
+        <h2 style="margin: 0 0 var(--spacing-lg) 0;">Replies ({{ replies.count }})</h2>
         {% if replies %}
-            <div class="space-y-4">
+            <div style="display:flex; flex-direction: column; gap: var(--spacing-md);">
                 {% for reply in replies %}
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-5 ml-6">
-                        <!-- Reply Header -->
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="bg-gray-300 rounded-full w-10 h-10 flex items-center justify-center text-gray-600 font-semibold">
-                                    {{ reply.user.first_name|first|upper }}{{ reply.user.last_name|first|upper }}
+                <div class="card">
+                    <div style="display:flex; justify-content: space-between; gap: var(--spacing-lg);">
+                        <div style="display:flex; gap: var(--spacing-md);">
+                            <div style="width:44px; height:44px; border-radius:50%; background:#7FA8C9; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem;">
+                                {{ reply.user.first_name|first|upper }}{{ reply.user.last_name|first|upper }}
+                            </div>
+                            <div>
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                                    <span style="font-weight:600; color: var(--text-primary);">{{ reply.user.get_full_name|default:reply.user.username }}</span>
+                                    {% if reply.user == course.published_by %}
+                                    <span style="padding:2px 8px; background:#E8F5E9; color:#2E7D32; border:1px solid #C8E6C9; border-radius:999px; font-size:10px; font-weight:700;">Teacher</span>
+                                    {% elif reply.user.is_admin_user %}
+                                    <span style="padding:2px 8px; background:#F3E5F5; color:#6A1B9A; border:1px solid #E1BEE7; border-radius:999px; font-size:10px; font-weight:700;">Admin</span>
+                                    {% else %}
+                                    <span style="padding:2px 8px; background:#E3F2FD; color:#1565C0; border:1px solid #BBDEFB; border-radius:999px; font-size:10px; font-weight:700;">Student</span>
+                                    {% endif %}
                                 </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-semibold text-gray-900">
-                                            {{ reply.user.get_full_name|default:reply.user.username }}
-                                        </span>
-                                        {% if reply.user == course.published_by %}
-                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Teacher</span>
-                                        {% elif reply.user.is_admin_user %}
-                                            <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Admin</span>
-                                        {% else %}
-                                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">Student</span>
-                                        {% endif %}
-                                    </div>
-                                    <p class="text-sm text-gray-500">
-                                        {{ reply.created_at|date:"M d, Y - g:i A" }}
-                                        {% if reply.is_edited %}
-                                            <span class="text-gray-400">(edited)</span>
-                                        {% endif %}
-                                    </p>
+                                <div style="display:flex; align-items:center; gap:6px; color: var(--text-secondary); font-size:11px;">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>{{ reply.created_at|date:"M d, Y - g:i A" }}</span>
+                                    {% if reply.is_edited %}
+                                    <span style="color: var(--text-muted); font-style: italic;">(edited)</span>
+                                    {% endif %}
                                 </div>
                             </div>
-
-                            <!-- Reply Action Buttons -->
-                            {% if reply.user == current_user or user_role == 'admin' or user_role == 'teacher' %}
-                                <div class="flex gap-2">
-                                    {% if reply.user == current_user %}
-                                        <a href="{% url 'student_discussion_edit' course.id reply.id %}" class="text-gray-600 hover:text-blue-600 text-sm font-medium">
-                                            Edit
-                                        </a>
-                                    {% endif %}
-                                    <form method="post" action="{% url 'student_discussion_delete' course.id reply.id %}" class="inline" onsubmit="return confirm('Are you sure you want to delete this reply?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="text-gray-600 hover:text-red-600 text-sm font-medium">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
+                        </div>
+                        {% if reply.user == current_user or user_role == 'admin' or user_role == 'teacher' %}
+                        <div style="display:flex; gap: var(--spacing-sm);">
+                            {% if reply.user == current_user %}
+                            <a href="{% url 'student_discussion_edit' course.id reply.id %}" class="btn btn-outline btn-sm">Edit</a>
                             {% endif %}
+                            <form method="post" action="{% url 'student_discussion_delete' course.id reply.id %}" onsubmit="return confirm('Are you sure you want to delete this reply?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline btn-sm" style="color:#B71C1C; border-color:#F5C6CB;">Delete</button>
+                            </form>
                         </div>
-
-                        <!-- Reply Content -->
-                        <div class="prose max-w-none">
-                            <p class="text-gray-800 whitespace-pre-wrap">{{ reply.content }}</p>
-                        </div>
+                        {% endif %}
                     </div>
+                    <div style="margin-top: var(--spacing-md);">
+                        <p style="margin:0; color: var(--text-primary); line-height:1.6; white-space: pre-wrap;">{{ reply.content }}</p>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <p class="text-gray-600">No replies yet. Be the first to reply!</p>
-            </div>
+            <div class="alert alert-info">No replies yet. Be the first to join the conversation.</div>
         {% endif %}
     </div>
 
     <!-- Reply Form -->
-    <div class="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Post a Reply</h3>
-        <form method="post" action="{% url 'student_discussion_reply' course.id post.id %}">
+    <div class="card">
+        <h3 style="margin-top:0; margin-bottom: var(--spacing-md);">Post a Reply</h3>
+        <form method="post" action="{% url 'student_discussion_reply' course.id post.id %}" id="replyForm">
             {% csrf_token %}
-
-            <div class="mb-4">
-                <label for="id_content" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ reply_form.content.label }}
-                </label>
+            <label for="id_content" style="display:block; margin-bottom: var(--spacing-sm); font-weight:600;">Your Reply</label>
+            <div>
                 {{ reply_form.content }}
                 {% if reply_form.content.errors %}
-                    <p class="mt-1 text-sm text-red-600">{{ reply_form.content.errors.0 }}</p>
+                <div class="alert alert-info" style="margin-top: var(--spacing-sm); color:#B71C1C;">{{ reply_form.content.errors.0 }}</div>
                 {% endif %}
-                <p class="mt-2 text-sm text-gray-500">
-                    Minimum 10 characters, maximum 2000 characters
-                </p>
             </div>
-
-            <div class="flex gap-3">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                    Post Reply
-                </button>
-                <a href="{% url 'student_course_discussions' course.id %}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
-                    Cancel
-                </a>
+            <div style="display:flex; justify-content: space-between; align-items:center; margin-top: var(--spacing-sm); color: var(--text-secondary); font-size: 12px;">
+                <span>Minimum 10 characters, maximum 2000 characters</span>
+                <span id="replyCharCount" style="font-weight:700;">0 / 2000</span>
+            </div>
+            <div style="display:flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                <button type="submit" class="btn btn-primary">Post Reply</button>
+                <a href="{% url 'student_course_discussions' course.id %}" class="btn btn-outline">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<style>
-    .whitespace-pre-wrap {
-        white-space: pre-wrap;
-        word-wrap: break-word;
+<script>
+    // Character counter for reply form (no dependency on utility classes)
+    const replyTextarea = document.getElementById('id_content');
+    const replyCharCount = document.getElementById('replyCharCount');
+    function updateReplyCharCount() {
+        if (!replyTextarea || !replyCharCount) return;
+        const length = replyTextarea.value.length;
+        replyCharCount.textContent = `${length} / 2000`;
+        // Optional visual: change color inline without CSS classes
+        if (length < 10) {
+            replyCharCount.style.color = '#B71C1C';
+        } else if (length > 1900) {
+            replyCharCount.style.color = '#E65100';
+        } else {
+            replyCharCount.style.color = 'var(--text-secondary)';
+        }
     }
-    .prose p {
-        margin: 0;
+    if (replyTextarea) {
+        replyTextarea.addEventListener('input', updateReplyCharCount);
+        updateReplyCharCount();
     }
-</style>
+</script>
 {% endblock %}
