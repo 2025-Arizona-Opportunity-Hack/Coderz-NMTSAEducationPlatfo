@@ -3,6 +3,7 @@
 ## ✅ Functional Testing
 
 ### Authentication
+
 - [ ] User can register with valid email and password
 - [ ] User receives validation errors for invalid inputs
 - [ ] User can log in with correct credentials
@@ -14,6 +15,7 @@
 - [ ] Auth token is properly stored and removed
 
 ### Course Exploration
+
 - [ ] Courses load and display correctly on Explore page
 - [ ] Search functionality filters courses by keyword
 - [ ] Category filter works correctly
@@ -25,6 +27,7 @@
 - [ ] Clicking a course card navigates to course detail page
 
 ### Course Detail Page
+
 - [ ] Course details load correctly
 - [ ] Course hero section displays all information
 - [ ] Instructor card shows instructor details
@@ -36,6 +39,7 @@
 - [ ] Schema.org structured data is present
 
 ### Lesson Viewer
+
 - [ ] Lesson content loads correctly
 - [ ] Video player displays and plays video
 - [ ] Video controls work (play, pause, seek, volume)
@@ -53,6 +57,7 @@
 - [ ] Completing lesson updates progress
 
 ### Dashboard
+
 - [ ] Dashboard stats display correctly
 - [ ] Enrolled courses show with accurate progress
 - [ ] Continue learning section shows recent courses
@@ -64,6 +69,7 @@
 - [ ] Tab navigation functions (Overview, My Courses, Certificates)
 
 ### Applications
+
 - [ ] Applications list displays correctly
 - [ ] Status filter tabs work (all, pending, under review, approved, rejected)
 - [ ] User can create new application
@@ -76,6 +82,7 @@
 - [ ] Pagination works
 
 ### Forum
+
 - [ ] Forum posts display correctly
 - [ ] Search functionality works
 - [ ] Tag filtering functions properly
@@ -91,6 +98,7 @@
 ## 🎨 UI/UX Testing
 
 ### Responsive Design
+
 - [ ] Mobile (< 768px) - All pages render correctly
 - [ ] Tablet (768px - 1024px) - Layout adapts properly
 - [ ] Desktop (> 1024px) - Full layout displays correctly
@@ -100,6 +108,7 @@
 - [ ] No horizontal scrolling on any screen size
 
 ### Visual Design
+
 - [ ] Color scheme is consistent across all pages
 - [ ] Typography is clear and readable
 - [ ] Buttons have proper hover/focus states
@@ -112,6 +121,7 @@
 - [ ] Icons display correctly
 
 ### Navigation
+
 - [ ] Navbar displays correctly on all pages
 - [ ] Active navigation link is highlighted
 - [ ] All navigation links work correctly
@@ -124,6 +134,7 @@
 ## ♿ Accessibility Testing
 
 ### Keyboard Navigation
+
 - [ ] All interactive elements are keyboard accessible
 - [ ] Tab order is logical
 - [ ] Focus indicators are visible
@@ -133,6 +144,7 @@
 - [ ] No keyboard traps
 
 ### Screen Reader
+
 - [ ] Page titles are descriptive
 - [ ] Headings are properly hierarchical (h1, h2, h3)
 - [ ] Images have alt text
@@ -144,6 +156,7 @@
 - [ ] Dynamic content updates are announced
 
 ### Visual Accessibility
+
 - [ ] Color contrast ratios meet WCAG AA standards
 - [ ] Text is readable at 200% zoom
 - [ ] Focus indicators are visible
@@ -154,6 +167,7 @@
 ## 🌍 Internationalization Testing
 
 ### Language Switching
+
 - [ ] Language switcher displays current language
 - [ ] Clicking language switcher changes language
 - [ ] All UI text changes to selected language
@@ -162,6 +176,7 @@
 - [ ] Number formats adapt to language
 
 ### Translation Coverage
+
 - [ ] All pages have complete translations
 - [ ] Error messages are translated
 - [ ] Form validation messages are translated
@@ -172,6 +187,7 @@
 ## 🔐 Security Testing
 
 ### Authentication
+
 - [ ] Passwords are not visible in network requests
 - [ ] JWT tokens are stored securely
 - [ ] Protected routes require authentication
@@ -180,6 +196,7 @@
 - [ ] CSRF protection implemented
 
 ### Data Validation
+
 - [ ] Client-side validation prevents invalid submissions
 - [ ] Server-side validation errors display correctly
 - [ ] File uploads validate file types
@@ -190,6 +207,7 @@
 ## ⚡ Performance Testing
 
 ### Page Load
+
 - [ ] Initial page load < 3 seconds
 - [ ] Subsequent page loads < 1 second
 - [ ] Images are optimized
@@ -198,6 +216,7 @@
 - [ ] Bundle size is reasonable
 
 ### Runtime Performance
+
 - [ ] No memory leaks detected
 - [ ] Smooth scrolling
 - [ ] Animations are smooth (60fps)
@@ -208,6 +227,7 @@
 ## 🔄 State Management Testing
 
 ### Zustand Store
+
 - [ ] Auth state persists correctly
 - [ ] Profile data updates correctly
 - [ ] State rehydration works after refresh
@@ -217,12 +237,14 @@
 ## 📱 Browser Compatibility
 
 ### Desktop Browsers
+
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
 - [ ] Edge (latest)
 
 ### Mobile Browsers
+
 - [ ] Chrome Mobile
 - [ ] Safari iOS
 - [ ] Firefox Mobile
@@ -231,6 +253,7 @@
 ## 🐛 Error Handling
 
 ### Network Errors
+
 - [ ] Offline state displays error message
 - [ ] Failed API calls show error message
 - [ ] Retry functionality works
@@ -239,6 +262,7 @@
 - [ ] 500 errors display correctly
 
 ### User Errors
+
 - [ ] Form validation errors are clear
 - [ ] Invalid input triggers proper messages
 - [ ] File upload errors are descriptive
@@ -247,6 +271,7 @@
 ## 📊 SEO Testing
 
 ### Meta Tags
+
 - [ ] All pages have unique titles
 - [ ] All pages have meta descriptions
 - [ ] Open Graph tags present
@@ -254,6 +279,7 @@
 - [ ] Canonical URLs set correctly
 
 ### Structured Data
+
 - [ ] Course pages have Schema.org data
 - [ ] Structured data validates in Google tool
 - [ ] Breadcrumbs are properly marked up
@@ -261,6 +287,7 @@
 ## 🔗 Integration Testing
 
 ### API Integration
+
 - [ ] All API endpoints are called correctly
 - [ ] Request headers are set properly
 - [ ] Response data is parsed correctly
@@ -282,20 +309,23 @@
 ## 📝 Notes
 
 ### Testing Environment
+
 - Node.js version: 18+
 - Browser versions: Latest stable
 - Screen sizes tested: 320px, 768px, 1024px, 1920px
 - Network conditions: Fast 3G, 4G, WiFi
 
 ### Known Issues
+
 - Document any known issues here during testing
 
 ### Test Results Summary
-- Total tests: _____
-- Passed: _____
-- Failed: _____
-- Blocked: _____
-- Pass rate: _____%
+
+- Total tests: **\_**
+- Passed: **\_**
+- Failed: **\_**
+- Blocked: **\_**
+- Pass rate: **\_**%
 
 ---
 

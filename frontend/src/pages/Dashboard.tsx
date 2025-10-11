@@ -45,21 +45,17 @@ export function Dashboard() {
       setLoading(true);
       setError(null);
 
-      const [
-        statsData,
-        enrollmentsData,
-        continueData,
-        certificatesData,
-      ] = await Promise.all([
-        dashboardService.getStats(),
-        dashboardService.getEnrollments(
-          currentPage,
-          12,
-          filter === "all" ? undefined : filter,
-        ),
-        dashboardService.getContinueLearning(),
-        dashboardService.getCertificates(),
-      ]);
+      const [statsData, enrollmentsData, continueData, certificatesData] =
+        await Promise.all([
+          dashboardService.getStats(),
+          dashboardService.getEnrollments(
+            currentPage,
+            12,
+            filter === "all" ? undefined : filter,
+          ),
+          dashboardService.getContinueLearning(),
+          dashboardService.getCertificates(),
+        ]);
 
       setStats(statsData);
       setEnrollments(enrollmentsData.data);
@@ -84,7 +80,7 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <Spinner size="lg" color="primary" />
+        <Spinner color="primary" size="lg" />
       </div>
     );
   }
@@ -95,10 +91,10 @@ export function Dashboard() {
         <div className="text-center">
           <p className="text-danger text-lg mb-4">{error}</p>
           <button
-            onClick={loadDashboardData}
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600"
+            onClick={loadDashboardData}
           >
-            {t('common.tryAgain')}
+            {t("common.tryAgain")}
           </button>
         </div>
       </div>
@@ -108,9 +104,11 @@ export function Dashboard() {
   return (
     <>
       <Helmet>
-        <title>{t('dashboard.title')} - {t('common.siteName')}</title>
-        <meta name="description" content={t('dashboard.title')} />
-        <meta name="robots" content="noindex, nofollow" />
+        <title>
+          {t("dashboard.title")} - {t("common.siteName")}
+        </title>
+        <meta content={t("dashboard.title")} name="description" />
+        <meta content="noindex, nofollow" name="robots" />
       </Helmet>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -126,8 +124,6 @@ export function Dashboard() {
         {/* Tabs Navigation */}
         <Tabs
           aria-label="Dashboard sections"
-          color="primary"
-          variant="underlined"
           classNames={{
             cursor: "w-full bg-primary",
             tab: "max-w-fit px-0 h-12",
@@ -135,6 +131,8 @@ export function Dashboard() {
             tabList:
               "gap-6 w-full relative rounded-none p-0 border-b border-divider",
           }}
+          color="primary"
+          variant="underlined"
         >
           {/* Overview Tab */}
           <Tab

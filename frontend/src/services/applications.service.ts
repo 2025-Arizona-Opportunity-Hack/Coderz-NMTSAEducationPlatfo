@@ -5,6 +5,7 @@ import type {
   ApiResponse,
   PaginatedResponse,
 } from "../types/api";
+
 import { api } from "../config/api";
 
 export const applicationsService = {
@@ -43,9 +44,7 @@ export const applicationsService = {
   /**
    * Create a new certification application
    */
-  async createApplication(
-    data: CreateApplicationDto,
-  ): Promise<Application> {
+  async createApplication(data: CreateApplicationDto): Promise<Application> {
     const formData = new FormData();
 
     formData.append("courseId", data.courseId);

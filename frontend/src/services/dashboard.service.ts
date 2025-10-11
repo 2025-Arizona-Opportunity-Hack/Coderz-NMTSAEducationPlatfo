@@ -6,6 +6,7 @@ import type {
   ApiResponse,
   PaginatedResponse,
 } from "../types/api";
+
 import { api } from "../config/api";
 
 export const dashboardService = {
@@ -13,9 +14,8 @@ export const dashboardService = {
    * Get dashboard statistics
    */
   async getStats(): Promise<DashboardStats> {
-    const response = await api.get<ApiResponse<DashboardStats>>(
-      "/dashboard/stats",
-    );
+    const response =
+      await api.get<ApiResponse<DashboardStats>>("/dashboard/stats");
 
     return response.data.data;
   },

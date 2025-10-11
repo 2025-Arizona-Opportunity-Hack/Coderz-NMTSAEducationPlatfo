@@ -54,16 +54,19 @@ Vercel provides the simplest deployment experience with automatic CI/CD.
 #### Via Vercel CLI
 
 1. **Install Vercel CLI**
+
 ```bash
 npm install -g vercel
 ```
 
 2. **Login to Vercel**
+
 ```bash
 vercel login
 ```
 
 3. **Deploy**
+
 ```bash
 vercel --prod
 ```
@@ -88,9 +91,7 @@ The project includes a `vercel.json` file for SPA routing:
 
 ```json
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
   "headers": [
     {
       "source": "/(.*)",
@@ -118,16 +119,19 @@ The project includes a `vercel.json` file for SPA routing:
 #### Via Netlify CLI
 
 1. **Install Netlify CLI**
+
 ```bash
 npm install -g netlify-cli
 ```
 
 2. **Login to Netlify**
+
 ```bash
 netlify login
 ```
 
 3. **Deploy**
+
 ```bash
 netlify deploy --prod --dir=dist
 ```
@@ -169,6 +173,7 @@ Create `netlify.toml`:
 ### Option 3: AWS S3 + CloudFront
 
 #### Prerequisites
+
 - AWS Account
 - AWS CLI configured
 - S3 bucket created
@@ -177,16 +182,19 @@ Create `netlify.toml`:
 #### Deploy to S3
 
 1. **Build the application**
+
 ```bash
 pnpm build
 ```
 
 2. **Sync to S3**
+
 ```bash
 aws s3 sync dist/ s3://your-bucket-name --delete
 ```
 
 3. **Invalidate CloudFront cache**
+
 ```bash
 aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 ```
@@ -295,16 +303,19 @@ docker run -p 80:80 nmtsa-learn-frontend
 #### Deploy to Cloud
 
 **AWS ECS/Fargate**
+
 1. Push image to ECR
 2. Create ECS task definition
 3. Deploy to ECS service
 
 **Google Cloud Run**
+
 ```bash
 gcloud run deploy nmtsa-learn --image gcr.io/project-id/nmtsa-learn-frontend
 ```
 
 **Azure Container Instances**
+
 ```bash
 az container create --resource-group myResourceGroup --name nmtsa-learn --image myregistry.azurecr.io/nmtsa-learn-frontend
 ```
@@ -313,20 +324,21 @@ az container create --resource-group myResourceGroup --name nmtsa-learn --image 
 
 ### Required Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
+| Variable            | Description          | Example                          |
+| ------------------- | -------------------- | -------------------------------- |
 | `VITE_API_BASE_URL` | Backend API base URL | `https://api.nmtsalearn.com/api` |
 
 ### Optional Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_VERSION` | API version | `v1` |
-| `VITE_DEBUG` | Enable debug mode | `false` |
+| Variable           | Description       | Default |
+| ------------------ | ----------------- | ------- |
+| `VITE_API_VERSION` | API version       | `v1`    |
+| `VITE_DEBUG`       | Enable debug mode | `false` |
 
 ## 🔐 Security Considerations
 
 ### HTTPS
+
 - **Always use HTTPS in production**
 - Configure SSL certificates
 - Redirect HTTP to HTTPS
@@ -340,6 +352,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; 
 ```
 
 ### Environment Variables
+
 - Never commit `.env` files
 - Use platform-specific secret management
 - Rotate API keys regularly
@@ -366,12 +379,17 @@ Add analytics (e.g., Google Analytics):
 
 ```html
 <!-- Add to index.html -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
+></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'GA_MEASUREMENT_ID');
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "GA_MEASUREMENT_ID");
 </script>
 ```
 
@@ -393,31 +411,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      
+          node-version: "18"
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build
         run: pnpm build
         env:
           VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
           working-directory: ./
 ```
 
@@ -440,17 +458,20 @@ After deployment, verify:
 ## 🔧 Rollback Strategy
 
 ### Vercel
+
 ```bash
 vercel rollback
 ```
 
 ### Git-based Deployments
+
 ```bash
 git revert HEAD
 git push origin main
 ```
 
 ### Docker
+
 ```bash
 # Deploy previous version
 docker run -p 80:80 nmtsa-learn-frontend:previous-tag
@@ -459,6 +480,7 @@ docker run -p 80:80 nmtsa-learn-frontend:previous-tag
 ## 📞 Support
 
 For deployment issues:
+
 - Check logs in hosting platform dashboard
 - Verify environment variables
 - Test API connectivity

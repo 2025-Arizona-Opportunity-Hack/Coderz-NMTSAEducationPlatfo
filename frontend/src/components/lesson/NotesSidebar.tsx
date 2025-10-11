@@ -1,11 +1,11 @@
+import type { Note } from "../../types/api";
+
 import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { useTranslation } from "react-i18next";
 import { Trash2, Edit2, Save, X } from "lucide-react";
-
-import type { Note } from "../../types/api";
 
 interface NotesSidebarProps {
   notes: Note[];
@@ -87,7 +87,8 @@ export function NotesSidebar({
             />
             {currentTimestamp !== undefined && (
               <p className="text-xs text-gray-500 mt-2">
-                {t("lesson.videoTimestamp")}: {formatTimestamp(currentTimestamp)}
+                {t("lesson.videoTimestamp")}:{" "}
+                {formatTimestamp(currentTimestamp)}
               </p>
             )}
             <Button
@@ -105,7 +106,9 @@ export function NotesSidebar({
 
         {/* Existing Notes */}
         {notes.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">{t("lesson.noNotes")}</p>
+          <p className="text-center text-gray-500 py-8">
+            {t("lesson.noNotes")}
+          </p>
         ) : (
           notes.map((note) => (
             <Card key={note.id}>
@@ -166,8 +169,8 @@ export function NotesSidebar({
                       </Button>
                       <Button
                         size="sm"
-                        variant="flat"
                         startContent={<X className="w-4 h-4" />}
+                        variant="flat"
                         onPress={() => {
                           setEditingNoteId(null);
                           setEditContent("");

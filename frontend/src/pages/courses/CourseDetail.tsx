@@ -1,3 +1,5 @@
+import type { CourseDetail as CourseDetailType, Review } from "../../types/api";
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -12,7 +14,6 @@ import { CourseModules } from "../../components/course/CourseModules";
 import { CourseReviews } from "../../components/course/CourseReviews";
 import { courseService } from "../../services/course.service";
 import { useAuthStore } from "../../store/useAuthStore";
-import type { CourseDetail as CourseDetailType, Review } from "../../types/api";
 
 export function CourseDetail() {
   const { id } = useParams<{ id: string }>();

@@ -1,3 +1,5 @@
+import type { ForumPost } from "../types/api";
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
@@ -11,7 +13,6 @@ import { useDisclosure } from "@heroui/use-disclosure";
 import { Plus, Search, TrendingUp, Clock } from "lucide-react";
 
 import { forumService } from "../services/forum.service";
-import type { ForumPost } from "../types/api";
 import { ForumPostCard } from "../components/forum/ForumPostCard";
 import { CreatePostModal } from "../components/forum/CreatePostModal";
 
@@ -176,10 +177,16 @@ export function Forum() {
                 setSortBy(key);
               }}
             >
-              <SelectItem key="recent" startContent={<Clock className="w-4 h-4" />}>
+              <SelectItem
+                key="recent"
+                startContent={<Clock className="w-4 h-4" />}
+              >
                 {t("forum.sortRecent")}
               </SelectItem>
-              <SelectItem key="popular" startContent={<TrendingUp className="w-4 h-4" />}>
+              <SelectItem
+                key="popular"
+                startContent={<TrendingUp className="w-4 h-4" />}
+              >
                 {t("forum.sortPopular")}
               </SelectItem>
             </Select>
@@ -188,7 +195,9 @@ export function Forum() {
           {/* Tags Filter */}
           {availableTags.length > 0 && (
             <div>
-              <p className="text-sm text-default-600 mb-2">{t("forum.filterByTags")}:</p>
+              <p className="text-sm text-default-600 mb-2">
+                {t("forum.filterByTags")}:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {availableTags.map((tag) => (
                   <Chip
@@ -240,9 +249,9 @@ export function Forum() {
               {totalPages > 1 && (
                 <div className="flex justify-center mt-8">
                   <Pagination
+                    showControls
                     color="primary"
                     page={currentPage}
-                    showControls
                     total={totalPages}
                     onChange={setCurrentPage}
                   />

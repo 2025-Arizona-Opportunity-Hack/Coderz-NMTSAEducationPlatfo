@@ -1,10 +1,10 @@
+import type { Review } from "../../types/api";
+
 import { Avatar } from "@heroui/avatar";
 import { Chip } from "@heroui/chip";
 import { Pagination } from "@heroui/pagination";
 import { useTranslation } from "react-i18next";
 import { Star } from "lucide-react";
-
-import type { Review } from "../../types/api";
 
 interface CourseReviewsProps {
   reviews: Review[];

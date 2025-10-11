@@ -1,16 +1,10 @@
+import type { Module } from "../../types/api";
+
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
-import {
-  PlayCircle,
-  FileText,
-  CheckCircle,
-  Lock,
-  Clock,
-} from "lucide-react";
+import { PlayCircle, FileText, CheckCircle, Lock, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-
-import type { Module } from "../../types/api";
 
 interface CourseModulesProps {
   modules: Module[];

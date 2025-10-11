@@ -1,9 +1,9 @@
+import type { CourseDetail } from "../../types/api";
+
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { useTranslation } from "react-i18next";
 import { Linkedin, Twitter, Globe } from "lucide-react";
-
-import type { CourseDetail } from "../../types/api";
 
 interface InstructorCardProps {
   instructor: CourseDetail["instructor"];

@@ -1,3 +1,5 @@
+import type { Application } from "../../types/api";
+
 import {
   Modal,
   ModalContent,
@@ -20,8 +22,6 @@ import {
   Download,
   User,
 } from "lucide-react";
-
-import type { Application } from "../../types/api";
 
 interface ApplicationDetailsProps {
   application: Application | null;
@@ -87,12 +87,7 @@ export function ApplicationDetails({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      scrollBehavior="inside"
-      size="3xl"
-      onClose={onClose}
-    >
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="3xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           {t("applications.details.title")}
@@ -269,9 +264,9 @@ export function ApplicationDetails({
                           </div>
                         </div>
                         <Button
+                          download
                           as="a"
                           color="primary"
-                          download
                           href={doc.url}
                           size="sm"
                           startContent={<Download className="w-4 h-4" />}

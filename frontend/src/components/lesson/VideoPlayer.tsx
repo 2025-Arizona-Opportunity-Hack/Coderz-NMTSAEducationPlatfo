@@ -184,23 +184,32 @@ export function VideoPlayer({
           {/* Ensure a <track> exists to satisfy accessibility/lint rules. */}
           {/* If captions are provided, use the first one; otherwise render an empty track node. */}
           <track
-            kind="captions"
-            src={captions && captions.length ? captions[0].src : ""}
-            srcLang={captions && captions.length ? captions[0].srclang ?? "en" : "en"}
-            label={captions && captions.length ? captions[0].label ?? "English" : "English"}
             default={!!(captions && captions.length && captions[0].isDefault)}
+            kind="captions"
+            label={
+              captions && captions.length
+                ? (captions[0].label ?? "English")
+                : "English"
+            }
+            src={captions && captions.length ? captions[0].src : ""}
+            srcLang={
+              captions && captions.length ? (captions[0].srclang ?? "en") : "en"
+            }
           />
-          {captions && captions.length > 1 &&
-            captions.slice(1).map((c, idx) => (
-              <track
-                key={idx}
-                kind="captions"
-                src={c.src}
-                srcLang={c.srclang ?? "en"}
-                label={c.label ?? `Caption ${idx + 2}`}
-                default={!!c.isDefault}
-              />
-            ))}
+          {captions &&
+            captions.length > 1 &&
+            captions
+              .slice(1)
+              .map((c, idx) => (
+                <track
+                  key={idx}
+                  default={!!c.isDefault}
+                  kind="captions"
+                  label={c.label ?? `Caption ${idx + 2}`}
+                  src={c.src}
+                  srcLang={c.srclang ?? "en"}
+                />
+              ))}
         </video>
 
         {/* Controls Overlay */}
@@ -219,12 +228,7 @@ export function VideoPlayer({
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Button
-                isIconOnly
-                size="sm"
-                variant="light"
-                onPress={togglePlay}
-              >
+              <Button isIconOnly size="sm" variant="light" onPress={togglePlay}>
                 {isPlaying ? (
                   <Pause className="w-5 h-5 text-white" />
                 ) : (
@@ -281,11 +285,7 @@ export function VideoPlayer({
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="light"
-                onPress={changePlaybackRate}
-              >
+              <Button size="sm" variant="light" onPress={changePlaybackRate}>
                 <span className="text-white text-sm">{playbackRate}x</span>
               </Button>
 

@@ -1,3 +1,5 @@
+import type { ContinueLearningItem } from "../../types/api";
+
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Progress } from "@heroui/progress";
@@ -5,8 +7,6 @@ import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PlayCircle, Clock } from "lucide-react";
-
-import type { ContinueLearningItem } from "../../types/api";
 
 interface ContinueLearningProps {
   items: ContinueLearningItem[];
@@ -46,8 +46,8 @@ export function ContinueLearning({ items }: ContinueLearningProps) {
         {items.map((item) => (
           <Card
             key={item.enrollment.id}
-            className="hover:shadow-lg transition-shadow"
             isPressable
+            className="hover:shadow-lg transition-shadow"
             onPress={() =>
               navigate(
                 `/courses/${item.enrollment.courseId}/lessons/${item.nextLesson.id}`,

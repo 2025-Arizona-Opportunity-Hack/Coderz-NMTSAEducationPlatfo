@@ -1,3 +1,5 @@
+import type { LessonContent, Note } from "../types/api";
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -12,7 +14,6 @@ import { LessonNavigation } from "../components/lesson/LessonNavigation";
 import { NotesSidebar } from "../components/lesson/NotesSidebar";
 import { ResourcesList } from "../components/lesson/ResourcesList";
 import { lessonService } from "../services/lesson.service";
-import type { LessonContent, Note } from "../types/api";
 
 export function Lesson() {
   const { courseId, lessonId } = useParams<{
@@ -161,7 +162,10 @@ export function Lesson() {
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
-        <LessonHeader isCompleted={lesson.isCompleted || false} lesson={lesson} />
+        <LessonHeader
+          isCompleted={lesson.isCompleted || false}
+          lesson={lesson}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -170,10 +174,10 @@ export function Lesson() {
               {/* Video Player */}
               {lesson.type === "video" && lesson.videoUrl && (
                 <VideoPlayer
+                  captions={lesson.captions}
                   videoUrl={lesson.videoUrl}
                   onComplete={handleMarkComplete}
                   onProgress={handleVideoProgress}
-                  captions={lesson.captions}
                 />
               )}
 

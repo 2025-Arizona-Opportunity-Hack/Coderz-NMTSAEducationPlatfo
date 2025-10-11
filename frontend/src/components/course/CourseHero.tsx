@@ -1,17 +1,10 @@
+import type { CourseDetail } from "../../types/api";
+
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Progress } from "@heroui/progress";
 import { useTranslation } from "react-i18next";
-import {
-  Clock,
-  Award,
-  Star,
-  Users,
-  BookOpen,
-  CheckCircle,
-} from "lucide-react";
-
-import type { CourseDetail } from "../../types/api";
+import { Clock, Award, Star, Users, BookOpen, CheckCircle } from "lucide-react";
 
 interface CourseHeroProps {
   course: CourseDetail;
@@ -193,9 +186,7 @@ export function CourseHero({
 
               {/* Course Includes */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="font-semibold mb-3">
-                  {t("course.includes")}:
-                </h3>
+                <h3 className="font-semibold mb-3">{t("course.includes")}:</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500" />

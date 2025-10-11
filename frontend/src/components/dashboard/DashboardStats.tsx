@@ -1,3 +1,5 @@
+import type { DashboardStats as StatsType } from "../../types/api";
+
 import { Card, CardBody } from "@heroui/card";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,8 +10,6 @@ import {
   TrendingUp,
   Flame,
 } from "lucide-react";
-
-import type { DashboardStats as StatsType } from "../../types/api";
 
 interface DashboardStatsProps {
   stats: StatsType;

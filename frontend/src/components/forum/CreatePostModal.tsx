@@ -16,7 +16,11 @@ import { X } from "lucide-react";
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { title: string; content: string; tags: string[] }) => Promise<void>;
+  onSubmit: (data: {
+    title: string;
+    content: string;
+    tags: string[];
+  }) => Promise<void>;
   availableTags?: string[];
 }
 
@@ -32,7 +36,9 @@ export function CreatePostModal({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{ title?: string; content?: string }>({});
+  const [errors, setErrors] = useState<{ title?: string; content?: string }>(
+    {},
+  );
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -55,7 +61,11 @@ export function CreatePostModal({
 
     try {
       setIsSubmitting(true);
-      await onSubmit({ title: title.trim(), content: content.trim(), tags: selectedTags });
+      await onSubmit({
+        title: title.trim(),
+        content: content.trim(),
+        tags: selectedTags,
+      });
       handleClose();
     } catch (error) {
       console.error("Failed to create post:", error);
@@ -76,7 +86,11 @@ export function CreatePostModal({
   const handleAddTag = (tag: string) => {
     const normalizedTag = tag.trim().toLowerCase();
 
-    if (normalizedTag && !selectedTags.includes(normalizedTag) && selectedTags.length < 5) {
+    if (
+      normalizedTag &&
+      !selectedTags.includes(normalizedTag) &&
+      selectedTags.length < 5
+    ) {
       setSelectedTags([...selectedTags, normalizedTag]);
       setCustomTag("");
     }
@@ -87,15 +101,20 @@ export function CreatePostModal({
   };
 
   return (
-    <Modal isOpen={isOpen} scrollBehavior="inside" size="2xl" onClose={handleClose}>
+    <Modal
+      isOpen={isOpen}
+      scrollBehavior="inside"
+      size="2xl"
+      onClose={handleClose}
+    >
       <ModalContent>
         <ModalHeader>{t("forum.form.createPost")}</ModalHeader>
         <ModalBody>
           <div className="space-y-4">
             <Input
+              isRequired
               errorMessage={errors.title}
               isInvalid={!!errors.title}
-              isRequired
               label={t("forum.form.title")}
               placeholder={t("forum.form.titlePlaceholder")}
               value={title}
@@ -106,9 +125,9 @@ export function CreatePostModal({
             />
 
             <Textarea
+              isRequired
               errorMessage={errors.content}
               isInvalid={!!errors.content}
-              isRequired
               label={t("forum.form.content")}
               maxRows={12}
               minRows={6}
@@ -178,7 +197,9 @@ export function CreatePostModal({
                       <Chip
                         key={tag}
                         className="cursor-pointer"
-                        color={selectedTags.includes(tag) ? "primary" : "default"}
+                        color={
+                          selectedTags.includes(tag) ? "primary" : "default"
+                        }
                         size="sm"
                         variant="flat"
                         onClick={() => {
@@ -202,7 +223,11 @@ export function CreatePostModal({
           <Button color="danger" variant="light" onPress={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button color="primary" isLoading={isSubmitting} onPress={handleSubmit}>
+          <Button
+            color="primary"
+            isLoading={isSubmitting}
+            onPress={handleSubmit}
+          >
             {t("forum.form.publish")}
           </Button>
         </ModalFooter>

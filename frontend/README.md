@@ -160,11 +160,13 @@ pnpm build
 ## 🧪 Current Status
 
 ✅ **Completed:**
+
 - Step 1: Project scaffold with Vite, TypeScript, Tailwind, Zustand, i18n
 - Step 2: Authentication pages and token-based auth flow
 - Global layout with Navbar, Footer, Skip-to-content
 
 ⏳ **Next Steps:**
+
 - Step 3: Explore page with course listing and filters
 - Step 4: Course detail page
 - Step 5: Lesson page with markdown support

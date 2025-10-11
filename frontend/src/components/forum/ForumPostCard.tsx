@@ -1,11 +1,11 @@
+import type { ForumPost } from "../../types/api";
+
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Avatar } from "@heroui/avatar";
 import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { MessageCircle, ThumbsUp, Pin, Calendar } from "lucide-react";
-
-import type { ForumPost } from "../../types/api";
 
 interface ForumPostCardProps {
   post: ForumPost;
@@ -50,8 +50,8 @@ export function ForumPostCard({ post }: ForumPostCardProps) {
 
   return (
     <Card
-      className="w-full hover:shadow-lg transition-shadow cursor-pointer"
       isPressable
+      className="w-full hover:shadow-lg transition-shadow cursor-pointer"
       onPress={() => navigate(`/forum/${post.id}`)}
     >
       <CardHeader className="flex gap-3 pb-2">

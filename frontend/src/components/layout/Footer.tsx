@@ -59,6 +59,14 @@ export function Footer() {
                     {t("footer.terms")}
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    className="text-sm hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-md px-1"
+                    to="/accessibility"
+                  >
+                    {t("legal.accessibility")}
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>

@@ -13,6 +13,10 @@ import { Forum } from "./pages/Forum";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { ForgotPassword } from "./pages/ForgotPassword";
+import { Terms } from "./pages/Terms";
+import { Privacy } from "./pages/Privacy";
+import { AccessibilityStatement } from "./pages/AccessibilityStatement";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   useAuth();
@@ -58,6 +62,10 @@ function App() {
         <Route element={<Login />} path="login" />
         <Route element={<Register />} path="register" />
         <Route element={<ForgotPassword />} path="forgot-password" />
+        <Route element={<Terms />} path="terms" />
+        <Route element={<Privacy />} path="privacy" />
+        <Route element={<AccessibilityStatement />} path="accessibility" />
+        <Route element={<NotFound />} path="*" />
       </Route>
     </Routes>
   );

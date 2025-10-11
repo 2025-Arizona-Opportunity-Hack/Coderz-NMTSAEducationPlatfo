@@ -1,8 +1,15 @@
+import type { LessonContent } from "../../types/api";
+
 import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
-import { Clock, CheckCircle, Video, BookOpen, FileQuestion, ClipboardList } from "lucide-react";
-
-import type { LessonContent } from "../../types/api";
+import {
+  Clock,
+  CheckCircle,
+  Video,
+  BookOpen,
+  FileQuestion,
+  ClipboardList,
+} from "lucide-react";
 
 interface LessonHeaderProps {
   lesson: LessonContent;

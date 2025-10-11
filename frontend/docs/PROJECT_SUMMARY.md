@@ -20,34 +20,40 @@
 ## 🛠️ Tech Stack
 
 ### Core Technologies
+
 - **React 18.3.1**: Modern UI library with hooks
 - **TypeScript 5.7.2**: Type-safe development
 - **Vite 6.0.11**: Fast build tool and dev server
 - **React Router 7.1.3**: Client-side routing
 
 ### UI Framework
+
 - **Tailwind CSS v4-beta**: Utility-first styling
 - **HeroUI v2.6.16**: Accessible component library
 - **Framer Motion 11.15.0**: Smooth animations
 - **lucide-react 0.469.0**: Icon library
 
 ### State Management & Data
+
 - **Zustand 5.0.2**: Lightweight state management
 - **Axios 1.12.2**: HTTP client with interceptors
 - **zustand/middleware**: Persist auth state
 
 ### Internationalization
+
 - **react-i18next 15.2.0**: i18n framework
 - **i18next 24.2.0**: Translation management
 - **Languages**: English, Spanish (es_ES)
 
 ### Content & Media
+
 - **react-markdown 9.0.4**: Markdown rendering
 - **remark-gfm 4.0.0**: GitHub Flavored Markdown
 - **rehype-highlight 7.0.1**: Syntax highlighting
 - **Custom Video Player**: HTML5 video with controls
 
 ### SEO & Meta
+
 - **react-helmet-async 2.0.5**: Document head management
 - **Schema.org**: Structured data for rich snippets
 
@@ -117,6 +123,7 @@ frontend/
 ## 🎯 Features Implementation
 
 ### 1. Authentication System
+
 - **Login**: Email/password with JWT tokens
 - **Registration**: Create account with profile info
 - **Password Recovery**: Email-based password reset
@@ -124,6 +131,7 @@ frontend/
 - **Persistent Sessions**: Token refresh and storage
 
 ### 2. Course Exploration
+
 - **Browse Courses**: Grid/list view with filtering
 - **Search**: Full-text course search
 - **Categories**: Filter by course categories
@@ -132,6 +140,7 @@ frontend/
 - **Enrollment**: One-click course enrollment
 
 ### 3. Learning Experience
+
 - **Video Lessons**: Custom HTML5 player with:
   - Play/pause controls
   - Volume adjustment
@@ -145,7 +154,8 @@ frontend/
 - **Course Completion**: Certificate generation on completion
 
 ### 4. Student Dashboard
-- **Statistics Cards**: 
+
+- **Statistics Cards**:
   - Total courses enrolled
   - Courses completed
   - Certificates earned
@@ -156,6 +166,7 @@ frontend/
 - **Recent Activity**: Learning activity timeline
 
 ### 5. Certification Applications
+
 - **Application Form**: Submit certification applications
 - **Application Status**: Track application progress
 - **Filter & Sort**: Filter by status, sort by date
@@ -163,6 +174,7 @@ frontend/
 - **Document Upload**: Attach required documents
 
 ### 6. Community Forum
+
 - **Create Posts**: Share questions and discussions
 - **View Discussions**: Browse all forum posts
 - **Categories**: Organize by topic
@@ -170,6 +182,7 @@ frontend/
 - **Moderation**: Report and manage posts
 
 ### 7. Accessibility Features
+
 - **ARIA Labels**: Comprehensive ARIA attributes
 - **Keyboard Navigation**: Full keyboard support
 - **Screen Reader Support**: Semantic HTML
@@ -179,6 +192,7 @@ frontend/
 - **Alt Text**: All images have descriptions
 
 ### 8. Internationalization
+
 - **25+ Common Keys**: siteName, optional, required, cancel, save, delete, edit, submit, search, filter, sort, close, back, next, previous, download, upload, confirm, tryAgain, viewMore, viewLess, noResults, all
 - **Language Switcher**: Toggle English/Spanish
 - **RTL Support**: Ready for right-to-left languages
@@ -198,11 +212,13 @@ frontend/
 ## 📱 Responsive Design
 
 ### Breakpoints
+
 - **Mobile**: 320px - 639px (xs)
 - **Tablet**: 640px - 1023px (sm, md)
 - **Desktop**: 1024px+ (lg, xl, 2xl)
 
 ### Mobile Features
+
 - Hamburger menu navigation
 - Touch-optimized controls
 - Swipe gestures
@@ -222,6 +238,7 @@ frontend/
 ## 🧪 Testing Coverage
 
 Comprehensive testing checklist includes:
+
 - **Functional Testing**: 50+ test cases
 - **UI/UX Testing**: 30+ test cases
 - **Accessibility Testing**: 25+ test cases
@@ -246,6 +263,7 @@ Comprehensive testing checklist includes:
 ## 🌍 Deployment Options
 
 Supported platforms:
+
 - **Vercel** (Recommended): Zero-config deployment
 - **Netlify**: Continuous deployment
 - **AWS S3 + CloudFront**: Scalable cloud hosting
@@ -255,9 +273,11 @@ Supported platforms:
 ## 🔧 Environment Variables
 
 Required:
+
 - `VITE_API_BASE_URL`: Backend API base URL
 
 Optional:
+
 - `VITE_API_VERSION`: API version (default: v1)
 - `VITE_DEBUG`: Enable debug mode (default: false)
 
@@ -292,18 +312,21 @@ Optional:
 ## 🔄 State Management
 
 ### Global State (Zustand)
+
 - Authentication state
 - User profile
 - JWT tokens
 - Login status
 
 ### Local State (React)
+
 - Form inputs
 - UI toggles
 - Loading states
 - Error messages
 
 ### Server State (React Query - Future)
+
 - API data caching
 - Automatic refetching
 - Optimistic updates
@@ -320,6 +343,7 @@ Optional:
 ## 🎯 Future Enhancements
 
 Potential features for future versions:
+
 - [ ] Real-time chat with instructors
 - [ ] Live video streaming
 - [ ] Assignment submission and grading
@@ -334,12 +358,14 @@ Potential features for future versions:
 ## 📞 Support & Maintenance
 
 ### Key Files to Monitor
+
 - `src/config/api.ts`: API configuration
 - `src/services/*.ts`: API service layer
 - `src/i18n/locales/*.json`: Translations
 - `src/types/index.ts`: Type definitions
 
 ### Common Tasks
+
 - **Add New Page**: Create in `src/pages/`, add route in `App.tsx`
 - **Add Translation**: Update `en.json` and `es.json`
 - **Add API Endpoint**: Update relevant service in `src/services/`
@@ -362,6 +388,7 @@ Potential features for future versions:
 ## 📈 Development Timeline
 
 ### Completed Phases
+
 - ✅ **Phase 1**: Project setup and architecture
 - ✅ **Phase 2**: Authentication system
 - ✅ **Phase 3**: Course exploration

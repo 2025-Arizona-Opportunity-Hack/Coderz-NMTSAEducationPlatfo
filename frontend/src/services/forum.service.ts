@@ -7,6 +7,7 @@ import type {
   ApiResponse,
   PaginatedResponse,
 } from "../types/api";
+
 import { api } from "../config/api";
 
 export const forumService = {
@@ -114,10 +115,7 @@ export const forumService = {
   /**
    * Update a comment
    */
-  async updateComment(
-    id: string,
-    content: string,
-  ): Promise<ForumComment> {
+  async updateComment(id: string, content: string): Promise<ForumComment> {
     const response = await api.patch<ApiResponse<ForumComment>>(
       `/forum/comments/${id}`,
       { content },

@@ -1,9 +1,9 @@
+import type { Resource } from "../../types/api";
+
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { useTranslation } from "react-i18next";
 import { Download, FileText, FileArchive, FileImage } from "lucide-react";
-
-import type { Resource } from "../../types/api";
 
 interface ResourcesListProps {
   resources: Resource[];
@@ -72,9 +72,9 @@ export function ResourcesList({ resources }: ResourcesListProps) {
                   </div>
                 </div>
                 <Button
+                  download
                   as="a"
                   color="primary"
-                  download
                   href={resource.fileUrl}
                   size="sm"
                   startContent={<Download className="w-4 h-4" />}

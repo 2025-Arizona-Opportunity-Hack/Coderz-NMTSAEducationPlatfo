@@ -270,5 +270,10 @@
         "contentTooShort": "Content must be at least 20 characters"
       }
     }
+  },
+  "legal": {
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "accessibility": "Accessibility Statement"
   }
 }

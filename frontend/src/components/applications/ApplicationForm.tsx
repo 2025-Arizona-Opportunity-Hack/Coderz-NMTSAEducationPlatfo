@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@heroui/modal";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import { Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Checkbox } from "@heroui/checkbox";
@@ -67,7 +72,9 @@ export function ApplicationForm({
     }
 
     if (!prerequisitesConfirmed) {
-      newErrors.prerequisites = t("applications.form.errors.prerequisitesRequired");
+      newErrors.prerequisites = t(
+        "applications.form.errors.prerequisitesRequired",
+      );
     }
 
     setErrors(newErrors);
@@ -129,9 +136,9 @@ export function ApplicationForm({
             {/* Course Selection */}
             <div>
               <Select
+                isRequired
                 errorMessage={errors.courseId}
                 isInvalid={!!errors.courseId}
-                isRequired
                 label={t("applications.form.selectCourse")}
                 placeholder={t("applications.form.selectCoursePlaceholder")}
                 selectedKeys={selectedCourseId ? [selectedCourseId] : []}
@@ -198,9 +205,9 @@ export function ApplicationForm({
 
             {/* Motivation Statement */}
             <Textarea
+              isRequired
               errorMessage={errors.motivation}
               isInvalid={!!errors.motivation}
-              isRequired
               label={t("applications.form.motivation")}
               maxRows={8}
               minRows={4}
@@ -212,7 +219,8 @@ export function ApplicationForm({
               }}
             />
             <p className="text-xs text-default-500">
-              {t("applications.form.motivationHint")} ({motivationStatement.length}/500)
+              {t("applications.form.motivationHint")} (
+              {motivationStatement.length}/500)
             </p>
 
             {/* Prerequisites Confirmation */}

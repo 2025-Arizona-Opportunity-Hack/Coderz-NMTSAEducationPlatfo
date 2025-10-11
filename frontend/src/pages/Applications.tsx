@@ -1,3 +1,5 @@
+import type { Application, ApplicationStatus } from "../types/api";
+
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
@@ -9,7 +11,6 @@ import { useDisclosure } from "@heroui/use-disclosure";
 import { Plus, FileCheck } from "lucide-react";
 
 import { applicationsService } from "../services/applications.service";
-import type { Application, ApplicationStatus } from "../types/api";
 import { ApplicationCard } from "../components/applications/ApplicationCard";
 import { ApplicationForm } from "../components/applications/ApplicationForm";
 import { ApplicationDetails } from "../components/applications/ApplicationDetails";
@@ -81,9 +82,7 @@ export function Applications() {
   };
 
   const handleCancelApplication = async (applicationId: string) => {
-    if (
-      !window.confirm(t("applications.confirmCancel"))
-    ) {
+    if (!window.confirm(t("applications.confirmCancel"))) {
       return;
     }
 
@@ -245,9 +244,9 @@ export function Applications() {
               {totalPages > 1 && (
                 <div className="flex justify-center mt-8">
                   <Pagination
+                    showControls
                     color="primary"
                     page={currentPage}
-                    showControls
                     total={totalPages}
                     onChange={setCurrentPage}
                   />

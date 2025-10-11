@@ -1,3 +1,5 @@
+import type { EnrollmentWithProgress } from "../../types/api";
+
 import { useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
@@ -9,8 +11,6 @@ import { Pagination } from "@heroui/pagination";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Search, Clock, Award } from "lucide-react";
-
-import type { EnrollmentWithProgress } from "../../types/api";
 
 interface EnrolledCoursesProps {
   enrollments: EnrollmentWithProgress[];
@@ -68,9 +68,7 @@ export function EnrolledCourses({
           onChange={(e) => handleFilterChange(e.target.value)}
         >
           <SelectItem key="all">{t("dashboard.allCourses")}</SelectItem>
-          <SelectItem key="in-progress">
-            {t("dashboard.inProgress")}
-          </SelectItem>
+          <SelectItem key="in-progress">{t("dashboard.inProgress")}</SelectItem>
           <SelectItem key="completed">{t("dashboard.completed")}</SelectItem>
         </Select>
       </div>
@@ -88,11 +86,9 @@ export function EnrolledCourses({
           {filteredEnrollments.map((enrollment) => (
             <Card
               key={enrollment.id}
-              className="hover:shadow-lg transition-shadow"
               isPressable
-              onPress={() =>
-                navigate(`/courses/${enrollment.course.id}`)
-              }
+              className="hover:shadow-lg transition-shadow"
+              onPress={() => navigate(`/courses/${enrollment.course.id}`)}
             >
               <CardHeader className="pb-0">
                 {enrollment.course.thumbnailUrl && (
@@ -185,8 +181,8 @@ export function EnrolledCourses({
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
           <Pagination
-            total={totalPages}
             page={currentPage}
+            total={totalPages}
             onChange={onPageChange}
           />
         </div>

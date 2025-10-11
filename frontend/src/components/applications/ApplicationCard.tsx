@@ -1,3 +1,5 @@
+import type { Application } from "../../types/api";
+
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
@@ -11,8 +13,6 @@ import {
   FileText,
   Calendar,
 } from "lucide-react";
-
-import type { Application } from "../../types/api";
 
 interface ApplicationCardProps {
   application: Application;
