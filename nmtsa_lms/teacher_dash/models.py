@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from taggit.managers import TaggableManager
+from django_ckeditor_5.fields import CKEditor5Field
 import uuid
 
 def gen_slug():
@@ -10,14 +11,14 @@ def gen_slug():
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = CKEditor5Field('Description', config_name='extends')
     published_date = models.DateTimeField(auto_now_add=True)
     is_published = models.BooleanField(default=False)
     num_enrollments = models.IntegerField(default=0)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     is_paid = models.BooleanField(default=False)
     is_submitted_for_review = models.BooleanField(default=False)
-    admin_review_feedback = models.TextField(blank=True, null=True, help_text="Optional feedback from admin during course review")
+    admin_review_feedback = CKEditor5Field('Admin Review Feedback', config_name='extends', blank=True, null=True)
     admin_approved = models.BooleanField(default=False, help_text="Indicates if the course has been approved by an admin")
     published_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     modules = models.ManyToManyField('Module', blank=True)
@@ -33,7 +34,7 @@ class Course(models.Model):
 
 class Module(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = CKEditor5Field('Description', config_name='extends')
     lessons = models.ManyToManyField('Lesson', blank=True)
     tags = TaggableManager(blank=True)
     slug = models.SlugField(max_length=11, unique=True, default=gen_slug, null=True, blank=True)
@@ -66,7 +67,7 @@ class Lesson(models.Model):
 class DiscussionPost(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='discussions')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='discussion_posts')
-    content = models.TextField()
+    content = CKEditor5Field('Content', config_name='default')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -154,8 +155,8 @@ class DiscussionPost(models.Model):
 class VideoLesson(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='video')
     video_file = models.FileField(upload_to='videos/')
-    transcript = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    transcript = CKEditor5Field('Transcript', config_name='extends', blank=True, null=True)
+    description = CKEditor5Field('Description', config_name='extends', blank=True, null=True)
 
     class Meta:
         db_table = 'video_lessons'
@@ -166,7 +167,7 @@ class VideoLesson(models.Model):
 
 class BlogLesson(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='blog')
-    content = models.TextField()
+    content = CKEditor5Field('Content', config_name='extends')
     images = models.ImageField(upload_to='blog_images/', blank=True, null=True)
 
     class Meta:

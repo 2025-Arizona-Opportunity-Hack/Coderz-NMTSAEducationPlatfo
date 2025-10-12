@@ -90,7 +90,7 @@
 
         <!-- Post Content -->
         <div class="prose max-w-none">
-            <p class="text-gray-800 whitespace-pre-wrap">{{ post.content }}</p>
+            <p class="text-gray-800 whitespace-pre-wrap">{{ post.content|safe }}</p>
         </div>
     </div>
 
@@ -148,7 +148,7 @@
 
                         <!-- Reply Content -->
                         <div class="prose max-w-none">
-                            <p class="text-gray-800 whitespace-pre-wrap">{{ reply.content }}</p>
+                            <p class="text-gray-800 whitespace-pre-wrap">{{ reply.content|safe }}</p>
                         </div>
                     </div>
                 {% endfor %}

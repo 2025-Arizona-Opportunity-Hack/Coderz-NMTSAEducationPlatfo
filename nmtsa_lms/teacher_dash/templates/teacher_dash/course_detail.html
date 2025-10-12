@@ -170,7 +170,7 @@
     <p style="margin: 0;">
         This course has been unpublished and resubmitted for admin review due to content changes. Enrollments and discussions remain intact.
         {% if course.admin_review_feedback %}
-        <br><strong>Admin Feedback:</strong> {{ course.admin_review_feedback }}
+        <br><strong>Admin Feedback:</strong> {{ course.admin_review_feedback|safe }}
         {% endif %}
     </p>
 </div>
@@ -188,7 +188,7 @@
             <div class="module-card">
                 <div style="flex: 1; display: flex; flex-direction: column; gap: var(--spacing-xs);">
                     <h3 style="margin: 0;">{{ module.title }}</h3>
-                    <p style="color: var(--text-secondary); margin: 0;">{{ module.description|truncatewords:24 }}</p>
+                    <p style="color: var(--text-secondary); margin: 0;">{{ module.description|striptags|truncatewords:24 }}</p>
                     <small style="color: var(--text-muted); font-size: 0.85rem;">{{ module.lessons.count }} lessons</small>
                 </div>
                 <div class="module-card_actions">
@@ -240,7 +240,7 @@
                     </svg>
                     <div style="flex: 1;">
                         <div style="font-weight: 600; color: var(--color-info); margin-bottom: var(--spacing-xs);">Admin Feedback</div>
-                        <p style="margin: 0; line-height: 1.6; white-space: pre-line; color: var(--text-primary);">{{ course.admin_review_feedback }}</p>
+                        <p style="margin: 0; line-height: 1.6; white-space: pre-line; color: var(--text-primary);">{{ course.admin_review_feedback|safe }}</p>
                     </div>
                 </div>
             </div>

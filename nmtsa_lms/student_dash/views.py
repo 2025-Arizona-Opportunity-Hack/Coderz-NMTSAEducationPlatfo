@@ -40,29 +40,40 @@ def _check_enrollment_and_auth(request, course):
     """
     Check user authentication and enrollment status for a course.
     Returns: (is_authenticated, is_enrolled, enrollment_object, user_object)
-    
+
     This helper is used to determine what UI elements to show:
     - Anonymous users: Show "Sign in to enroll" prompts
     - Authenticated but not enrolled: Show "Enroll now" buttons
     - Enrolled users: Show "Continue learning" and full access
+
+    Supports BOTH OAuth (students/teachers via Auth0) and Django auth (admins).
     """
+    user = None
+
+    # Check OAuth authentication (students/teachers via Auth0)
     session_user = request.session.get('user')
-    
-    if not session_user:
-        # Anonymous user
+    if session_user:
+        user_id = session_user.get('user_id')
+        user = User.objects.filter(id=user_id).first()
+
+    # Check Django authentication (admins via username/password)
+    if not user and request.user.is_authenticated:
+        user = request.user
+
+    # If no authenticated user found via either method
+    if not user:
         return (False, False, None, None)
-    
-    user_id = session_user.get('user_id')
+
+    # Check enrollment status
     try:
-        user = User.objects.get(id=user_id)
         enrollment = Enrollment.objects.filter(
-            user=user, 
-            course=course, 
+            user=user,
+            course=course,
             is_active=True
         ).first()
-        
+
         return (True, bool(enrollment), enrollment, user)
-    except User.DoesNotExist:
+    except Exception:
         return (False, False, None, None)
 
 
@@ -185,6 +196,31 @@ def catalog(request):
                         reverse=True
                     )
 
+                    # Get authenticated user and check enrollment status
+                    session_user = request.session.get('user')
+                    user = None
+                    if session_user:
+                        user_id = session_user.get('user_id')
+                        user = User.objects.filter(id=user_id).first()
+
+                    # Fallback to Django auth
+                    if not user and request.user.is_authenticated:
+                        user = request.user
+
+                    # Mark enrollment status for each course
+                    if user:
+                        enrolled_course_ids = set(
+                            Enrollment.objects.filter(user=user, is_active=True)
+                            .values_list('course_id', flat=True)
+                        )
+                        for course in courses_list:
+                            course.user_enrolled = course.id in enrolled_course_ids
+                        request.is_authenticated_user = True
+                    else:
+                        for course in courses_list:
+                            course.user_enrolled = False
+                        request.is_authenticated_user = False
+
                     context = {
                         'courses': courses_list,
                         'filters': {
@@ -239,8 +275,35 @@ def catalog(request):
         else:  # newest
             qs = qs.order_by('-published_date')
 
+    # Get authenticated user and check enrollment status for each course
+    session_user = request.session.get('user')
+    user = None
+    if session_user:
+        user_id = session_user.get('user_id')
+        user = User.objects.filter(id=user_id).first()
+
+    # Fallback to Django auth
+    if not user and request.user.is_authenticated:
+        user = request.user
+
+    # Convert to list and mark enrollment status
+    courses_list = list(qs)
+    if user:
+        enrolled_course_ids = set(
+            Enrollment.objects.filter(user=user, is_active=True)
+            .values_list('course_id', flat=True)
+        )
+        for course in courses_list:
+            course.user_enrolled = course.id in enrolled_course_ids
+        # Set request attribute for template compatibility
+        request.is_authenticated_user = True
+    else:
+        for course in courses_list:
+            course.user_enrolled = False
+        request.is_authenticated_user = False
+
     context = {
-        'courses': qs,
+        'courses': courses_list,
         'filters': {
             'q': q,
             'price_min': price_min or '',
@@ -258,12 +321,8 @@ def course_detail(request, course_slug):
     """Course detail page with enrollment option"""
     course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
-    # Check if user is already enrolled
-    session_user = request.session.get('user')
-    user_id = session_user.get('user_id')
-    user = User.objects.get(id=user_id)
-
-    enrollment = Enrollment.objects.filter(user=user, course=course).first()
+    # Check authentication and enrollment status
+    is_authenticated, is_enrolled, enrollment, user = _check_enrollment_and_auth(request, course)
 
     # Get course modules and lessons
     modules = course.modules.all().prefetch_related('lessons')
@@ -276,6 +335,8 @@ def course_detail(request, course_slug):
         'enrollment': enrollment,
         'modules': modules,
         'total_lessons': total_lessons,
+        'is_authenticated': is_authenticated,
+        'is_enrolled': is_enrolled,
     }
     return render(request, 'student_dash/course_detail.html', context)
 
