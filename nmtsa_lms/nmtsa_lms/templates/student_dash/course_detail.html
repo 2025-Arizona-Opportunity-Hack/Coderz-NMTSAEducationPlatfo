@@ -230,7 +230,7 @@
         <!-- Course Description -->
         <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
             <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.5rem * var(--font-scale));">About This Course</h2>
-            <p style="color: var(--text-primary); line-height: 1.8; font-size: calc(1rem * var(--font-scale)); white-space: pre-line;">{{ course.description }}</p>
+            <p style="color: var(--text-primary); line-height: 1.8; font-size: calc(1rem * var(--font-scale)); white-space: pre-line;">{{ course.description|safe }}</p>
         </div>
 
         <!-- Course Content / Modules -->
@@ -256,7 +256,7 @@
 
                     <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--border-color);">
                         <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); line-height: 1.6;">
-                            {{ module.description }}
+                            {{ module.description|safe }}
                         </p>
 
                         <!-- Lessons in Module -->
@@ -322,7 +322,7 @@
 
                     {% if course.published_by.teacher_profile.bio %}
                     <p style="color: var(--text-primary); line-height: 1.6;">
-                        {{ course.published_by.teacher_profile.bio }}
+                        {{ course.published_by.teacher_profile.bio|safe }}
                     </p>
                     {% endif %}
 

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django_ckeditor_5.fields import CKEditor5Field
 
 class User(AbstractUser):
     """
@@ -74,14 +75,8 @@ class TeacherProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='teacher_profile'
     )
-    bio = models.TextField(
-        blank=True,
-        help_text="Professional bio"
-    )
-    credentials = models.TextField(
-        blank=True,
-        help_text="Professional credentials (degrees, certifications)"
-    )
+    bio = CKEditor5Field('Bio', config_name='extends', blank=True)
+    credentials = CKEditor5Field('Credentials', config_name='extends', blank=True)
     resume = models.FileField(
         upload_to='teacher_resumes/',
         null=True,
@@ -100,10 +95,7 @@ class TeacherProfile(models.Model):
         default='pending',
         help_text="Admin verification status"
     )
-    verification_notes = models.TextField(
-        blank=True,
-        help_text="Admin notes about verification"
-    )
+    verification_notes = CKEditor5Field('Verification Notes', config_name='extends', blank=True)
     verified_at = models.DateTimeField(
         null=True,
         blank=True,
@@ -181,22 +173,10 @@ class StudentProfile(models.Model):
         blank=True,
         help_text="Age of care recipient"
     )
-    special_needs = models.TextField(
-        blank=True,
-        help_text="Special needs, conditions, or considerations for course recommendations"
-    )
-    learning_goals = models.TextField(
-        blank=True,
-        help_text="What the student hopes to learn/achieve"
-    )
-    interests = models.TextField(
-        blank=True,
-        help_text="Specific areas of interest for course recommendations"
-    )
-    accessibility_needs = models.TextField(
-        blank=True,
-        help_text="Any accessibility requirements for learning"
-    )
+    special_needs = CKEditor5Field('Special Needs', config_name='basic', blank=True)
+    learning_goals = CKEditor5Field('Learning Goals', config_name='basic', blank=True)
+    interests = CKEditor5Field('Interests', config_name='basic', blank=True)
+    accessibility_needs = CKEditor5Field('Accessibility Needs', config_name='basic', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

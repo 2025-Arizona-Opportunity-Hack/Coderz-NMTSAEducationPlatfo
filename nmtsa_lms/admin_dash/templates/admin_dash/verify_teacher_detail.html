@@ -51,7 +51,7 @@
         <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
             Professional Bio
         </h3>
-        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.bio }}</p>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.bio|safe }}</p>
     </div>
 
     <!-- Credentials -->
@@ -59,7 +59,7 @@
         <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
             Professional Credentials
         </h3>
-        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.credentials }}</p>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.credentials|safe }}</p>
     </div>
 
     <!-- Supporting Documents -->
