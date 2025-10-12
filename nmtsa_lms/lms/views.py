@@ -97,14 +97,19 @@ def chat_get_messages(request, room_id):
 	# Add any messages sent during this session
 	for msg in MOCK_MESSAGES:
 		if msg.get('room_id') == int(room_id):
+			# Preserve original message properties
+			# Only mark as own message if sender_id matches current user
+			msg_sender_id = msg.get('sender_id')
+			is_own = (msg_sender_id == user_id) if msg_sender_id is not None else msg.get('is_own_message', False)
+			
 			mock_messages.append({
 				'id': msg['id'],
-				'sender': user_name,
-				'sender_id': user_id,
+				'sender': msg.get('sender', user_name),
+				'sender_id': msg_sender_id,
 				'content': msg['content'],
 				'timestamp': msg['timestamp'],
-				'is_own_message': True,
-				'message_type': 'text'
+				'is_own_message': is_own,
+				'message_type': msg.get('message_type', 'text')
 			})
 	
 	return JsonResponse({
