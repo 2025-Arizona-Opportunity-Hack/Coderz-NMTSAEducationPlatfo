@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}NMTSA Learning - Professional Neurologic Music Therapy Education{% endblock %}
+
+{% block description %}Transform lives through professional neurologic music therapy education. Autism-friendly LMS for healthcare professionals, therapists, and families. Earn certifications online with accessible, sensory-aware design.{% endblock %}
+
+{% block keywords %}neurologic music therapy, NMT certification, autism therapy, music therapy education, professional development, healthcare education, autism-friendly learning, sensory-accessible platform, online courses{% endblock %}
+
+{% block og_title %}NMTSA Learning - Professional Neurologic Music Therapy Education{% endblock %}
+{% block og_description %}Professional neurologic music therapy education with autism-friendly design. Earn certifications online for autism support and healthcare.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section style="text-align: center; padding: var(--spacing-3xl) var(--spacing-xl); background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%); border-radius: var(--radius-xl); margin-bottom: var(--spacing-3xl); box-shadow: var(--shadow-lg);">
+    <h1 style="font-size: calc(3rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1;">
+        Welcome to NMTSA Learning
+    </h1>
+    <p style="font-size: calc(1.25rem * var(--font-scale)); color: var(--text-secondary); max-width: 700px; margin: 0 auto var(--spacing-2xl); line-height: 1.7; font-weight: 400;">
+        Professional education in neurologic music therapy for autism support, healthcare professionals, and families
+    </p>
+    <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+        {% if request.session.user %}
+            {% if request.session.user.role == 'student' %}
+            <a href="{% url 'student_dashboard' %}" class="btn btn-primary btn-lg" style="text-decoration: none; box-shadow: var(--shadow-md);">
+                Go to Dashboard
+            </a>
+            <a href="{% url 'student_catalog' %}" class="btn btn-outline btn-lg" style="text-decoration: none;">
+                Browse Courses
+            </a>
+            {% elif request.session.user.role == 'teacher' %}
+            <a href="{% url 'teacher_dashboard' %}" class="btn btn-primary btn-lg" style="text-decoration: none; box-shadow: var(--shadow-md);">
+                Teacher Dashboard
+            </a>
+            {% elif request.session.user.role == 'admin' %}
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary btn-lg" style="text-decoration: none; box-shadow: var(--shadow-md);">
+                Admin Dashboard
+            </a>
+            {% else %}
+            <a href="{% url 'select_role' %}" class="btn btn-primary btn-lg" style="text-decoration: none; box-shadow: var(--shadow-md);">
+                Complete Your Profile
+            </a>
+            {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg" style="text-decoration: none; box-shadow: var(--shadow-md);">
+            Get Started for Free
+        </a>
+        <a href="#about" class="btn btn-outline btn-lg" style="text-decoration: none;">
+            Learn More
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Who We Serve -->
+<section style="margin-bottom: var(--spacing-2xl);">
+    <h2 style="text-align: center; margin-bottom: var(--spacing-xl);">Who We Serve</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+        <!-- Healthcare Professionals -->
+        <div class="card" style="text-align: center; padding: var(--spacing-2xl); border: 1px solid var(--border-color);">
+            <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-lg); box-shadow: var(--shadow-md);">
+                <svg width="36" height="36" fill="none" stroke="var(--primary)" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: var(--spacing-md); font-weight: 700;">Healthcare Professionals</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); line-height: 1.7;">
+                Earn professional credits and certifications in neurologic music therapy techniques for working with individuals with autism and neurologic conditions.
+            </p>
+            <a href="/about/professionals/" style="color: var(--primary); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                Learn More
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Families -->
+        <div class="card" style="text-align: center; padding: var(--spacing-2xl); border: 1px solid var(--border-color);">
+            <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--secondary-light), var(--secondary)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-lg); box-shadow: var(--shadow-md);">
+                <svg width="36" height="36" fill="none" stroke="var(--secondary)" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: var(--spacing-md); font-weight: 700;">Families & Caregivers</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); line-height: 1.7;">
+                Access practical strategies and evidence-based approaches to support your loved ones with autism using music therapy principles at home.
+            </p>
+            <a href="/about/families/" style="color: var(--secondary); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                Learn More
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Educators -->
+        <div class="card" style="text-align: center; padding: var(--spacing-2xl); border: 1px solid var(--border-color);">
+            <div style="width: 72px; height: 72px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-lg); box-shadow: var(--shadow-md);">
+                <svg width="36" height="36" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: var(--spacing-md); font-weight: 700;">Educators & Therapists</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); line-height: 1.7;">
+                Create and share educational content about neurologic music therapy. Build your professional presence and generate revenue from your expertise.
+            </p>
+            <a href="/about/educators/" style="color: var(--accent); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                Learn More
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- About NMTSA -->
+<section style="background: var(--bg-card); padding: var(--spacing-3xl); border-radius: var(--radius-xl); border: 1px solid var(--border-color); margin-bottom: var(--spacing-3xl); box-shadow: var(--shadow-md);" id="about">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h2 style="text-align: center; margin-bottom: var(--spacing-xl); font-weight: 800;">About Neurologic Music Therapy</h2>
+        <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.8; margin-bottom: var(--spacing-xl);">
+            <strong style="color: var(--text-primary); font-weight: 700;">Neurologic Music Therapy (NMT)</strong> is a research-based treatment system that uses music and rhythm to improve brain function.
+            For individuals with autism, NMT can help develop:
+        </p>
+        <ul style="font-size: calc(1.0625rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.9; max-width: 600px; margin: 0 auto var(--spacing-2xl); list-style: none; padding: 0;">
+            <li style="margin-bottom: var(--spacing-md); padding-left: var(--spacing-lg); position: relative;">
+                <svg width="20" height="20" fill="none" stroke="var(--secondary)" stroke-width="2.5" viewBox="0 0 24 24" style="position: absolute; left: 0; top: 2px;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Motor skills and body awareness through rhythm-based movement
+            </li>
+            <li style="margin-bottom: var(--spacing-md); padding-left: var(--spacing-lg); position: relative;">
+                <svg width="20" height="20" fill="none" stroke="var(--secondary)" stroke-width="2.5" viewBox="0 0 24 24" style="position: absolute; left: 0; top: 2px;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Speech, language, and communication abilities
+            </li>
+            <li style="margin-bottom: var(--spacing-md); padding-left: var(--spacing-lg); position: relative;">
+                <svg width="20" height="20" fill="none" stroke="var(--secondary)" stroke-width="2.5" viewBox="0 0 24 24" style="position: absolute; left: 0; top: 2px;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Social interaction and emotional regulation
+            </li>
+            <li style="padding-left: var(--spacing-lg); position: relative;">
+                <svg width="20" height="20" fill="none" stroke="var(--secondary)" stroke-width="2.5" viewBox="0 0 24 24" style="position: absolute; left: 0; top: 2px;">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Independence and meaningful connections with others
+            </li>
+        </ul>
+        <p style="text-align: center;">
+            <a href="/#about" style="color: var(--primary); font-weight: 600; font-size: calc(1.0625rem * var(--font-scale)); display: inline-flex; align-items: center; gap: 6px;">
+                Learn More About NMTSA
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </p>
+    </div>
+</section>
+
+<!-- Platform Features -->
+<section style="margin-bottom: var(--spacing-2xl);">
+    <h2 style="text-align: center; margin-bottom: var(--spacing-xl);">Why Choose NMTSA Learning?</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+        <div style="text-align: center; padding: var(--spacing-lg);">
+            <svg width="48" height="48" fill="none" stroke="#7FA8C9" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-md);">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <h3 style="margin-bottom: var(--spacing-sm);">Expert-Led Courses</h3>
+            <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
+                Learn from certified NMT professionals with real-world experience
+            </p>
+        </div>
+
+        <div style="text-align: center; padding: var(--spacing-lg);">
+            <svg width="48" height="48" fill="none" stroke="#A8C9A8" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-md);">
+                <circle cx="12" cy="8" r="7"/>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+            </svg>
+            <h3 style="margin-bottom: var(--spacing-sm);">Professional Certificates</h3>
+            <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
+                Earn recognized certifications and continuing education credits
+            </p>
+        </div>
+
+        <div style="text-align: center; padding: var(--spacing-lg);">
+            <svg width="48" height="48" fill="none" stroke="#B8D4E6" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-md);">
+                <path d="M12 2v20M2 12h20"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <h3 style="margin-bottom: var(--spacing-sm);">Autism-Friendly Design</h3>
+            <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
+                Platform designed with sensory accessibility in mind
+            </p>
+        </div>
+
+        <div style="text-align: center; padding: var(--spacing-lg);">
+            <svg width="48" height="48" fill="none" stroke="#D9C9B3" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-md);">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <h3 style="margin-bottom: var(--spacing-sm);">Learn at Your Pace</h3>
+            <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
+                Self-paced courses accessible 24/7 from any device
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); padding: var(--spacing-3xl) var(--spacing-xl); border-radius: var(--radius-xl); text-align: center; color: white; box-shadow: var(--shadow-xl);">
+    <h2 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: white; font-weight: 800; letter-spacing: -0.02em;">
+        Ready to Get Started?
+    </h2>
+    <p style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-2xl); color: white; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7; font-weight: 400;">
+        Join thousands of professionals and families learning effective autism support strategies
+    </p>
+    <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+        <a href="/signup/" class="btn btn-lg" style="text-decoration: none; background: white; color: var(--primary); border-color: white; box-shadow: var(--shadow-lg); font-weight: 700;">
+            Sign Up for Free
+        </a>
+        <a href="/browse-courses/" class="btn btn-lg" style="text-decoration: none; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); font-weight: 600;">
+            Explore Courses
+        </a>
+    </div>
+</section>
+{% endblock %}
