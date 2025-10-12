@@ -24,6 +24,20 @@ class CourseForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields["tags"].initial = ", ".join(self.instance.tags.names())
 
+    def clean(self):
+        cleaned = super().clean()
+        price = cleaned.get("price")
+        # Automatically determine is_paid based on price value
+        if price is None or price <= 0:
+            # Free course
+            cleaned["price"] = 0
+            cleaned["is_paid"] = False
+        else:
+            # Paid course
+            cleaned["is_paid"] = True
+
+        return cleaned
+
     def save(self, commit: bool = True, teacher=None):
         course = super().save(commit=False)
         if teacher is not None:

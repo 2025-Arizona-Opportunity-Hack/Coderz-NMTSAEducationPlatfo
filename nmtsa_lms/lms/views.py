@@ -157,7 +157,7 @@ def chat_send_message(request, room_id):
 		}
 		MOCK_MESSAGES.append(message)
 		
-		# Generate AI response using Supermemory
+		# Generate AI response using Supermemory Memory Router
 		if int(room_id) == 1:  # Support chat
 			time.sleep(0.3)
 			
@@ -167,40 +167,47 @@ def chat_send_message(request, room_id):
 			
 			if supermemory:
 				try:
-					# Generate AI response with memory context
+					# Generate AI response with Memory Router
+					# Memory Router automatically searches and injects relevant memories
 					chat_response = supermemory.chat_completion(
 						messages=[
-							{
-								'role': 'system',
-								'content': 'You are a helpful NMTSA LMS support assistant. Help users with course-related questions, enrollment, and general support.'
-							},
 							{
 								'role': 'user',
 								'content': content
 							}
 						],
-						use_memory=True
+						user_id=str(user_id),
+						temperature=0.7
 					)
 					
 					if chat_response.get('success'):
 						ai_response_content = chat_response.get('response')
 						
-						# Add this interaction to memory for future context
+						# Store this interaction in memory for future context
+						# Using user-specific container tag for personalized memory
 						supermemory.add_memory(
-							content=f"User asked: {content}. Assistant responded: {ai_response_content}",
+							content=f"User Question: {content}\n\nAssistant Response: {ai_response_content}",
 							metadata={
 								'type': 'chat_interaction',
 								'user_id': str(user_id),
-								'room_id': str(room_id)
-							}
+								'room_id': str(room_id),
+								'timestamp': timezone.now().isoformat()
+							},
+							container_tag=f'nmtsa-chat-{user_id}',
+							custom_id=f'chat-{user_id}-{timezone.now().timestamp()}'
 						)
+					else:
+						# Log error but continue
+						error_msg = chat_response.get('error', 'Unknown error')
+						print(f"[Chat] AI response error: {error_msg}")
+						
 				except Exception as e:
 					print(f"[Chat] Supermemory error: {e}")
 					ai_response_content = None
 			
-			# Fallback to simple response if Supermemory unavailable
+			# Fallback to helpful response if Supermemory unavailable
 			if not ai_response_content:
-				ai_response_content = 'Thanks for your message! An admin will respond shortly.'
+				ai_response_content = 'Hi! I\'m the NMTSA LMS Assistant. I can help you find courses, answer questions about the platform, and guide you through neurologic music therapy education. What would you like to know?'
 			
 			response_msg = {
 				'id': len(MOCK_MESSAGES) + 101,

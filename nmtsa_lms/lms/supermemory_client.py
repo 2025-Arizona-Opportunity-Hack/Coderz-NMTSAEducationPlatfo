@@ -1,7 +1,7 @@
 """
 Supermemory Client for NMTSA LMS
 Provides memory-enhanced AI capabilities for chat and course recommendations
-Uses the official Supermemory Python SDK
+Uses the official Supermemory Python SDK with Memory Router for LLM integration
 """
 import os
 import logging
@@ -15,43 +15,127 @@ try:
     SUPERMEMORY_AVAILABLE = True
 except ImportError:
     SUPERMEMORY_AVAILABLE = False
-    print("Warning: supermemory package not installed. Install with: pip install --pre supermemory")
+    logger.warning("supermemory package not installed. Install with: pip install --pre supermemory")
+
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    logger.warning("openai package required for Gemini integration. Install with: pip install openai")
+
+
+# System prompt that restricts chatbot to NMTSA LMS domain
+NMTSA_SYSTEM_PROMPT = """You are the NMTSA LMS Assistant, a helpful AI chatbot for the Neurologic Music Therapy Student Association Learning Management System (NMTSA LMS).
+
+YOUR ROLE:
+- Help users discover and learn about neurologic music therapy courses
+- Answer questions about the NMTSA LMS platform features and functionality
+- Provide information about course enrollment, pricing, and content
+- Guide users through the platform navigation
+- Answer frequently asked questions about the website
+
+STRICT GUIDELINES:
+1. ONLY discuss topics related to:
+   - NMTSA LMS website and platform features
+   - Available courses on neurologic music therapy
+   - How to enroll, navigate, and use the platform
+   - Teacher/student roles and verification process
+   - Course content, modules, and lessons
+   - Pricing and payment information
+   
+2. ALWAYS search your memory FIRST before answering questions about courses or platform features
+
+3. If asked about topics OUTSIDE this domain:
+   - Politely redirect: "I'm specifically designed to help with the NMTSA LMS platform and neurologic music therapy courses. For that topic, I recommend checking other resources. How can I help you with our learning platform?"
+
+4. When discussing courses:
+   - Provide accurate information from your memory
+   - Mention course titles, descriptions, and what students will learn
+   - Be specific about whether courses are free or paid
+   - Guide users on how to enroll
+
+5. Communication style:
+   - Be friendly, clear, and professional
+   - Use natural, conversational language
+   - Ask clarifying questions if needed
+   - Provide helpful next steps
+
+REMEMBER: You represent NMTSA LMS. Stay on-topic and be helpful within your domain!"""
 
 
 class SupermemoryClient:
     """
     Client for interacting with Supermemory API using official SDK
-    Provides methods for chat completion, memory management, and semantic search
+    Provides memory-enhanced chat using Google Gemini via Memory Router
+    
+    Uses Google Gemini (gemini-pro) for natural language generation with
+    Supermemory's memory context for accurate, domain-specific responses.
     """
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(
+        self, 
+        api_key: Optional[str] = None, 
+        gemini_api_key: Optional[str] = None
+    ):
         """
-        Initialize Supermemory client
+        Initialize Supermemory client with Gemini Memory Router
         
         Args:
             api_key: Supermemory API key (defaults to env variable or Django settings)
+            gemini_api_key: Google Gemini API key for Memory Router
         """
         if not SUPERMEMORY_AVAILABLE:
             raise ImportError("supermemory package not installed. Run: pip install --pre supermemory")
         
-        # Try multiple sources for API key
-        self.api_key = (
+        if not OPENAI_AVAILABLE:
+            raise ImportError("openai package required for Gemini integration. Run: pip install openai")
+        
+        # Get Supermemory API key
+        self.supermemory_api_key = (
             api_key or 
             os.getenv("SUPERMEMORY_API_KEY") or 
             getattr(settings, 'SUPERMEMORY_API_KEY', None)
         )
         
-        if not self.api_key:
+        if not self.supermemory_api_key:
             raise ValueError("SUPERMEMORY_API_KEY must be set in environment or Django settings")
         
-        # Initialize the official SDK client
-        self.client = Supermemory(api_key=self.api_key)
+        # Get Gemini API key
+        self.gemini_api_key = (
+            gemini_api_key or
+            os.getenv("GEMINI_API_KEY") or
+            getattr(settings, 'GEMINI_API_KEY', None)
+        )
+        
+        if not self.gemini_api_key:
+            raise ValueError(
+                "GEMINI_API_KEY must be set for chat functionality. "
+                "Get free API key at: https://makersuite.google.com/app/apikey"
+            )
+        
+        # Initialize Supermemory client for memory operations
+        self.memory_client = Supermemory(api_key=self.supermemory_api_key)
+        
+        # Initialize Gemini client with Memory Router
+        # Uses OpenAI-compatible API via Supermemory's Memory Router
+        # Route: https://api.supermemory.ai/v3/https://generativelanguage.googleapis.com/v1beta
+        self.chat_client = OpenAI(
+            api_key=self.gemini_api_key,
+            base_url="https://api.supermemory.ai/v3/https://generativelanguage.googleapis.com/v1beta",
+            default_headers={
+                "x-supermemory-api-key": self.supermemory_api_key,
+                "x-sm-user-id": "nmtsa-lms-system"
+            }
+        )
+        
+        logger.info("Initialized Supermemory with Google Gemini (free tier available)")
     
     def search_memories(
         self, 
         query: str, 
         limit: int = 10, 
-        container_tag: Optional[str] = None
+        container_tags: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
         """
         Search memories using semantic search via official SDK
@@ -59,35 +143,48 @@ class SupermemoryClient:
         Args:
             query: Search query
             limit: Maximum number of results
-            container_tag: Optional container tag to filter results
+            container_tags: Optional list of container tags to filter results
             
         Returns:
-            List of memory objects with content and metadata
+            List of memory objects with content, metadata, and score
         """
         try:
+            # Build search parameters
+            search_params = {
+                "q": query,
+                "limit": limit
+            }
+            
+            if container_tags:
+                search_params["container_tags"] = container_tags
+            
             # Use SDK's search.execute method
-            response = self.client.search.execute(
-                q=query,
-                limit=limit,
-                container_tags=[container_tag]
-            )
+            response = self.memory_client.search.execute(**search_params)
             
             # Convert response to list of dicts
             results = []
             if hasattr(response, 'results'):
                 for memory in response.results:
-                    # Handle both object and dict responses
-                    if hasattr(memory, 'to_dict'):
-                        memory = memory.to_dict()
+                    # Convert to dict if it's a Pydantic model
+                    if hasattr(memory, 'model_dump'):
+                        memory_dict = memory.model_dump()
+                    elif hasattr(memory, 'to_dict'):
+                        memory_dict = memory.to_dict()
                     elif hasattr(memory, '__dict__'):
-                        memory = vars(memory)
-                    if memory['score'] > 0.60:
-                        results.append(memory)
+                        memory_dict = vars(memory)
+                    else:
+                        memory_dict = dict(memory)
+                    
+                    # Filter by relevance score (0.60 threshold)
+                    score = memory_dict.get('score', 0)
+                    if score > 0.60:
+                        results.append(memory_dict)
             
+            logger.info(f"Search for '{query}' returned {len(results)} relevant results")
             return results
                 
         except Exception as e:
-            print(f"Error searching memories: {e}")
+            logger.error(f"Error searching memories: {e}")
             return []
     
     def add_memory(
@@ -98,16 +195,19 @@ class SupermemoryClient:
         custom_id: Optional[str] = None
     ) -> Optional[str]:
         """
-        Add a new document to Supermemory (will be chunked into memories)
+        Add a new memory to Supermemory (with upsert support via custom_id)
+        
+        Using the same custom_id will UPDATE the existing memory instead of creating duplicates.
+        This enables idempotent operations.
         
         Args:
-            content: Document content to store
+            content: Memory content to store
             metadata: Optional metadata dict (strings, numbers, booleans only)
-            container_tag: Optional tag to group related memories (recommended: single tag)
-            custom_id: Optional custom identifier for deduplication/updates
+            container_tag: Optional tag to group related memories
+            custom_id: Optional custom identifier for deduplication/upserts (RECOMMENDED)
             
         Returns:
-            Document ID if successful, None otherwise
+            Memory ID if successful, None otherwise
         """
         try:
             # Build payload for SDK
@@ -120,88 +220,92 @@ class SupermemoryClient:
                 payload['metadata'] = metadata
             
             if custom_id:
+                # Using custom_id enables upsert behavior
                 payload['custom_id'] = custom_id
             
-            # Use SDK's documents endpoint (method name may vary - adjust if needed)
-            if hasattr(self.client, 'documents') and hasattr(self.client.documents, 'create'):
-                response = self.client.documents.create(**payload)
-            else:
-                # Fallback: use memories.add if documents.create doesn't exist
-                response = self.client.memories.add(**payload)
+            # Use SDK's memories.add method (correct as per docs)
+            response = self.memory_client.memories.add(**payload)
             
-            # Return document ID
+            # Return memory ID
+            memory_id = None
             if hasattr(response, 'id'):
-                return response.id
-            elif isinstance(response, dict) and 'id' in response:
-                return response['id']
+                memory_id = response.id
+            elif hasattr(response, 'model_dump'):
+                memory_id = response.model_dump().get('id')
+            elif isinstance(response, dict):
+                memory_id = response.get('id')
             
-            return None
+            if memory_id:
+                logger.info(f"Added/updated memory with ID: {memory_id}")
+            
+            return memory_id
                 
         except Exception as e:
-            print(f"Error adding memory: {e}")
+            logger.error(f"Error adding memory: {e}")
             return None
     
     def chat_completion(
         self, 
         messages: List[Dict[str, str]], 
-        use_memory: bool = True,
-        container_tag: Optional[str] = None
-    ) -> Optional[str]:
+        user_id: Optional[str] = None,
+        model: str = "gemini-pro",
+        temperature: float = 0.7
+    ) -> Dict[str, Any]:
         """
-        Generate chat completion with optional memory context
+        Generate chat completion using Google Gemini via Memory Router
+        
+        Memory Router automatically injects relevant memories from the conversation context.
+        Uses Google Gemini with free tier (60 requests/minute).
         
         Args:
             messages: List of message dictionaries with 'role' and 'content'
-            use_memory: Whether to use memory context (default: True)
-            container_tag: Optional container tag to filter memory search
+            user_id: Optional user identifier for memory context (default: system-wide)
+            model: Gemini model to use (default: "gemini-pro")
+                   Options: "gemini-pro", "gemini-1.5-pro", "gemini-1.5-flash"
+            temperature: Creativity level 0-1 (default: 0.7)
             
         Returns:
-            AI response text, or None if error
+            Dict with 'success' (bool), 'response' (str), and optional 'error' (str)
         """
         try:
-            # Extract the user's last message for context retrieval
-            user_message = next(
-                (msg['content'] for msg in reversed(messages) if msg['role'] == 'user'),
-                ""
+            # Prepend system prompt for domain restriction
+            enhanced_messages = [
+                {"role": "system", "content": NMTSA_SYSTEM_PROMPT}
+            ] + messages
+            
+            # Set user_id for memory context (optional but recommended)
+            headers = {}
+            if user_id:
+                headers["x-sm-user-id"] = f"nmtsa-user-{user_id}"
+            
+            # Create chat completion via Memory Router with Gemini
+            # Memory Router will automatically search and inject relevant memories
+            response = self.chat_client.chat.completions.create(
+                model=model,
+                messages=enhanced_messages,
+                temperature=temperature,
+                max_tokens=500,  # Reasonable limit for chat responses
+                extra_headers=headers if headers else None
             )
             
-            # Search for relevant memories if enabled
-            enhanced_messages = messages.copy()
-            if use_memory and user_message:
-                memories = self.search_memories(user_message, limit=5, container_tag=container_tag)
-                
-                if memories:
-                    # Extract content from memory results
-                    context_parts = []
-                    for memory in memories[:3]:  # Limit to top 3
-                        content = memory.get('content', '')
-                        if content:
-                            context_parts.append(content)
-                    
-                    if context_parts:
-                        context = "\n".join(context_parts)
-                        
-                        # Add system message with memory context
-                        enhanced_messages.insert(0, {
-                            'role': 'system',
-                            'content': f'You are a helpful AI assistant for the NMTSA LMS platform, specializing in neurologic music therapy education. Use the following relevant context from memory to provide accurate answers:\n\n{context}'
-                        })
+            # Extract response content
+            assistant_message = response.choices[0].message.content
             
-            # TODO: Integrate with actual LLM API (OpenAI, Anthropic, etc.)
-            # For now, return a helpful mock response
-            # Example integration:
-            # import openai
-            # response = openai.ChatCompletion.create(
-            #     model="gpt-4",
-            #     messages=enhanced_messages
-            # )
-            # return response.choices[0].message.content
+            logger.info(f"Chat completion successful with Gemini (user: {user_id or 'system'})")
             
-            return "I'm an AI assistant for the NMTSA LMS platform, powered by Supermemory. I can help you find courses, answer questions about neurologic music therapy education, and assist with the learning platform. How can I help you today?"
+            return {
+                "success": True,
+                "response": assistant_message,
+                "provider": "gemini"
+            }
             
         except Exception as e:
-            print(f"Error in chat completion: {e}")
-            return None
+            logger.error(f"Error in Gemini chat completion: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "response": "I'm sorry, I'm having trouble processing your request right now. Please try again."
+            }
     
     def index_course(self, content: str, metadata: Dict[str, Any]) -> Optional[str]:
         """
@@ -300,7 +404,7 @@ class SupermemoryClient:
         return self.search_memories(
             query=query,
             limit=limit,
-            container_tag=container_tag
+            container_tags=[container_tag]  # Pass as list
         )
 
     def multi_tier_search(
@@ -364,7 +468,7 @@ class SupermemoryClient:
             memories = self.search_memories(
                 query=query,
                 limit=limit,
-                container_tag='nmtsa-courses'
+                container_tags=['nmtsa-courses']  # Pass as list
             )
 
             # Extract course data from memories
@@ -385,10 +489,11 @@ class SupermemoryClient:
                         'tags': metadata.get('tags', [])
                     })
 
+            logger.info(f"Found {len(courses)} courses for query: {query}")
             return courses
 
         except Exception as e:
-            print(f"Course search error: {e}")
+            logger.error(f"Course search error: {e}")
             return []
 
 
@@ -398,21 +503,23 @@ _supermemory_client: Optional[SupermemoryClient] = None
 
 def get_supermemory_client() -> Optional[SupermemoryClient]:
     """
-    Get or create singleton Supermemory client instance
+    Get or create singleton Supermemory client instance with Google Gemini
     
     Returns:
         SupermemoryClient instance if configured and SDK available, None otherwise
     """
     global _supermemory_client
     
-    if not SUPERMEMORY_AVAILABLE:
+    if not SUPERMEMORY_AVAILABLE or not OPENAI_AVAILABLE:
+        logger.warning("Supermemory or openai package not available")
         return None
     
     if _supermemory_client is None:
         try:
             _supermemory_client = SupermemoryClient()
+            logger.info("Supermemory client initialized with Google Gemini")
         except (ValueError, ImportError) as e:
-            print(f"Supermemory not configured: {e}")
+            logger.error(f"Supermemory not configured: {e}")
             return None
     
     return _supermemory_client
