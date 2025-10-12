@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',  # For SEO sitemap generation
     'authentication',
     'lms',
     'student_dash',
@@ -84,6 +85,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'nmtsa_lms.context_processors.breadcrumbs',  # Auto breadcrumbs
+                'nmtsa_lms.context_processors.site_info',    # Site-wide info
             ],
         },
     },

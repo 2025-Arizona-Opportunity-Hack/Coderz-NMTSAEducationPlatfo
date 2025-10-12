@@ -1,0 +1,102 @@
+# robots.txt for NMTSA Learning Platform
+# Generated: October 11, 2025
+
+# Default rule - allow all search engines
+User-agent: *
+
+# Allow public pages
+Allow: /
+Allow: /static/
+Allow: /media/videos/
+Allow: /media/blog_images/
+
+# Disallow admin and authentication pages
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /admin-dash/
+Disallow: /student-dash/
+Disallow: /teacher-dash/
+Disallow: /student/
+Disallow: /teacher/
+
+# Disallow user dashboards and private content
+Disallow: /authentication/
+Disallow: /select-role/
+Disallow: /onboarding/
+Disallow: /logout/
+Disallow: /callback/
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /lms/api/
+
+# Disallow search and filter pages (to prevent duplicate content)
+Disallow: /*?*search=
+Disallow: /*?*filter=
+Disallow: /*?*page=
+
+# Disallow media upload directories (except public videos/images)
+Disallow: /media/resumes/
+Disallow: /media/certifications/
+Disallow: /media/transcripts/
+
+# Allow specific public course pages (will be in sitemap)
+Allow: /courses/
+Allow: /catalog/
+
+# Sitemap location
+Sitemap: https://nmtsalearning.com/sitemap.xml
+Sitemap: https://nmtsalearning.com/sitemap-courses.xml
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1
+
+# Specific rules for different bots
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /student/
+Disallow: /teacher/
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /student/
+Disallow: /teacher/
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+# Block AI scrapers (optional - uncomment if desired)
+# User-agent: GPTBot
+# Disallow: /
+# 
+# User-agent: ChatGPT-User
+# Disallow: /
+# 
+# User-agent: CCBot
+# Disallow: /
+# 
+# User-agent: anthropic-ai
+# Disallow: /
+# 
+# User-agent: Claude-Web
+# Disallow: /
+
+# Block spam bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: AhrefsSiteAudit
+Disallow: /

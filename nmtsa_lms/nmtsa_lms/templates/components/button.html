@@ -1,4 +1,4 @@
-{# Reusable Button Component with Loading States
+{# Reusable Button Component - Responsive & Accessible
    Usage:
    {% include 'components/button.html' with text='Click Me' variant='primary' size='md' href='#' %}
 
@@ -12,78 +12,76 @@
    - disabled: true|false (default: false)
    - loading: true|false - Show loading spinner (default: false)
    - id: Button ID for JavaScript targeting (optional)
-   - icon: Icon name to show before text (optional)
+   - icon: Icon SVG path (optional)
+   - aria_label: Custom ARIA label (optional)
 #}
 
 {% if href %}
     <a href="{{ href }}"
        {% if id %}id="{{ id }}"{% endif %}
-       class="btn btn-{{ variant|default:'primary' }} {% if size == 'sm' %}btn-sm{% elif size == 'lg' %}btn-lg{% endif %}"
+       class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+              {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md
+              {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md
+              {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light
+              {% elif variant == 'success' %}bg-[color:var(--color-success)] text-white hover:opacity-90 shadow-md
+              {% elif variant == 'danger' %}bg-[color:var(--color-error)] text-white hover:opacity-90 shadow-md
+              {% elif variant == 'warning' %}bg-[color:var(--color-warning)] text-white hover:opacity-90 shadow-md
+              {% else %}bg-primary text-white hover:bg-primary-hover shadow-md{% endif %}
+              {% if size == 'sm' %}text-sm px-3 py-1.5
+              {% elif size == 'lg' %}text-lg px-6 py-3
+              {% else %}text-base px-4 py-2{% endif %}"
        {% if onclick %}onclick="{{ onclick }}"{% endif %}
-       {% if disabled %}aria-disabled="true" style="opacity: 0.6; pointer-events: none; cursor: not-allowed;"{% endif %}
-       style="display: inline-flex; align-items: center; gap: var(--spacing-sm); justify-content: center; text-decoration: none; position: relative;">
+       {% if disabled %}aria-disabled="true" class="opacity-60 pointer-events-none cursor-not-allowed"{% endif %}
+       {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
+       role="button">
 
         {% if loading %}
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="animation: spin 2s linear infinite;" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" opacity="0.25"/>
-                <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
-            </svg>
-        {% elif icon %}
-            {% include 'components/icon.html' with name=icon size=16 %}
-        {% endif %}
-
-        <span>{{ text }}</span>
-    </a>
-{% else %}
-    <button type="{{ type|default:'button' }}"
-            {% if id %}id="{{ id }}"{% endif %}
-            class="btn btn-{{ variant|default:'primary' }} {% if size == 'sm' %}btn-sm{% elif size == 'lg' %}btn-lg{% endif %}"
-            {% if onclick %}onclick="{{ onclick }}"{% endif %}
-            {% if disabled or loading %}disabled{% endif %}
-            style="display: inline-flex; align-items: center; gap: var(--spacing-sm); justify-content: center; position: relative; {% if disabled or loading %}opacity: 0.6; cursor: not-allowed;{% else %}cursor: pointer;{% endif %}">
-
-        {% if loading %}
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="animation: spin 2s linear infinite;" aria-hidden="true">
+            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" opacity="0.25"/>
                 <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
             </svg>
             <span>Processing...</span>
         {% else %}
             {% if icon %}
-                {% include 'components/icon.html' with name=icon size=16 %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    {{ icon|safe }}
+                </svg>
+            {% endif %}
+            <span>{{ text }}</span>
+        {% endif %}
+    </a>
+{% else %}
+    <button type="{{ type|default:'button' }}"
+            {% if id %}id="{{ id }}"{% endif %}
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+                   {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'success' %}bg-[color:var(--color-success)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'danger' %}bg-[color:var(--color-error)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'warning' %}bg-[color:var(--color-warning)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% else %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed{% endif %}
+                   {% if size == 'sm' %}text-sm px-3 py-1.5
+                   {% elif size == 'lg' %}text-lg px-6 py-3
+                   {% else %}text-base px-4 py-2{% endif %}"
+            {% if onclick %}onclick="{{ onclick }}"{% endif %}
+            {% if disabled or loading %}disabled{% endif %}
+            {% if aria_label %}aria-label="{{ aria_label }}"{% else %}aria-label="{{ text }}"{% endif %}>
+
+        {% if loading %}
+            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" role="status">
+                <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
+            </svg>
+            <span>Processing...</span>
+            <span class="sr-only">Loading, please wait</span>
+        {% else %}
+            {% if icon %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    {{ icon|safe }}
+                </svg>
             {% endif %}
             <span>{{ text }}</span>
         {% endif %}
     </button>
 {% endif %}
-
-<style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-    svg {
-        animation: none !important;
-    }
-}
-
-/* Button focus state for accessibility */
-.btn:focus {
-    outline: 3px solid var(--primary);
-    outline-offset: 2px;
-}
-
-/* Button hover state (subtle) */
-.btn:hover:not(:disabled):not([aria-disabled="true"]) {
-    filter: brightness(0.95);
-}
-
-/* Button pressed state */
-.btn:active:not(:disabled):not([aria-disabled="true"]) {
-    transform: translateY(1px);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-}
-</style>

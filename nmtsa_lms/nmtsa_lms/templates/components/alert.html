@@ -1,166 +1,75 @@
-{# Reusable Alert Component with Icons
+{# Reusable Alert Component - Accessible with ARIA live regions
    Usage:
-   {% include 'components/alert.html' with type='success' message='Operation completed successfully!' %}
+   {% include 'components/alert.html' with message='Success!' type='success' %}
 
    Parameters:
-   - type: success|info|warning|error (required)
    - message: Alert message text (required)
+   - type: success|info|warning|error (default: info)
    - dismissible: true|false - Show close button (default: false)
-   - auto_dismiss: true|false - Auto-dismiss after 5 seconds (default: false)
+   - icon: true|false - Show icon (default: true)
+   - title: Optional title for the alert
+   - id: Alert ID for JavaScript targeting (optional)
 #}
 
-<div class="alert alert-{{ type }}"
+<div {% if id %}id="{{ id }}"{% endif %}
+     class="flex items-start gap-3 p-4 rounded-lg border-2 mb-4
+            {% if type == 'success' %}bg-[color:var(--color-success-bg)] border-[color:var(--color-success)] text-[color:var(--color-success)]
+            {% elif type == 'warning' %}bg-[color:var(--color-warning-bg)] border-[color:var(--color-warning)] text-[color:var(--color-warning)]
+            {% elif type == 'error' %}bg-[color:var(--color-error-bg)] border-[color:var(--color-error)] text-[color:var(--color-error)]
+            {% else %}bg-[color:var(--color-info-bg)] border-[color:var(--color-info)] text-[color:var(--color-info)]{% endif %}"
      role="alert"
      aria-live="{% if type == 'error' %}assertive{% else %}polite{% endif %}"
-     id="alert-{{ type }}-{{ forloop.counter|default:'1' }}"
-     style="
-         display: flex;
-         align-items: start;
-         gap: var(--spacing-md);
-         padding: var(--spacing-lg);
-         border-radius: var(--radius-md);
-         border: 2px solid;
-         margin-bottom: var(--spacing-md);
-         {% if type == 'success' %}
-             background: #E8F5E9;
-             border-color: #66BB6A;
-             color: #2E7D32;
-         {% elif type == 'error' %}
-             background: #FFEBEE;
-             border-color: #EF5350;
-             color: #C62828;
-         {% elif type == 'warning' %}
-             background: #FFF3E0;
-             border-color: #FFA726;
-             color: #E65100;
-         {% else %}
-             background: #E3F2FD;
-             border-color: #42A5F5;
-             color: #1565C0;
-         {% endif %}
-     ">
-
+     aria-atomic="true">
+    
     <!-- Icon -->
-    <div style="flex-shrink: 0; margin-top: 2px;">
+    {% if icon %}
+    <div class="flex-shrink-0 mt-0.5" aria-hidden="true">
         {% if type == 'success' %}
-            <!-- Success Checkmark Circle -->
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m9 12 2 2 4-4"/>
-            </svg>
-        {% elif type == 'error' %}
-            <!-- Error X Circle -->
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 12l2 2 4-4"/>
+        </svg>
         {% elif type == 'warning' %}
-            <!-- Warning Triangle -->
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m10.29 3.86 8.64 16.28c.35.67-.07 1.49-.82 1.49H5.89c-.75 0-1.17-.82-.82-1.49L13.7 3.86a.967.967 0 0 1 1.68 0z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/>
-                <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        {% elif type == 'error' %}
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
         {% else %}
-            <!-- Info Circle -->
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="16" x2="12" y2="12"/>
-                <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4M12 8h.01"/>
+        </svg>
         {% endif %}
     </div>
-
-    <!-- Message Content -->
-    <div style="flex: 1; font-size: calc(1rem * var(--font-scale)); line-height: 1.6;">
-        {{ message|safe }}
+    {% endif %}
+    
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+        {% if title %}
+        <h4 class="text-base font-bold mb-1">{{ title }}</h4>
+        {% endif %}
+        <p class="text-sm sm:text-base leading-relaxed {% if type == 'success' %}text-[color:var(--color-success)]{% elif type == 'warning' %}text-[color:var(--color-warning)]{% elif type == 'error' %}text-[color:var(--color-error)]{% else %}text-[color:var(--color-info)]{% endif %}">
+            {{ message }}
+        </p>
     </div>
-
+    
     <!-- Dismiss Button -->
     {% if dismissible %}
-    <button onclick="dismissAlert(this)"
-            style="
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-                margin-left: var(--spacing-md);
-                min-width: 24px;
-                min-height: 24px;
-                flex-shrink: 0;
-                color: currentColor;
-                opacity: 0.7;
-            "
-            aria-label="Close alert"
-            onmouseenter="this.style.opacity='1'"
-            onmouseleave="this.style.opacity='0.7'">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <button type="button"
+            class="flex-shrink-0 p-1 rounded hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-focus min-h-touch min-w-touch"
+            onclick="this.parentElement.remove()"
+            aria-label="Dismiss alert">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
     </button>
     {% endif %}
-
-    {% if auto_dismiss %}
-    <!-- Auto-dismiss Progress Bar -->
-    <div style="
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: currentColor;
-        opacity: 0.3;
-        animation: shrink 5s linear forwards;
-    "></div>
-    {% endif %}
 </div>
-
-{% if auto_dismiss or dismissible %}
-<script>
-function dismissAlert(button) {
-    const alert = button.closest('.alert');
-    if (alert) {
-        alert.style.opacity = '0';
-        alert.style.transform = 'translateY(-10px)';
-        setTimeout(() => alert.remove(), 300);
-    }
-}
-
-{% if auto_dismiss %}
-// Auto-dismiss after 5 seconds
-setTimeout(() => {
-    const alert = document.getElementById('alert-{{ type }}-{{ forloop.counter|default:'1' }}');
-    if (alert) {
-        alert.style.opacity = '0';
-        alert.style.transform = 'translateY(-10px)';
-        setTimeout(() => alert.remove(), 300);
-    }
-}, 5000);
-{% endif %}
-</script>
-
-<style>
-@keyframes shrink {
-    from { width: 100%; }
-    to { width: 0%; }
-}
-
-/* Smooth transitions for dismiss */
-.alert {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    .alert {
-        transition: none !important;
-    }
-    @keyframes shrink {
-        from { width: 100%; }
-        to { width: 100%; }
-    }
-}
-</style>
-{% endif %}

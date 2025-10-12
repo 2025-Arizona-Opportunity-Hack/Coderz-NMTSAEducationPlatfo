@@ -1,0 +1,46 @@
+{
+  "name": "NMTSA Learning - Neurologic Music Therapy Education",
+  "short_name": "NMTSA Learning",
+  "description": "Professional neurologic music therapy education for autism support, healthcare professionals, and families",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#CC9300",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/images/favicons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/images/favicons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/images/favicons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "health", "lifestyle"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Courses",
+      "short_name": "Courses",
+      "description": "Explore available courses",
+      "url": "/student/catalog/",
+      "icons": [
+        {
+          "src": "/static/images/favicons/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}
