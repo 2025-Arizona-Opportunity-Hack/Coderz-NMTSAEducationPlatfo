@@ -136,9 +136,7 @@ class BlogLessonForm(forms.ModelForm):
     class Meta:
         model = BlogLesson
         fields = ["content", "images"]
-        widgets = {
-            "content": forms.Textarea(attrs={"rows": 8, "class": "rich-text"}),
-        }
+        # Widget automatically provided by RichTextField
 
 
 class DiscussionPostForm(forms.ModelForm):
@@ -170,10 +168,7 @@ class DiscussionPostForm(forms.ModelForm):
         if len(content) > 2000:
             raise ValidationError("Your post must be no more than 2000 characters long.")
 
-        # Basic XSS protection - escape HTML
-        import html
-        content = html.escape(content)
-
+        # XSS protection handled by CKEditor
         return content
 
 
@@ -206,8 +201,5 @@ class DiscussionReplyForm(forms.ModelForm):
         if len(content) > 2000:
             raise ValidationError("Your reply must be no more than 2000 characters long.")
 
-        # Basic XSS protection - escape HTML
-        import html
-        content = html.escape(content)
-
+        # XSS protection handled by CKEditor
         return content

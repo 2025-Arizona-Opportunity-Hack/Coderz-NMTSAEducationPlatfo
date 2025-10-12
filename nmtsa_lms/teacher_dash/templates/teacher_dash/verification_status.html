@@ -13,7 +13,7 @@
         <p><strong>Status:</strong> {{ profile.get_verification_status_display }}</p>
         <p><strong>Submitted:</strong> {{ profile.created_at|date:"M d, Y" }}</p>
         {% if profile.verification_notes %}
-        <p><strong>Admin Notes:</strong> {{ profile.verification_notes }}</p>
+        <p><strong>Admin Notes:</strong> {{ profile.verification_notes|safe }}</p>
         {% endif %}
         <p style="margin-top: var(--spacing-lg);">If you need to update your documents, visit <a href="{% url 'teacher_onboarding' %}">Teacher Onboarding</a>.</p>
     {% else %}
