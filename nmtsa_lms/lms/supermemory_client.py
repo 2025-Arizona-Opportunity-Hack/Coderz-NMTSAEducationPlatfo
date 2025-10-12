@@ -248,8 +248,8 @@ class SupermemoryClient:
         self, 
         messages: List[Dict[str, str]], 
         user_id: Optional[str] = None,
-        model: str = "gemini-pro",
-        temperature: float = 0.7
+        model: str = "gemini-2.5-flash",
+        temperature: float = 0.2
     ) -> Dict[str, Any]:
         """
         Generate chat completion using Google Gemini via Memory Router
