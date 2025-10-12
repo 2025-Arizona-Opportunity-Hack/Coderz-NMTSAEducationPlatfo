@@ -426,3 +426,27 @@ python manage.py test
 ---
 
 Built for NMTSA to reduce administrative burden, create new revenue streams, and provide better support for families and healthcare professionals through evidence-based educational content.
+
+## Hackathon & Team Info
+
+Please replace the placeholder values below with your real links and names before submission.
+
+- Team name: NMTSA-LMS Team
+- Team members: Alice Example, Bob Example, Carol Example (replace with real names)
+- Slack channel: #nmtsa-lms (replace with your workspace channel or invite link)
+
+Problem statement
+- Provide an accessible, trackable online learning platform for neurologic music therapy education that supports dual authentication, teacher verification, course review workflows, student progress tracking, and an AI assistant for search and chat.
+
+Live demo / Judges
+- Working project (live/demo): <REPLACE_WITH_LIVE_URL>
+- DevPost: <REPLACE_WITH_DEVPOST_URL>
+- Final demo video: <REPLACE_WITH_FINAL_VIDEO_URL>
+
+Designs & repo links
+- Figma (designs): <REPLACE_WITH_FIGMA_LINK>
+- GitHub (this repo): <REPLACE_WITH_GITHUB_REPO_URL>
+
+Notes
+- The canonical "Tech Stack" and "Quick Start (Development)" / run instructions are provided earlier in this README — please use those sections as the authoritative source to avoid duplication.
+- Replace all <REPLACE_...> placeholders with final values before submitting to judges. If you send me the final values I can fill them in for you.
