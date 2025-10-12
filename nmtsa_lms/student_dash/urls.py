@@ -11,6 +11,9 @@ urlpatterns = [
     # Checkout and payment
     path('courses/<int:course_id>/checkout/', views.checkout_course, name='student_checkout'),
     path('courses/<int:course_id>/process-payment/', views.process_checkout, name='student_process_checkout'),
+    # PayPal payment endpoints
+    path('courses/<int:course_id>/payment/create-order/', views.create_paypal_order, name='student_create_paypal_order'),
+    path('courses/<int:course_id>/payment/capture-order/', views.capture_paypal_order, name='student_capture_paypal_order'),
     # Learning routes
     path('courses/<int:course_id>/learn/', views.learning, name='student_learning'),
     path('courses/<int:course_id>/modules/<int:module_id>/lessons/<int:lesson_id>/', views.lesson_view, name='student_lesson'),

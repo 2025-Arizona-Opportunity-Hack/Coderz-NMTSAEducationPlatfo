@@ -5,12 +5,8 @@ Provides memory-enhanced AI capabilities for chat and course recommendations
 import os
 from typing import Optional
 
-try:
-    from supermemory import Supermemory
-    SUPERMEMORY_AVAILABLE = True
-except ImportError:
-    SUPERMEMORY_AVAILABLE = False
-    Supermemory = None
+from supermemory import Supermemory
+
 
 
 # Singleton instance
@@ -28,10 +24,6 @@ def get_supermemory_client() -> Optional[Supermemory]:
     
     if _supermemory_client is None:
         api_key = os.getenv("SUPERMEMORY_API_KEY")
-        
-        if not api_key or not SUPERMEMORY_AVAILABLE:
-            return None
-        
         try:
             base_url = os.getenv("SUPERMEMORY_BASE_URL", "https://api.supermemory.ai/")
             _supermemory_client = Supermemory(
