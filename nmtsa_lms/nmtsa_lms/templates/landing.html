@@ -1,69 +1,70 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}NMTSA Learning - Professional Neurologic Music Therapy Education{% endblock %}
+{% block title %}{% trans "NMTSA Learning - Professional Neurologic Music Therapy Education" %}{% endblock %}
 
-{% block description %}Transform lives through professional neurologic music therapy education. Autism-friendly LMS for healthcare professionals, therapists, and families. Earn certifications online with accessible, sensory-aware design.{% endblock %}
+{% block description %}{% trans "Transform lives through professional neurologic music therapy education. Autism-friendly LMS for healthcare professionals, therapists, and families. Earn certifications online with accessible, sensory-aware design." %}{% endblock %}
 
-{% block keywords %}neurologic music therapy, NMT certification, autism therapy, music therapy education, professional development, healthcare education, autism-friendly learning, sensory-accessible platform, online courses{% endblock %}
+{% block keywords %}{% trans "neurologic music therapy, NMT certification, autism therapy, music therapy education, professional development, healthcare education, autism-friendly learning, sensory-accessible platform, online courses" %}{% endblock %}
 
-{% block og_title %}NMTSA Learning - Professional Neurologic Music Therapy Education{% endblock %}
-{% block og_description %}Professional neurologic music therapy education with autism-friendly design. Earn certifications online for autism support and healthcare.{% endblock %}
+{% block og_title %}{% trans "NMTSA Learning - Professional Neurologic Music Therapy Education" %}{% endblock %}
+{% block og_description %}{% trans "Professional neurologic music therapy education with autism-friendly design. Earn certifications online for autism support and healthcare." %}{% endblock %}
 
 {% block content %}
 
 <!-- Hero Section -->
 <section class="text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-gradient-primary rounded-xl sm:rounded-2xl mb-12 shadow-lg" 
          role="region" 
-         aria-label="Welcome hero">
+         aria-label="{% trans 'Welcome hero' %}">
     <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold mb-4 sm:mb-6 text-primary leading-tight tracking-tight">
-        Welcome to NMTSA Learning
+        {% trans "Welcome to NMTSA Learning" %}
     </h1>
     <p class="text-base sm:text-lg lg:text-xl text-secondary max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
-        Professional education in neurologic music therapy for autism support, healthcare professionals, and families
+        {% trans "Professional education in neurologic music therapy for autism support, healthcare professionals, and families" %}
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center flex-wrap px-4">
         {% if request.session.user %}
             {% if request.session.user.role == 'student' %}
             <a href="{% url 'student_dashboard' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-               aria-label="Go to student dashboard">
-                Go to Dashboard
+               aria-label="{% trans 'Go to student dashboard' %}">
+                {% trans "Go to Dashboard" %}
             </a>
             <a href="{% url 'public_catalog' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-               aria-label="Browse available courses">
-                Browse Courses
+               aria-label="{% trans 'Browse available courses' %}">
+                {% trans "Browse Courses" %}
             </a>
             {% elif request.session.user.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-               aria-label="Go to teacher dashboard">
-                Teacher Dashboard
+               aria-label="{% trans 'Go to teacher dashboard' %}">
+                {% trans "Teacher Dashboard" %}
             </a>
             {% elif request.session.user.role == 'admin' %}
             <a href="{% url 'admin_dashboard' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-               aria-label="Go to admin dashboard">
-                Admin Dashboard
+               aria-label="{% trans 'Go to admin dashboard' %}">
+                {% trans "Admin Dashboard" %}
             </a>
             {% else %}
             <a href="{% url 'select_role' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-               aria-label="Complete your profile setup">
-                Complete Your Profile
+               aria-label="{% trans 'Complete your profile setup' %}">
+                {% trans "Complete Your Profile" %}
             </a>
             {% endif %}
         {% else %}
         <a href="{% url 'login' %}" 
            class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-           aria-label="Sign up to get started">
-            Get Started for Free
+           aria-label="{% trans 'Sign up to get started' %}">
+            {% trans "Get Started for Free" %}
         </a>
         <a href="{% url 'public_catalog' %}" 
            class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-           aria-label="Browse available courses">
-            Browse Courses
+           aria-label="{% trans 'Browse available courses' %}">
+            {% trans "Browse Courses" %}
         </a>
         {% endif %}
     </div>
@@ -72,7 +73,7 @@
 <!-- Who We Serve -->
 <section class="mb-16 sm:mb-20" role="region" aria-labelledby="who-we-serve-heading">
     <h2 id="who-we-serve-heading" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 text-primary">
-        Who We Serve
+        {% trans "Who We Serve" %}
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -85,15 +86,15 @@
                 </svg>
             </div>
             <h3 class="text-xl sm:text-2xl font-bold mb-4 text-primary">
-                Healthcare Professionals
+                {% trans "Healthcare Professionals" %}
             </h3>
             <p class="text-secondary mb-6 leading-relaxed">
-                Earn professional credits and certifications in neurologic music therapy techniques for working with individuals with autism and neurologic conditions.
+                {% trans "Earn professional credits and certifications in neurologic music therapy techniques for working with individuals with autism and neurologic conditions." %}
             </p>
             <a href="/about/professionals/" 
                class="inline-flex items-center gap-2 text-[color:var(--primary-hover)] hover:text-primary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
-               aria-label="Learn more about resources for healthcare professionals">
-                Learn More
+               aria-label="{% trans 'Learn more about resources for healthcare professionals' %}">
+                {% trans "Learn More" %}
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>

@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!-- Settings Dialog Overlay -->
 <div id="settings-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 9998;" onclick="closeSettings()"></div>
@@ -167,19 +168,24 @@
                 <label for="language-select" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
                     Interface Language
                 </label>
-                <select id="language-select" 
-                        onchange="setLanguage(this.value)"
-                        style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); font-size: calc(1rem * var(--font-scale)); cursor: pointer;">
-                    <option value="en">English</option>
-                    <option value="es">Español (Spanish)</option>
-                    <option value="fr">Français (French)</option>
-                    <option value="de">Deutsch (German)</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="ja">日本語 (Japanese)</option>
-                    <option value="ar">العربية (Arabic)</option>
-                </select>
+                <form id="language-form" action="{% url 'set_language' %}" method="post" style="margin: 0;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                    <select id="language-select" 
+                            name="language"
+                            onchange="document.getElementById('language-form').submit()"
+                            style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); font-size: calc(1rem * var(--font-scale)); cursor: pointer;">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang_code, lang_name in LANGUAGES %}
+                            <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
+                                {{ lang_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
                 <p style="margin-top: var(--spacing-sm); font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">
-                    Note: Language support is coming soon. Currently displaying in English.
+                    Changes apply immediately. Page will reload with selected language.
                 </p>
             </div>
         </section>
@@ -336,12 +342,8 @@
             activeFontBtn.style.backgroundColor = 'var(--primary-light)';
         }
 
-        // Update language select
-        const currentLanguage = localStorage.getItem('nmtsa-language') || 'en';
-        const languageSelect = document.getElementById('language-select');
-        if (languageSelect) {
-            languageSelect.value = currentLanguage;
-        }
+        // Language is now handled by Django i18n - no need to set from localStorage
+        // The current language is already selected via Django template tags
 
         // Update accessibility checkboxes
         document.getElementById('reduce-motion').checked = localStorage.getItem('nmtsa-reduce-motion') === 'true';
@@ -358,12 +360,8 @@
         if (notifyEmail) notifyEmail.checked = localStorage.getItem('nmtsa-notify-email') !== 'false';
     }
 
-    // Set language
-    function setLanguage(lang) {
-        localStorage.setItem('nmtsa-language', lang);
-        console.log('Language set to:', lang);
-        // TODO: Implement actual language switching
-    }
+    // Language switching is now handled by Django i18n form submission
+    // See the language-form in the Language Section above
 
     // Toggle reduce motion
     function toggleReduceMotion(enabled) {
@@ -405,10 +403,9 @@
     // Reset all settings to defaults
     function resetSettings() {
         if (confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
-            // Clear all settings
+            // Clear all settings (language is handled by Django session, not localStorage)
             localStorage.removeItem('nmtsa-theme');
             localStorage.removeItem('nmtsa-font-size');
-            localStorage.removeItem('nmtsa-language');
             localStorage.removeItem('nmtsa-reduce-motion');
             localStorage.removeItem('nmtsa-screen-reader');
             localStorage.removeItem('nmtsa-keyboard-hints');
@@ -419,7 +416,6 @@
             // Reset to defaults
             setTheme('light');
             setFontSize('medium');
-            setLanguage('en');
             toggleReduceMotion(false);
             toggleScreenReaderMode(false);
             toggleKeyboardHints(false);

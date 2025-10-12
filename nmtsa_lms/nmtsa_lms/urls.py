@@ -18,14 +18,31 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
+from django.views.i18n import JavaScriptCatalog
 from lms.sitemaps import sitemaps
 from . import views
 from student_dash import views as student_views
 
+# Non-i18n URLs (SEO, API endpoints that shouldn't have language prefix)
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # SEO Files (no language prefix for crawlers)
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    
+    # Language switcher endpoint (no language prefix)
+    path('i18n/', include('django.conf.urls.i18n')),
+    
+    # JavaScript translations catalog
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+]
+
+# Translatable URLs (with language prefix like /en/, /es/, /fr/)
+urlpatterns += i18n_patterns(
     path("", views.index, name="landing"),
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),
@@ -52,10 +69,8 @@ urlpatterns = [
     path('faq/', views.faq, name='faq'),
     path('contact/', views.contact, name='contact'),
     
-    # SEO Files
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
-]
+    prefix_default_language=True,  # Include /en/ for English too
+)
 
 # Media files URL patterns (for file uploads)
 if settings.DEBUG:
