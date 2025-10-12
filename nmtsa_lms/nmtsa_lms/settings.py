@@ -51,6 +51,13 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Application definition
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'coderz-nmtsaeducationplatfo.onrender.com',
+    '0.0.0.0',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -60,6 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',  # For SEO sitemap generation
     'django_ckeditor_5',
+    'corsheaders',
     'authentication',
     'lms',
     'student_dash',
@@ -176,6 +184,19 @@ AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
 # Media files (File uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CORS / CSRF settings for hosting on Render (add your production host here)
+CORS_ALLOWED_ORIGINS = [
+    'https://coderz-nmtsaeducationplatfo.onrender.com',
+]
+
+# If you're serving via https at the Render domain, trust it for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://coderz-nmtsaeducationplatfo.onrender.com',
+]
+
+# Allow simple cross-origin requests for development, but keep strict in prod
+CORS_ALLOW_ALL_ORIGINS = False
 
 # CKEditor 5 Configuration
 customColorPalette = [

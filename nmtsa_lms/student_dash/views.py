@@ -727,7 +727,7 @@ def lesson_view(request, course_slug, module_slug, lesson_slug):
     all_lessons = []
     for mod in modules:
         for lesson in mod.lessons.all():
-            lesson.module_id = mod.id
+            lesson.module_slug = mod.slug
             # Add watch percentage for sidebar display
             if lesson.lesson_type == 'video':
                 lesson.watch_percentage = video_progress_map.get(lesson.id, 0)
@@ -1258,8 +1258,7 @@ def public_catalog(request):
                         reverse=True
                     )
 
-                    # For each course, check enrollment status and bookmarks if user is authenticated
-                    user_bookmarked_ids = set()
+                    # For each course, check enrollment status if user is authenticated
                     user = None
                     
                     # Check both OAuth and Django authentication
@@ -1273,16 +1272,12 @@ def public_catalog(request):
                             Enrollment.objects.filter(user=user, is_active=True)
                             .values_list('course_id', flat=True)
                         )
-                        # Get bookmarked course IDs
-                        user_bookmarked_ids = set(user.bookmarked_courses.values_list('id', flat=True))
                         
                         for course in courses_list:
                             course.user_enrolled = course.id in enrolled_course_ids
-                            course.is_bookmarked = course.id in user_bookmarked_ids
                     else:
                         for course in courses_list:
                             course.user_enrolled = False
-                            course.is_bookmarked = False
 
                     context = {
                         'courses': courses_list,
@@ -1295,7 +1290,6 @@ def public_catalog(request):
                         },
                         'search_results': search_results,  # Include for debugging/display
                         'is_public_view': True,
-                        'user_bookmarked_ids': user_bookmarked_ids,  # Pass for JavaScript
                     }
                     return render(request, 'student_dash/course_catalog.html', context)
 
@@ -1367,9 +1361,8 @@ def public_catalog(request):
         else:  # newest
             qs = qs.order_by('-published_date')
 
-    # Check enrollment status and bookmarks for authenticated users
+    # Check enrollment status for authenticated users
     courses_list = list(qs)
-    user_bookmarked_ids = set()
     user = None
     
     # Check both OAuth and Django authentication
@@ -1385,16 +1378,12 @@ def public_catalog(request):
             Enrollment.objects.filter(user=user, is_active=True)
             .values_list('course_id', flat=True)
         )
-        # Get bookmarked course IDs
-        user_bookmarked_ids = set(user.bookmarked_courses.values_list('id', flat=True))
         
         for course in courses_list:
             course.user_enrolled = course.id in enrolled_course_ids
-            course.is_bookmarked = course.id in user_bookmarked_ids
     else:
         for course in courses_list:
             course.user_enrolled = False
-            course.is_bookmarked = False
 
     context = {
         'courses': courses_list,
@@ -1409,7 +1398,6 @@ def public_catalog(request):
             'sort': sort,
         },
         'is_public_view': True,
-        'user_bookmarked_ids': user_bookmarked_ids,  # Pass for JavaScript
     }
     return render(request, 'student_dash/course_catalog.html', context)
 
@@ -1452,77 +1440,3 @@ def public_course_detail(request, course_slug):
     return render(request, 'student_dash/course_detail.html', context)
 
 
-@require_http_methods(["POST"])
-def toggle_bookmark(request, course_slug: str) -> JsonResponse:
-    """Toggle bookmark status for a course"""
-    # Check if user is authenticated (OAuth or Django auth)
-    user = None
-    if request.user.is_authenticated:
-        user = request.user
-    elif 'user' in request.session:
-        session_user = request.session.get('user')
-        if session_user and 'userinfo' in session_user:
-            email = session_user['userinfo'].get('email')
-            if email:
-                user = User.objects.filter(email=email).first()
-    
-    if not user:
-        return JsonResponse({'error': 'Authentication required'}, status=401)
-    
-    try:
-        course = get_object_or_404(Course, slug=course_slug, is_published=True, admin_approved=True)
-        
-        # Toggle bookmark
-        if course in user.bookmarked_courses.all():
-            user.bookmarked_courses.remove(course)
-            is_bookmarked = False
-            message = 'Course removed from bookmarks'
-        else:
-            user.bookmarked_courses.add(course)
-            is_bookmarked = True
-            message = 'Course added to bookmarks'
-        
-        return JsonResponse({
-            'success': True,
-            'is_bookmarked': is_bookmarked,
-            'message': message
-        })
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
-
-@optional_login
-def bookmarked_courses(request):
-    """Display user's bookmarked courses"""
-    # Get user from OAuth or Django auth
-    user = None
-    if request.user.is_authenticated:
-        user = request.user
-    elif 'user' in request.session:
-        session_user = request.session.get('user')
-        if session_user and 'userinfo' in session_user:
-            email = session_user['userinfo'].get('email')
-            if email:
-                user = User.objects.filter(email=email).first()
-    
-    if not user:
-        messages.info(request, 'Please sign in to view your bookmarked courses.')
-        return redirect('explore_courses')
-    
-    # Get bookmarked courses
-    bookmarked_courses = user.bookmarked_courses.filter(
-        is_published=True,
-        admin_approved=True
-    ).select_related('published_by').prefetch_related('tags').order_by('-created_at')
-    
-    # Pagination
-    paginator = Paginator(bookmarked_courses, 12)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'courses': page_obj,
-        'total_count': bookmarked_courses.count(),
-        'page_title': 'My Bookmarks'
-    }
-    return render(request, 'student_dash/bookmarked_courses.html', context)
