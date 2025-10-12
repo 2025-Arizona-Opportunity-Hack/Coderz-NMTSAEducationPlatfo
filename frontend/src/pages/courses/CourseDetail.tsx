@@ -89,6 +89,19 @@ export function CourseDetail() {
     }
   };
 
+  const handlePaymentSuccess = async () => {
+    // Refresh course data after successful payment
+    if (!id) return;
+
+    try {
+      const updatedCourse = await courseService.getCourseDetail(id);
+
+      setCourse(updatedCourse);
+    } catch (err) {
+      console.error("Failed to refresh course data:", err);
+    }
+  };
+
   const handleContinue = () => {
     if (course?.modules && course.modules.length > 0) {
       const firstLesson = course.modules[0].lessons[0];
@@ -184,6 +197,7 @@ export function CourseDetail() {
           isEnrolling={isEnrolling}
           onContinue={handleContinue}
           onEnroll={handleEnroll}
+          onPaymentSuccess={handlePaymentSuccess}
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

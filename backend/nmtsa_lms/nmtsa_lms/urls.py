@@ -42,6 +42,8 @@ urlpatterns = [
     path('api/v1/admin/', include('admin_dash.api_urls')),
     path('api/v1/student/', include('student_dash.api_urls')),
     path('api/v1/teacher/', include('teacher_dash.api_urls')),
+    path('api/v1/chat/', include('student_dash.chat_urls')),
+    path('api/v1/search/', include('student_dash.search_urls')),
 
     # API Documentation (Swagger/OpenAPI)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

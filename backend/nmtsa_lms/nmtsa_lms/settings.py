@@ -249,3 +249,23 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
 }
+
+# ==============================================================================
+# PAYPAL SETTINGS
+# ==============================================================================
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', '')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', '')
+# Use sandbox for development, production for live
+PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # 'sandbox' or 'live'
+PAYPAL_BASE_URL = 'https://api-m.sandbox.paypal.com' if PAYPAL_MODE == 'sandbox' else 'https://api-m.paypal.com'
+
+# ==============================================================================
+# SUPERMEMORY SETTINGS (AI-Powered Chat & Search)
+# ==============================================================================
+
+# Get Supermemory API key from environment
+# Sign up at https://supermemory.ai to get your API key
+SUPERMEMORY_API_KEY = os.getenv('SUPERMEMORY_API_KEY', '')
+SUPERMEMORY_BASE_URL = os.getenv('SUPERMEMORY_BASE_URL', 'https://api.supermemory.ai')
+SUPERMEMORY_PROJECT_ID = os.getenv('SUPERMEMORY_PROJECT_ID', '')

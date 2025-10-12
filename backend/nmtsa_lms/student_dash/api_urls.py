@@ -4,6 +4,7 @@ API URL configuration for student dashboard
 
 from django.urls import path
 from . import api_views
+from . import payment_views
 
 urlpatterns = [
     # Dashboard
@@ -12,6 +13,7 @@ urlpatterns = [
     # Courses
     path('courses/', api_views.EnrolledCoursesView.as_view(), name='enrolled_courses'),
     path('catalog/', api_views.CourseCatalogView.as_view(), name='course_catalog'),
+    path('courses/categories', api_views.CourseCategoriesView.as_view(), name='course_categories'),
     path('courses/<int:course_id>/', api_views.CourseDetailView.as_view(), name='course_detail'),
 
     # Enrollment
@@ -38,4 +40,9 @@ urlpatterns = [
     path('courses/<int:course_id>/discussions/<int:post_id>/replies/', api_views.DiscussionReplyView.as_view(), name='discussion_reply'),
     path('courses/<int:course_id>/discussions/<int:post_id>/edit/', api_views.DiscussionEditView.as_view(), name='discussion_edit'),
     path('courses/<int:course_id>/discussions/<int:post_id>/delete/', api_views.DiscussionDeleteView.as_view(), name='discussion_delete'),
+
+    # Payments (PayPal)
+    path('payments/create-order/', payment_views.CreatePaymentOrderView.as_view(), name='create_payment_order'),
+    path('payments/capture-order/', payment_views.CapturePaymentOrderView.as_view(), name='capture_payment_order'),
+    path('payments/', payment_views.PaymentHistoryView.as_view(), name='payment_history'),
 ]

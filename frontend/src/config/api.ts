@@ -34,11 +34,27 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
     if (error.response) {
-      // Handle 401 Unauthorized - clear auth and redirect
+      // Handle 401 Unauthorized
       if (error.response.status === 401) {
-        localStorage.removeItem("auth-token");
-        localStorage.removeItem("auth-storage");
-        window.location.href = "/login";
+        // Public endpoints that don't require authentication
+        const publicEndpoints = [
+          "/student/catalog",
+          "/student/courses/",
+          "/search/courses/contextual",
+          "/search/courses/recommendations",
+          "/chat/",
+        ];
+
+        // Only redirect to login if not a public endpoint
+        const isPublicEndpoint = publicEndpoints.some((ep) =>
+          error.config?.url?.includes(ep),
+        );
+        
+        if (!isPublicEndpoint) {
+          localStorage.removeItem("auth-token");
+          localStorage.removeItem("auth-storage");
+          window.location.href = "/login";
+        }
       }
 
       // Return formatted error

@@ -107,8 +107,9 @@ class CourseCatalogView(ListAPIView):
     GET /api/v1/student/catalog/
     Returns paginated, filtered list of published courses
     Query params: q, price_min, price_max, tag, sort
+    No authentication required - public course browsing
     """
-    permission_classes = [IsStudent, IsOnboardingComplete]
+    permission_classes = []  # Public access
     serializer_class = CourseListSerializer
 
     def get_queryset(self):
@@ -156,11 +157,31 @@ class CourseDetailView(RetrieveAPIView):
     """
     GET /api/v1/student/courses/{course_id}/
     Returns full course details with modules and lessons
+    No authentication required - public course viewing
     """
-    permission_classes = [IsStudent, IsOnboardingComplete]
+    permission_classes = []  # Public access
     serializer_class = CourseDetailSerializer
     queryset = Course.objects.filter(is_published=True).prefetch_related('modules', 'modules__lessons')
     lookup_url_kwarg = 'course_id'
+
+
+class CourseCategoriesView(APIView):
+    """
+    GET /api/v1/student/courses/categories
+    Returns all unique tags from published courses as categories
+    No authentication required - public access
+    """
+    permission_classes = []  # Public access
+
+    def get(self, request):
+        # Get all unique tags from published courses
+        from taggit.models import Tag
+        tags = Tag.objects.filter(
+            taggit_taggeditem_items__content_type__model='course',
+            taggit_taggeditem_items__object_id__in=Course.objects.filter(is_published=True).values_list('id', flat=True)
+        ).distinct().values_list('name', flat=True)
+        
+        return Response({'data': list(tags)})
 
 
 # ===== Enrollment =====

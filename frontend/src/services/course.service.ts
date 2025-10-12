@@ -29,9 +29,12 @@ export const courseService = {
     params: GetCoursesParams = {},
   ): Promise<PaginatedResponse<Course>> {
     try {
-      const response = await api.get<PaginatedResponse<Course>>("/courses", {
-        params,
-      });
+      const response = await api.get<PaginatedResponse<Course>>(
+        "/student/catalog",
+        {
+          params,
+        },
+      );
 
       return response.data;
     } catch (error) {
@@ -41,9 +44,75 @@ export const courseService = {
     }
   },
 
+  /**
+   * AI-powered contextual course search
+   * Uses natural language to find relevant courses
+   */
+  async searchCoursesContextual(
+    query: string,
+  ): Promise<{
+    query: string;
+    count: number;
+    courses: Course[];
+    ai_enhanced: boolean;
+  }> {
+    try {
+      const response = await api.post<{
+        query: string;
+        count: number;
+        courses: any[];
+        ai_enhanced: boolean;
+      }>("/search/courses/contextual/", {
+        query,
+      });
+
+      return response.data;
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      throw new Error(
+        apiError.message || "Failed to search courses contextually",
+      );
+    }
+  },
+
+  /**
+   * Get AI-powered course recommendations based on interests
+   */
+  async getCourseRecommendations(
+    interests?: string,
+    limit: number = 5,
+  ): Promise<{
+    interests: string;
+    count: number;
+    courses: Course[];
+  }> {
+    try {
+      const params: Record<string, string> = { limit: limit.toString() };
+
+      if (interests) {
+        params.interests = interests;
+      }
+
+      const response = await api.get<{
+        interests: string;
+        count: number;
+        courses: any[];
+      }>("/search/courses/recommendations/", {
+        params,
+      });
+
+      return response.data;
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      throw new Error(apiError.message || "Failed to get recommendations");
+    }
+  },
+
   async getCourseById(id: string): Promise<Course> {
     try {
-      const response = await api.get<Course>(`/courses/${id}`);
+      const response = await api.get<Course>(`/student/courses/${id}`);
 
       return response.data;
     } catch (error) {
@@ -55,7 +124,9 @@ export const courseService = {
 
   async getCategories(): Promise<string[]> {
     try {
-      const response = await api.get<{ data: string[] }>("/courses/categories");
+      const response = await api.get<{ data: string[] }>(
+        "/student/courses/categories",
+      );
 
       return response.data.data;
     } catch (error) {
@@ -67,9 +138,12 @@ export const courseService = {
 
   async getFeaturedCourses(limit: number = 6): Promise<Course[]> {
     try {
-      const response = await api.get<{ data: Course[] }>("/courses/featured", {
-        params: { limit },
-      });
+      const response = await api.get<{ data: Course[] }>(
+        "/student/courses/featured",
+        {
+          params: { limit },
+        },
+      );
 
       return response.data.data;
     } catch (error) {
@@ -81,7 +155,9 @@ export const courseService = {
 
   async getCourseDetail(id: string): Promise<CourseDetail> {
     try {
-      const response = await api.get<CourseDetail>(`/courses/${id}/detail`);
+      const response = await api.get<CourseDetail>(
+        `/student/courses/${id}/detail`,
+      );
 
       return response.data;
     } catch (error) {
@@ -94,7 +170,7 @@ export const courseService = {
   async enrollInCourse(courseId: string): Promise<Enrollment> {
     try {
       const response = await api.post<Enrollment>(
-        `/courses/${courseId}/enroll`,
+        `/student/courses/${courseId}/enroll`,
       );
 
       return response.data;
@@ -107,7 +183,7 @@ export const courseService = {
 
   async unenrollFromCourse(courseId: string): Promise<void> {
     try {
-      await api.delete(`/courses/${courseId}/enroll`);
+      await api.delete(`/student/courses/${courseId}/enroll`);
     } catch (error) {
       const apiError = error as ApiError;
 
@@ -122,7 +198,7 @@ export const courseService = {
   ): Promise<PaginatedResponse<Review>> {
     try {
       const response = await api.get<PaginatedResponse<Review>>(
-        `/courses/${courseId}/reviews`,
+        `/student/courses/${courseId}/reviews`,
         {
           params: { page, limit },
         },

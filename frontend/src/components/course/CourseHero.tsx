@@ -1,15 +1,27 @@
 import type { CourseDetail } from "../../types/api";
 
+import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Progress } from "@heroui/progress";
 import { useTranslation } from "react-i18next";
-import { Clock, Award, Star, Users, BookOpen, CheckCircle } from "lucide-react";
+import {
+  Clock,
+  Award,
+  Star,
+  Users,
+  BookOpen,
+  CheckCircle,
+  DollarSign,
+} from "lucide-react";
+
+import { PaymentButton } from "../payment/PaymentButton";
 
 interface CourseHeroProps {
   course: CourseDetail;
   onEnroll?: () => void;
   onContinue?: () => void;
+  onPaymentSuccess?: () => void;
   isEnrolling?: boolean;
 }
 
@@ -17,9 +29,12 @@ export function CourseHero({
   course,
   onEnroll,
   onContinue,
+  onPaymentSuccess,
   isEnrolling,
 }: CourseHeroProps) {
   const { t } = useTranslation();
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
 
   const difficultyColors = {
     beginner: "success",
@@ -162,25 +177,84 @@ export function CourseHero({
               ) : (
                 <>
                   <div className="mb-4">
-                    <div className="text-3xl font-bold text-primary mb-1">
-                      {t("course.free")}
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      {t("course.fullAccess")}
-                    </p>
+                    {course.isPaid && course.price ? (
+                      <>
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <div className="text-3xl font-bold text-primary">
+                            ${course.price}
+                          </div>
+                          <DollarSign className="w-5 h-5 text-primary" />
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {t("course.oneTimePayment")}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-3xl font-bold text-primary mb-1">
+                          {t("course.free")}
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {t("course.fullAccess")}
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <Button
-                    className="w-full"
-                    color="primary"
-                    isLoading={isEnrolling}
-                    size="lg"
-                    onPress={onEnroll}
-                  >
-                    {t("course.enrollNow")}
-                  </Button>
-                  <p className="text-xs text-center text-gray-500 mt-3">
-                    {t("course.enrollmentNote")}
-                  </p>
+
+                  {course.isPaid && course.price ? (
+                    showPayment ? (
+                      <div className="space-y-4">
+                        {paymentError && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                            {paymentError}
+                          </div>
+                        )}
+                        <PaymentButton
+                          amount={course.price}
+                          courseId={course.id}
+                          onError={(error) => setPaymentError(error)}
+                          onSuccess={() => {
+                            setPaymentError(null);
+                            onPaymentSuccess?.();
+                          }}
+                        />
+                        <Button
+                          className="w-full"
+                          color="default"
+                          size="sm"
+                          variant="flat"
+                          onPress={() => setShowPayment(false)}
+                        >
+                          {t("common.cancel")}
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        className="w-full"
+                        color="primary"
+                        size="lg"
+                        startContent={<DollarSign className="w-5 h-5" />}
+                        onPress={() => setShowPayment(true)}
+                      >
+                        {t("course.buyNow")}
+                      </Button>
+                    )
+                  ) : (
+                    <>
+                      <Button
+                        className="w-full"
+                        color="primary"
+                        isLoading={isEnrolling}
+                        size="lg"
+                        onPress={onEnroll}
+                      >
+                        {t("course.enrollNow")}
+                      </Button>
+                      <p className="text-xs text-center text-gray-500 mt-3">
+                        {t("course.enrollmentNote")}
+                      </p>
+                    </>
+                  )}
                 </>
               )}
 

@@ -17,7 +17,7 @@ export const lessonService = {
     lessonId: string,
   ): Promise<LessonContent> {
     const response = await api.get<ApiResponse<LessonContent>>(
-      `/courses/${courseId}/lessons/${lessonId}`,
+      `/student/courses/${courseId}/lessons/${lessonId}`,
     );
 
     return response.data.data;
@@ -31,7 +31,7 @@ export const lessonService = {
     lessonId: string,
   ): Promise<LessonProgress> {
     const response = await api.post<ApiResponse<LessonProgress>>(
-      `/courses/${courseId}/lessons/${lessonId}/complete`,
+      `/student/courses/${courseId}/lessons/${lessonId}/complete`,
     );
 
     return response.data.data;
@@ -46,7 +46,7 @@ export const lessonService = {
     progress: Partial<LessonProgress>,
   ): Promise<LessonProgress> {
     const response = await api.put<ApiResponse<LessonProgress>>(
-      `/courses/${courseId}/lessons/${lessonId}/progress`,
+      `/student/courses/${courseId}/lessons/${lessonId}/progress`,
       progress,
     );
 
@@ -61,7 +61,7 @@ export const lessonService = {
     lessonId: string,
   ): Promise<PaginatedResponse<Note>> {
     const response = await api.get<PaginatedResponse<Note>>(
-      `/courses/${courseId}/lessons/${lessonId}/notes`,
+      `/student/courses/${courseId}/lessons/${lessonId}/notes`,
     );
 
     return response.data;
@@ -77,7 +77,7 @@ export const lessonService = {
     timestamp?: number,
   ): Promise<Note> {
     const response = await api.post<ApiResponse<Note>>(
-      `/courses/${courseId}/lessons/${lessonId}/notes`,
+      `/student/courses/${courseId}/lessons/${lessonId}/notes`,
       { content, timestamp },
     );
 
@@ -94,7 +94,7 @@ export const lessonService = {
     content: string,
   ): Promise<Note> {
     const response = await api.put<ApiResponse<Note>>(
-      `/courses/${courseId}/lessons/${lessonId}/notes/${noteId}`,
+      `/student/courses/${courseId}/lessons/${lessonId}/notes/${noteId}`,
       { content },
     );
 
@@ -110,7 +110,7 @@ export const lessonService = {
     noteId: string,
   ): Promise<void> {
     await api.delete(
-      `/courses/${courseId}/lessons/${lessonId}/notes/${noteId}`,
+      `/student/courses/${courseId}/lessons/${lessonId}/notes/${noteId}`,
     );
   },
 };

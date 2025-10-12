@@ -3,8 +3,9 @@ import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
 import { Pagination } from "@heroui/pagination";
 import { Spinner } from "@heroui/spinner";
+import { Chip } from "@heroui/chip";
 import { useTranslation } from "react-i18next";
-import { Grid, List, SlidersHorizontal } from "lucide-react";
+import { Grid, List, SlidersHorizontal, Sparkles } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 import { CourseCard } from "../components/course/CourseCard";
@@ -16,6 +17,8 @@ import { courseService } from "../services/course.service";
 export function Explore() {
   const { t } = useTranslation();
   const [showFilters, setShowFilters] = useState(true);
+  const [isAiSearch, setIsAiSearch] = useState(false);
+  const [aiSearchQuery, setAiSearchQuery] = useState("");
 
   const {
     courses,
@@ -80,8 +83,36 @@ export function Explore() {
     getFilterParams,
   ]);
 
-  const handleSearch = (query: string) => {
-    setFilter("search", query);
+  const handleSearch = async (query: string) => {
+    // If query is long enough, try AI contextual search
+    if (query.length > 20 && query.includes(" ")) {
+      try {
+        setLoading(true);
+        setIsAiSearch(true);
+        setAiSearchQuery(query);
+
+        const result = await courseService.searchCoursesContextual(query);
+
+        // Update courses with AI search results
+        setCourses({
+          data: result.courses,
+          pagination: {
+            page: 1,
+            limit: result.courses.length,
+            total: result.count,
+            totalPages: 1,
+          },
+        });
+      } catch (err) {
+        // Fallback to regular search
+        setIsAiSearch(false);
+        setFilter("search", query);
+      }
+    } else {
+      // Regular keyword search
+      setIsAiSearch(false);
+      setFilter("search", query);
+    }
   };
 
   const handleSortChange = (keys: any) => {
@@ -137,6 +168,31 @@ export function Explore() {
         {/* Search Bar */}
         <div className="mb-6">
           <SearchBar defaultValue={filters.search} onSearch={handleSearch} />
+          {isAiSearch && (
+            <div className="mt-2 flex items-center gap-2">
+              <Chip
+                color="secondary"
+                size="sm"
+                startContent={<Sparkles className="w-3 h-3" />}
+                variant="flat"
+              >
+                AI-Enhanced Search
+              </Chip>
+              <span className="text-sm text-gray-600">
+                Showing contextual results for &quote;{aiSearchQuery}&quote;
+              </span>
+              <Button
+                size="sm"
+                variant="light"
+                onPress={() => {
+                  setIsAiSearch(false);
+                  setFilter("search", "");
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Filters Toggle & Sort */}

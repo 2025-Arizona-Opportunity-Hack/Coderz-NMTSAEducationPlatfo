@@ -55,6 +55,8 @@ export interface Course {
   credits: number;
   rating?: number;
   enrollmentCount?: number;
+  price?: number;
+  isPaid?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -321,4 +323,82 @@ export interface CreateCommentDto {
   postId: string;
   content: string;
   parentId?: string;
+}
+
+// Payment Types
+export interface Payment {
+  id: string;
+  course: {
+    id: string;
+    title: string;
+  };
+  amount: string;
+  currency: string;
+  status: "pending" | "completed" | "failed" | "refunded";
+  paypalOrderId: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface CreatePaymentOrderResponse {
+  order_id: string;
+  amount: string;
+  currency: string;
+}
+
+export interface CapturePaymentOrderResponse {
+  success: boolean;
+  message: string;
+  payment_id: string;
+  enrollment_id: string;
+}
+
+// Chat Types
+export interface ChatMessage {
+  id: string;
+  content: string;
+  senderId: string;
+  sender: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    role: "student" | "instructor" | "admin";
+  };
+  recipientId?: string;
+  recipient?: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    role: "student" | "instructor" | "admin";
+  };
+  conversationId?: string;
+  isRead: boolean;
+  timestamp: string;
+  createdAt: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  participantIds: string[];
+  participants: Profile[];
+  lastMessage?: ChatMessage;
+  unreadCount: number;
+  updatedAt: string;
+}
+
+export interface TypingStatus {
+  userId: string;
+  conversationId: string;
+  isTyping: boolean;
+  timestamp: string;
+}
+
+export interface SendMessageDto {
+  content: string;
+  recipientId?: string;
+  conversationId?: string;
+}
+
+export interface MarkAsReadDto {
+  messageIds: string[];
 }

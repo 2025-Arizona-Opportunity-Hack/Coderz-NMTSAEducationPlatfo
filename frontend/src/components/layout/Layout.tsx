@@ -1,5 +1,7 @@
 import { Outlet } from "react-router-dom";
 
+import { Chat } from "../chat/Chat";
+
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { SkipLink } from "./SkipLink";
@@ -18,6 +20,7 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <Chat />
     </div>
   );
 }
