@@ -6,6 +6,7 @@ Handles course management, modules, lessons, publishing, and analytics
 import os
 import math
 import tempfile
+import uuid
 from pathlib import Path
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, FileResponse
@@ -41,6 +42,17 @@ from .serializers import (
     DiscussionPostSerializer,
     DiscussionPostCreateSerializer,
 )
+
+
+# ===== Helper Functions =====
+
+def _generate_uuid_filename(original_filename):
+    """
+    Generate a unique filename using UUID while preserving the file extension.
+    This prevents filename collisions and information disclosure.
+    """
+    ext = Path(original_filename).suffix or '.mp4'
+    return f"{uuid.uuid4()}{ext}"
 
 
 # ===== Dashboard =====
@@ -411,9 +423,14 @@ class LessonListCreateView(APIView):
             with transaction.atomic():
                 # Extract video duration for video lessons
                 duration = serializer.validated_data.get('duration')
+                video_file = None
+                
                 if lesson_type == 'video':
                     video_file = serializer.validated_data.get('video_file')
                     if video_file:
+                        # Rename video file to UUID-based filename for security
+                        video_file.name = _generate_uuid_filename(video_file.name)
+                        
                         extracted_duration = self._extract_video_duration(video_file)
                         if extracted_duration:
                             duration = extracted_duration
@@ -431,7 +448,7 @@ class LessonListCreateView(APIView):
                 if lesson_type == 'video':
                     VideoLesson.objects.create(
                         lesson=lesson,
-                        video_file=serializer.validated_data.get('video_file'),
+                        video_file=video_file,
                         transcript=serializer.validated_data.get('transcript', '')
                     )
                 else:  # blog
@@ -544,31 +561,35 @@ class LessonUpdateView(APIView):
         serializer = LessonUpdateSerializer(lesson, data=request.data, partial=partial, context={'request': request})
 
         if serializer.is_valid():
-            # Update lesson
-            lesson.title = serializer.validated_data.get('title', lesson.title)
-            lesson.lesson_type = serializer.validated_data.get('lesson_type', lesson.lesson_type)
+            with transaction.atomic():
+                # Update lesson
+                lesson.title = serializer.validated_data.get('title', lesson.title)
+                lesson.lesson_type = serializer.validated_data.get('lesson_type', lesson.lesson_type)
 
-            # Handle duration
-            if 'duration' in serializer.validated_data:
-                lesson.duration = serializer.validated_data['duration']
+                # Handle duration
+                if 'duration' in serializer.validated_data:
+                    lesson.duration = serializer.validated_data['duration']
 
-            lesson.save()
+                lesson.save()
 
-            # Update type-specific content
-            if lesson.lesson_type == 'video':
-                video_lesson, _ = VideoLesson.objects.get_or_create(lesson=lesson)
-                if 'video_file' in serializer.validated_data:
-                    video_lesson.video_file = serializer.validated_data['video_file']
-                if 'transcript' in serializer.validated_data:
-                    video_lesson.transcript = serializer.validated_data['transcript']
-                video_lesson.save()
-            else:  # blog
-                blog_lesson, _ = BlogLesson.objects.get_or_create(lesson=lesson)
-                if 'content' in serializer.validated_data:
-                    blog_lesson.content = serializer.validated_data['content']
-                if 'images' in serializer.validated_data:
-                    blog_lesson.images = serializer.validated_data['images']
-                blog_lesson.save()
+                # Update type-specific content
+                if lesson.lesson_type == 'video':
+                    video_lesson, _ = VideoLesson.objects.get_or_create(lesson=lesson)
+                    if 'video_file' in serializer.validated_data:
+                        video_file = serializer.validated_data['video_file']
+                        # Rename video file to UUID-based filename for security
+                        video_file.name = _generate_uuid_filename(video_file.name)
+                        video_lesson.video_file = video_file
+                    if 'transcript' in serializer.validated_data:
+                        video_lesson.transcript = serializer.validated_data['transcript']
+                    video_lesson.save()
+                else:  # blog
+                    blog_lesson, _ = BlogLesson.objects.get_or_create(lesson=lesson)
+                    if 'content' in serializer.validated_data:
+                        blog_lesson.content = serializer.validated_data['content']
+                    if 'images' in serializer.validated_data:
+                        blog_lesson.images = serializer.validated_data['images']
+                    blog_lesson.save()
 
             message = self._handle_course_content_change(course)
 
@@ -645,11 +666,29 @@ class LessonPreviewView(APIView):
     """
     GET /api/v1/teacher/courses/{course_id}/modules/{module_id}/lessons/{lesson_id}/preview/
     Returns lesson preview data
+    Accessible by course owner (teacher) or admins for course review
     """
-    permission_classes = [IsTeacher, IsOnboardingComplete, IsLessonOwner]
+    permission_classes = [IsOnboardingComplete]
 
     def get(self, request, course_id, module_id, lesson_id):
-        course = get_object_or_404(Course, id=course_id, published_by=request.user)
+        # Import here to avoid circular import
+        from teacher_dash.permissions import IsLessonOwnerOrAdmin
+        
+        # Check permission manually
+        permission = IsLessonOwnerOrAdmin()
+        if not permission.has_permission(request, self):
+            return Response(
+                {'error': 'You do not have permission to preview this lesson.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Admins can access any course, teachers only their own
+        user_role = getattr(request.user, 'role', None)
+        if user_role == 'admin':
+            course = get_object_or_404(Course, id=course_id)
+        else:
+            course = get_object_or_404(Course, id=course_id, published_by=request.user)
+        
         module = get_object_or_404(course.modules, id=module_id)
         lesson = get_object_or_404(module.lessons, id=lesson_id)
 

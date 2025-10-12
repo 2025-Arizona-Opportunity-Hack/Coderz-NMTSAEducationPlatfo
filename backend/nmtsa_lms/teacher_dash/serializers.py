@@ -404,6 +404,13 @@ class DiscussionPostCreateSerializer(serializers.ModelSerializer):
     def validate_content(self, value):
         if not value or not value.strip():
             raise serializers.ValidationError("Content cannot be empty")
-        if len(value) > 5000:
-            raise serializers.ValidationError("Content cannot exceed 5000 characters")
+        
+        # Minimum length validation (matching forms.py)
+        if len(value.strip()) < 10:
+            raise serializers.ValidationError("Your post must be at least 10 characters long.")
+        
+        # Maximum length validation (matching forms.py)
+        if len(value) > 2000:
+            raise serializers.ValidationError("Your post must be no more than 2000 characters long.")
+        
         return value

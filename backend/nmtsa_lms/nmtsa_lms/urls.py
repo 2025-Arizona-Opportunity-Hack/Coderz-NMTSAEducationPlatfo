@@ -41,8 +41,7 @@ urlpatterns = [
     path('api/v1/auth/', include('authentication.api_urls')),
     path('api/v1/admin/', include('admin_dash.api_urls')),
     path('api/v1/student/', include('student_dash.api_urls')),
-    # Additional API endpoints will be added as we build them:
-    # path('api/v1/teacher/', include('teacher_dash.api_urls')),
+    path('api/v1/teacher/', include('teacher_dash.api_urls')),
 
     # API Documentation (Swagger/OpenAPI)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

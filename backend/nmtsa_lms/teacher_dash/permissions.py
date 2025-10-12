@@ -109,3 +109,37 @@ class IsLessonOwner(permissions.BasePermission):
             ).first()
             return course is not None
         return False
+
+
+class IsLessonOwnerOrAdmin(permissions.BasePermission):
+    """
+    Permission class for lesson preview that allows both course owners and admins
+    This is used for lesson preview functionality where admins need access for course review
+    """
+    message = "You can only preview lessons from your own courses or as an admin."
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        # Allow admins
+        if hasattr(request.user, 'role') and request.user.role == 'admin':
+            return True
+
+        # Check if user owns the course
+        course_id = view.kwargs.get('course_id')
+        module_id = view.kwargs.get('module_id')
+        lesson_id = view.kwargs.get('lesson_id')
+
+        if not course_id or not module_id or not lesson_id:
+            return False
+
+        # Check if lesson belongs to a module in a course owned by the user
+        try:
+            course = Course.objects.get(id=course_id, published_by=request.user)
+            module = course.modules.filter(id=module_id).first()
+            if module:
+                return module.lessons.filter(id=lesson_id).exists()
+            return False
+        except Course.DoesNotExist:
+            return False
