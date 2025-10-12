@@ -1,29 +1,32 @@
 {# Reusable Progress Steps Component for Multi-Step Forms
-   Usage:
-   {% include 'components/progress_steps.html' with
-      steps=checkout_steps
-      current_step=2
-   %}
+Usage:
+{% include 'components/progress_steps.html' with
+steps=checkout_steps
+current_step=2
+%}
 
-   Parameters:
-   - steps: List of step names (required)
-     Example: ['Billing Info', 'Payment Details', 'Confirmation']
-   - current_step: Current step number (1-indexed) (required)
+Parameters:
+- steps: List of step names (required)
+Example: ['Billing Info', 'Payment Details', 'Confirmation']
+- current_step: Current step number (1-indexed) (required)
 #}
 
+{% load i18n %}
+
 <div style="margin-bottom: var(--spacing-2xl);">
-    <!-- Progress Text -->
-    <div style="
+  <!-- Progress Text -->
+  <div style="
         text-align: center;
         margin-bottom: var(--spacing-lg);
         color: var(--text-secondary);
         font-size: calc(0.875rem * var(--font-scale));
     ">
-        Step <strong style="color: var(--primary);">{{ current_step }}</strong> of <strong>{{ steps|length }}</strong>
-    </div>
+    {% blocktrans with cur=current_step total=steps|length %}Step <strong style="color: var(--primary);">{{ cur
+      }}</strong> of <strong>{{ total }}</strong>{% endblocktrans %}
+  </div>
 
-    <!-- Steps Bar -->
-    <div style="
+  <!-- Steps Bar -->
+  <div style="
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -31,8 +34,8 @@
         max-width: 600px;
         margin: 0 auto;
     ">
-        <!-- Progress Line (Background) -->
-        <div style="
+    <!-- Progress Line (Background) -->
+    <div style="
             position: absolute;
             top: 20px;
             left: 0;
@@ -42,8 +45,8 @@
             z-index: 0;
         "></div>
 
-        <!-- Progress Line (Filled) -->
-        <div style="
+    <!-- Progress Line (Filled) -->
+    <div style="
             position: absolute;
             top: 20px;
             left: 0;
@@ -54,9 +57,9 @@
             transition: width 0.3s ease;
         "></div>
 
-        <!-- Step Circles -->
-        {% for step in steps %}
-        <div style="
+    <!-- Step Circles -->
+    {% for step in steps %}
+    <div style="
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -64,8 +67,8 @@
             z-index: 2;
             flex: 1;
         ">
-            <!-- Circle -->
-            <div style="
+      <!-- Circle -->
+      <div style="
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
@@ -92,19 +95,19 @@
                     border: 2px solid var(--border-color);
                 {% endif %}
             ">
-                {% if forloop.counter < current_step %}
-                    <!-- Checkmark for completed steps -->
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                {% else %}
-                    <!-- Step number -->
-                    {{ forloop.counter }}
-                {% endif %}
-            </div>
+        {% if forloop.counter < current_step %} <!-- Checkmark for completed steps -->
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          {% else %}
+          <!-- Step number -->
+          {{ forloop.counter }}
+          {% endif %}
+      </div>
 
-            <!-- Step Label -->
-            <div style="
+      <!-- Step Label -->
+      <div style="
                 text-align: center;
                 font-size: calc(0.75rem * var(--font-scale));
                 max-width: 100px;
@@ -116,30 +119,30 @@
                     color: var(--text-secondary);
                 {% endif %}
             ">
-                {{ step }}
-            </div>
-        </div>
-        {% endfor %}
+        {% trans step %}
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 
 <style>
-/* Mobile responsive: Stack steps vertically on small screens */
-@media (max-width: 640px) {
+  /* Mobile responsive: Stack steps vertically on small screens */
+  @media (max-width: 640px) {
     div[style*="display: flex"] div[style*="flex-direction: column"] {
-        font-size: calc(0.7rem * var(--font-scale));
+      font-size: calc(0.7rem * var(--font-scale));
     }
 
     div[style*="width: 40px"] {
-        width: 32px !important;
-        height: 32px !important;
+      width: 32px !important;
+      height: 32px !important;
     }
-}
+  }
 
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
     div[style*="transition"] {
-        transition: none !important;
+      transition: none !important;
     }
-}
+  }
 </style>

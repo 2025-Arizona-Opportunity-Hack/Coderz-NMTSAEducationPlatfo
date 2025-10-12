@@ -2,69 +2,78 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}" data-theme="light" data-font-size="medium">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <!-- SEO Meta Tags -->
-    <title>{% block title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}</title>
-    <meta name="description" content="{% block description %}Professional neurologic music therapy education platform. Autism-friendly LMS for healthcare professionals, therapists, and families. Earn certifications with accessible, sensory-aware design.{% endblock %}">
-    <meta name="keywords" content="{% block keywords %}neurologic music therapy, NMT, autism therapy, music therapy education, LMS, online learning, healthcare education, professional development, autism-friendly{% endblock %}">
-    <meta name="author" content="NMTSA - Neurologic Music Therapy Services of Arizona">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:title" content="{% block og_title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Professional neurologic music therapy education with autism-friendly design. Earn certifications online.{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
-    <meta property="og:image:width" content="512">
-    <meta property="og:image:height" content="512">
-    <meta property="og:image:alt" content="NMTSA Learning Logo">
-    <meta property="og:site_name" content="NMTSA Learning">
-    <meta property="og:locale" content="en_US">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@NMTSALearning">
-    <meta name="twitter:creator" content="@NMTSALearning">
-    <meta name="twitter:url" content="{{ request.build_absolute_uri }}">
-    <meta name="twitter:title" content="{% block twitter_title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}Professional neurologic music therapy education with autism-friendly design.{% endblock %}">
-    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
-    <meta name="twitter:image:alt" content="NMTSA Learning Logo">
-    
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicons/favicon-16x16.png' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicons/android-chrome-192x192.png' %}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/favicons/android-chrome-512x512.png' %}">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    
-    <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#CC9300">
-    <meta name="msapplication-TileColor" content="#CC9300">
-    
-    <!-- Additional SEO Meta Tags -->
-    <meta name="copyright" content="© 2025 NMTSA - Neurologic Music Therapy Services of Arizona">
-    <meta name="language" content="English">
-    <meta name="revisit-after" content="7 days">
-    <meta name="distribution" content="global">
-    <meta name="rating" content="general">
-    
-    <!-- Humans.txt -->
-    <link rel="author" href="{% static 'humans.txt' %}" type="text/plain">
-    
-    <!-- Structured Data (Schema.org) -->
-    <!-- Organization Schema -->
-    <script type="application/ld+json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Meta Tags -->
+  <title>{% block title %}{% trans "NMTSA Learning - Neurologic Music Therapy Education" %}{% endblock %}</title>
+  <meta name="description"
+    content="{% block description %}{% trans "Professional neurologic music therapy education platform. Autism-friendly LMS for healthcare professionals, therapists, and families. Earn certifications with accessible, sensory-aware design." %}{% endblock %}">
+  <meta name="keywords"
+    content="{% block keywords %}{% trans "neurologic music therapy, NMT, autism therapy, music therapy education, LMS, online learning, healthcare education, professional development, autism-friendly" %}{% endblock %}">
+  <meta name="author" content='{% trans "NMTSA - Neurologic Music Therapy Services of Arizona" %}'>
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:title"
+    content="{% block og_title %}{% trans "NMTSA Learning - Neurologic Music Therapy Education" %}{% endblock %}">
+  <meta property="og:description"
+    content="{% block og_description %}Professional neurologic music therapy education with autism-friendly design. Earn certifications online.{% endblock %}">
+  <meta property="og:image"
+    content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content='{% trans "NMTSA Learning Logo" %}'>
+  <meta property="og:site_name" content='{% trans "NMTSA Learning" %}'>
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@NMTSALearning">
+  <meta name="twitter:creator" content="@NMTSALearning">
+  <meta name="twitter:url" content="{{ request.build_absolute_uri }}">
+  <meta name="twitter:title"
+    content="{% block twitter_title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}">
+  <meta name="twitter:description"
+    content="{% block twitter_description %}Professional neurologic music therapy education with autism-friendly design.{% endblock %}">
+  <meta name="twitter:image"
+    content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
+  <meta name="twitter:image:alt" content='{% trans "NMTSA Learning Logo" %}'>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicons/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicons/favicon-16x16.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicons/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicons/android-chrome-192x192.png' %}">
+  <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/favicons/android-chrome-512x512.png' %}">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <!-- Theme Color for Mobile Browsers -->
+  <meta name="theme-color" content="#CC9300">
+  <meta name="msapplication-TileColor" content="#CC9300">
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="copyright" content='{% trans "© 2025 NMTSA - Neurologic Music Therapy Services of Arizona" %}'>
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <meta name="distribution" content="global">
+  <meta name="rating" content="general">
+
+  <!-- Humans.txt -->
+  <link rel="author" href="{% static 'humans.txt' %}" type="text/plain">
+
+  <!-- Structured Data (Schema.org) -->
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "EducationalOrganization",
@@ -83,230 +92,239 @@
       }
     }
     </script>
-    
-    <!-- Breadcrumb Schema (auto-generated from context processor) -->
-    {% if breadcrumbs and breadcrumbs|length > 1 %}
-        {% include 'components/breadcrumb_schema.html' %}
-    {% endif %}
-    
-    <!-- Page-specific Schema (blocks for course pages, etc.) -->
-    {% block extra_schema %}{% endblock %}
-    
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    
-    <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 
-    {% block extra_css %}{% endblock %}
+  <!-- Breadcrumb Schema (auto-generated from context processor) -->
+  {% if breadcrumbs and breadcrumbs|length > 1 %}
+  {% include 'components/breadcrumb_schema.html' %}
+  {% endif %}
+
+  <!-- Page-specific Schema (blocks for course pages, etc.) -->
+  {% block extra_schema %}{% endblock %}
+
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+  <!-- Preload critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+
+  {% block extra_css %}{% endblock %}
 </head>
+
 <body class="min-h-screen flex flex-col bg-primary text-primary">
-    <!-- Skip Navigation Links for Screen Readers -->
-    <a href="#main-content" 
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
-       aria-label="Skip to main content">
-        Skip to main content
-    </a>
-    <a href="#footer-navigation" 
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-48 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
-       aria-label="Skip to footer navigation">
-        Skip to footer
-    </a>
+  <!-- Skip Navigation Links for Screen Readers -->
+  <a href="#main-content"
+    class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
+    aria-label="Skip to main content">
+    {% trans "Skip to main content" %}
+  </a>
+  <a href="#footer-navigation"
+    class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-48 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
+    aria-label="Skip to footer navigation">
+    {% trans "Skip to footer" %}
+  </a>
 
-    <!-- Navigation Bar -->
-    <header role="banner" class="sticky top-0 z-40 bg-card border-b-2 border-default shadow-md">
-        {% block navbar %}
-        {% include 'components/navbar.html' %}
-        {% endblock %}
-    </header>
+  <!-- Navigation Bar -->
+  <header role="banner" class="sticky top-0 z-40 bg-card border-b-2 border-default shadow-md">
+    {% block navbar %}
+    {% include 'components/navbar.html' %}
+    {% endblock %}
+  </header>
 
-    <!-- Main Content -->
-    <main id="main-content" 
-          role="main" 
-          class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12"
-          aria-label="Main content">
-        <!-- Messages/Alerts -->
-        {% if messages %}
-        <div class="mb-6 space-y-3" role="alert" aria-live="polite" aria-atomic="true">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} p-4 rounded-lg border-2" role="status">
-                <span class="font-medium">{{ message }}</span>
-            </div>
-            {% endfor %}
+  <!-- Main Content -->
+  <main id="main-content" role="main" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12"
+    aria-label="Main content">
+    <!-- Messages/Alerts -->
+    {% if messages %}
+    <div class="mb-6 space-y-3" role="alert" aria-live="polite" aria-atomic="true">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} p-4 rounded-lg border-2" role="status">
+        <span class="font-medium">{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Breadcrumbs -->
+    {% block breadcrumbs %}{% endblock %}
+
+    <!-- Page Content -->
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer-navigation" role="contentinfo" class="bg-card border-t-2 border-default mt-12"
+    aria-label="Site footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <!-- Footer Content Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <!-- About Section -->
+        <section aria-labelledby="footer-about">
+          <h3 id="footer-about" class="text-lg font-bold mb-4 text-primary">
+            {% trans "NMTSA Learning" %}
+          </h3>
+          <p class="text-secondary text-sm leading-relaxed">
+            {% trans "Changing lives through innovative music therapy education and professional development." %}
+          </p>
+        </section>
+
+        <!-- Quick Links -->
+        <nav aria-labelledby="footer-quick-links">
+          <h4 id="footer-quick-links" class="text-lg font-bold mb-4 text-primary">
+            {% trans "Quick Links" %}
+          </h4>
+          <ul class="space-y-2">
+            <li><a href="/"
+                class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Home" %}</a>
+            </li>
+            <li><a href="/courses/"
+                class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Browse Courses" %}</a></li>
+            <li><a href="/#about"
+                class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "About NMTSA" %}</a></li>
+            <li><a href="/contact/"
+                class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Contact Us" %}</a></li>
+          </ul>
+        </nav>
+
+        <!-- Resources -->
+        <nav aria-labelledby="footer-resources">
+          <h4 id="footer-resources" class="text-lg font-bold mb-4 text-primary">
+            {% trans "Resources" %}
+          </h4>
+          <ul class="space-y-2">
+            <li><a href="/faq/"
+                class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "FAQ" %}</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="mt-8 pt-8 border-t border-default">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p class="text-muted text-sm text-center sm:text-left">
+            {% trans "&copy; 2025 NMTSA. All rights reserved." %}
+          </p>
+          <nav aria-label='{% trans "Legal links" %}' class="flex flex-wrap justify-center gap-4">
+            <a href="{% url 'privacy_policy' %}"
+              class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Privacy Policy" %}</a>
+            <span class="text-muted" aria-hidden="true">|</span>
+            <a href="{% url 'terms_of_service' %}"
+              class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Terms of Service" %}</a>
+            <span class="text-muted" aria-hidden="true">|</span>
+            <a href="{% url 'cookie_policy' %}"
+              class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">{% trans "Cookie Policy" %}</a>
+          </nav>
         </div>
-        {% endif %}
+      </div>
+    </div>
+  </footer>
 
-        <!-- Breadcrumbs -->
-        {% block breadcrumbs %}{% endblock %}
+  <!-- Theme Switcher JavaScript -->
+  <script>
+    // Initialize theme from localStorage or default to 'light'
+    function initTheme() {
+      const savedTheme = localStorage.getItem('nmtsa-theme') || 'light';
+      const savedFontSize = localStorage.getItem('nmtsa-font-size') || 'medium';
 
-        <!-- Page Content -->
-        {% block content %}{% endblock %}
-    </main>
+      setTheme(savedTheme, false);
+      setFontSize(savedFontSize, false);
+    }
 
-    <!-- Footer -->
-    <footer id="footer-navigation" 
-            role="contentinfo" 
-            class="bg-card border-t-2 border-default mt-12"
-            aria-label="Site footer">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <!-- Footer Content Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-                <!-- About Section -->
-                <section aria-labelledby="footer-about">
-                    <h3 id="footer-about" class="text-lg font-bold mb-4 text-primary">
-                        NMTSA Learning
-                    </h3>
-                    <p class="text-secondary text-sm leading-relaxed">
-                        Changing lives through innovative music therapy education and professional development.
-                    </p>
-                </section>
+    // Set theme and save to localStorage
+    function setTheme(theme, save = true) {
+      document.documentElement.setAttribute('data-theme', theme);
 
-                <!-- Quick Links -->
-                <nav aria-labelledby="footer-quick-links">
-                    <h4 id="footer-quick-links" class="text-lg font-bold mb-4 text-primary">
-                        Quick Links
-                    </h4>
-                    <ul class="space-y-2">
-                        <li><a href="/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Home</a></li>
-                        <li><a href="/courses/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Browse Courses</a></li>
-                        <li><a href="/#about" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">About NMTSA</a></li>
-                        <li><a href="/contact/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Contact Us</a></li>
-                    </ul>
-                </nav>
+      if (save) {
+        localStorage.setItem('nmtsa-theme', theme);
+      }
 
-                <!-- Resources -->
-                <nav aria-labelledby="footer-resources">
-                    <h4 id="footer-resources" class="text-lg font-bold mb-4 text-primary">
-                        Resources
-                    </h4>
-                    <ul class="space-y-2">
-                        <li><a href="/help/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Help Center</a></li>
-                        <li><a href="/accessibility/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Accessibility</a></li>
-                        <li><a href="/faq/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">FAQ</a></li>
-                        <li><a href="/support/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Support</a></li>
-                    </ul>
-                </nav>
-            </div>
+      // Update button states (visual indicator of active theme) - for navbar
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.style.borderColor = 'var(--border-color)';
+        btn.style.backgroundColor = 'var(--bg-secondary)';
+        btn.style.color = 'var(--text-secondary)';
+        btn.style.boxShadow = 'none';
+      });
 
-            <!-- Bottom Bar -->
-            <div class="mt-8 pt-8 border-t border-default">
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p class="text-muted text-sm text-center sm:text-left">
-                        &copy; 2025 NMTSA. All rights reserved.
-                    </p>
-                    <nav aria-label="Legal links" class="flex flex-wrap justify-center gap-4">
-                        <a href="{% url 'privacy_policy' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Privacy Policy</a>
-                        <span class="text-muted" aria-hidden="true">|</span>
-                        <a href="{% url 'terms_of_service' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Terms of Service</a>
-                        <span class="text-muted" aria-hidden="true">|</span>
-                        <a href="{% url 'cookie_policy' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Cookie Policy</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </footer>
+      const activeBtn = document.getElementById('theme-' + theme);
+      if (activeBtn) {
+        activeBtn.style.borderColor = 'var(--primary)';
+        activeBtn.style.backgroundColor = 'var(--primary-light)';
+        activeBtn.style.color = 'var(--primary)';
+        activeBtn.style.boxShadow = 'var(--shadow-sm)';
+      }
 
-    <!-- Theme Switcher JavaScript -->
-    <script>
-        // Initialize theme from localStorage or default to 'light'
-        function initTheme() {
-            const savedTheme = localStorage.getItem('nmtsa-theme') || 'light';
-            const savedFontSize = localStorage.getItem('nmtsa-font-size') || 'medium';
+      // Update settings dialog buttons
+      document.querySelectorAll('.settings-theme-btn').forEach(btn => {
+        btn.style.borderColor = 'var(--border-color)';
+        btn.style.backgroundColor = 'var(--bg-secondary)';
+      });
 
-            setTheme(savedTheme, false);
-            setFontSize(savedFontSize, false);
-        }
+      const settingsActiveBtn = document.getElementById('settings-theme-' + theme);
+      if (settingsActiveBtn) {
+        settingsActiveBtn.style.borderColor = 'var(--primary)';
+        settingsActiveBtn.style.backgroundColor = 'var(--primary-light)';
+      }
+    }
 
-        // Set theme and save to localStorage
-        function setTheme(theme, save = true) {
-            document.documentElement.setAttribute('data-theme', theme);
+    // Set font size and save to localStorage
+    function setFontSize(size, save = true) {
+      document.documentElement.setAttribute('data-font-size', size);
 
-            if (save) {
-                localStorage.setItem('nmtsa-theme', theme);
-            }
+      if (save) {
+        localStorage.setItem('nmtsa-font-size', size);
+      }
 
-            // Update button states (visual indicator of active theme) - for navbar
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.style.borderColor = 'var(--border-color)';
-                btn.style.backgroundColor = 'var(--bg-secondary)';
-                btn.style.color = 'var(--text-secondary)';
-                btn.style.boxShadow = 'none';
-            });
+      // Update button states - for navbar
+      document.querySelectorAll('.font-btn').forEach(btn => {
+        btn.style.borderColor = 'var(--border-color)';
+        btn.style.backgroundColor = 'var(--bg-secondary)';
+        btn.style.color = 'var(--text-secondary)';
+        btn.style.boxShadow = 'none';
+      });
 
-            const activeBtn = document.getElementById('theme-' + theme);
-            if (activeBtn) {
-                activeBtn.style.borderColor = 'var(--primary)';
-                activeBtn.style.backgroundColor = 'var(--primary-light)';
-                activeBtn.style.color = 'var(--primary)';
-                activeBtn.style.boxShadow = 'var(--shadow-sm)';
-            }
+      const activeBtn = document.getElementById('font-' + size);
+      if (activeBtn) {
+        activeBtn.style.borderColor = 'var(--primary)';
+        activeBtn.style.backgroundColor = 'var(--primary-light)';
+        activeBtn.style.color = 'var(--primary)';
+        activeBtn.style.boxShadow = 'var(--shadow-sm)';
+      }
 
-            // Update settings dialog buttons
-            document.querySelectorAll('.settings-theme-btn').forEach(btn => {
-                btn.style.borderColor = 'var(--border-color)';
-                btn.style.backgroundColor = 'var(--bg-secondary)';
-            });
+      // Update settings dialog buttons
+      document.querySelectorAll('.settings-font-btn').forEach(btn => {
+        btn.style.borderColor = 'var(--border-color)';
+        btn.style.backgroundColor = 'var(--bg-secondary)';
+      });
 
-            const settingsActiveBtn = document.getElementById('settings-theme-' + theme);
-            if (settingsActiveBtn) {
-                settingsActiveBtn.style.borderColor = 'var(--primary)';
-                settingsActiveBtn.style.backgroundColor = 'var(--primary-light)';
-            }
-        }
+      const settingsActiveBtn = document.getElementById('settings-font-' + size);
+      if (settingsActiveBtn) {
+        settingsActiveBtn.style.borderColor = 'var(--primary)';
+        settingsActiveBtn.style.backgroundColor = 'var(--primary-light)';
+      }
+    }
 
-        // Set font size and save to localStorage
-        function setFontSize(size, save = true) {
-            document.documentElement.setAttribute('data-font-size', size);
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initTheme);
+  </script>
 
-            if (save) {
-                localStorage.setItem('nmtsa-font-size', size);
-            }
+  <!-- Settings Dialog (Available for all users) -->
+  {% include 'components/settings_dialog.html' %}
 
-            // Update button states - for navbar
-            document.querySelectorAll('.font-btn').forEach(btn => {
-                btn.style.borderColor = 'var(--border-color)';
-                btn.style.backgroundColor = 'var(--bg-secondary)';
-                btn.style.color = 'var(--text-secondary)';
-                btn.style.boxShadow = 'none';
-            });
+  <!-- Chat Component (Available for all users) -->
+  {% include 'components/chat.html' %}
 
-            const activeBtn = document.getElementById('font-' + size);
-            if (activeBtn) {
-                activeBtn.style.borderColor = 'var(--primary)';
-                activeBtn.style.backgroundColor = 'var(--primary-light)';
-                activeBtn.style.color = 'var(--primary)';
-                activeBtn.style.boxShadow = 'var(--shadow-sm)';
-            }
+  <!-- Markdown and Sanitization Libraries for Chat -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"
+    integrity="sha384-/lRpMYN5lLCVnF9d+KYXFTlmUvXZ2hNTpw4p4OxT9nZ8i8KqXKxL6kQ2dGJmF7Jd"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"
+    integrity="sha384-qCsW4ttL0zPUJfyy0MBlxJYMqKYCdPt6d7RMsyFRhJX0BdYKJLlHGqD3nW3lOvHx"
+    crossorigin="anonymous"></script>
 
-            // Update settings dialog buttons
-            document.querySelectorAll('.settings-font-btn').forEach(btn => {
-                btn.style.borderColor = 'var(--border-color)';
-                btn.style.backgroundColor = 'var(--bg-secondary)';
-            });
+  <script src="{% static 'js/chat.js' %}"></script>
 
-            const settingsActiveBtn = document.getElementById('settings-font-' + size);
-            if (settingsActiveBtn) {
-                settingsActiveBtn.style.borderColor = 'var(--primary)';
-                settingsActiveBtn.style.backgroundColor = 'var(--primary-light)';
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initTheme);
-    </script>
-
-    <!-- Settings Dialog (Available for all users) -->
-    {% include 'components/settings_dialog.html' %}
-
-    <!-- Chat Component (Available for all users) -->
-    {% include 'components/chat.html' %}
-    
-    <!-- Markdown and Sanitization Libraries for Chat -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-/lRpMYN5lLCVnF9d+KYXFTlmUvXZ2hNTpw4p4OxT9nZ8i8KqXKxL6kQ2dGJmF7Jd" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js" integrity="sha384-qCsW4ttL0zPUJfyy0MBlxJYMqKYCdPt6d7RMsyFRhJX0BdYKJLlHGqD3nW3lOvHx" crossorigin="anonymous"></script>
-    
-    <script src="{% static 'js/chat.js' %}"></script>
-
-    {% block extra_js %}{% endblock %}
+  {% block extra_js %}{% endblock %}
 </body>
+
 </html>

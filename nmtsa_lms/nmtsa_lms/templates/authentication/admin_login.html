@@ -1,118 +1,110 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Admin Login - NMTSA Learning{% endblock %}
+{% block title %}{% trans "Admin Login - NMTSA Learning" %}{% endblock %}
 
 {% block content %}
 <section style="max-width: 500px; margin: 0 auto; padding: var(--spacing-3xl) var(--spacing-xl);">
-    <!-- Admin Badge -->
-    <div style="text-align: center; margin-bottom: var(--spacing-xl);">
-        <div style="display: inline-flex; align-items: center; gap: var(--spacing-sm); background: linear-gradient(135deg, var(--primary), var(--accent)); padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--radius-lg); color: white; font-weight: 700; margin-bottom: var(--spacing-lg);">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-            </svg>
-            Admin Access
-        </div>
-        <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-md); color: var(--text-primary);">
-            Administrator Login
-        </h1>
-        <p style="color: var(--text-secondary); font-size: calc(1.125rem * var(--font-scale));">
-            Sign in with your admin credentials
-        </p>
+  <!-- Admin Badge -->
+  <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+    <div
+      style="display: inline-flex; align-items: center; gap: var(--spacing-sm); background: linear-gradient(135deg, var(--primary), var(--accent)); padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--radius-lg); color: white; font-weight: 700; margin-bottom: var(--spacing-lg);">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      {% trans "Admin Access" %}
+    </div>
+    <h1
+      style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-md); color: var(--text-primary);">
+      {% trans "Administrator Login" %}
+    </h1>
+    <p style="color: var(--text-secondary); font-size: calc(1.125rem * var(--font-scale));">{% trans "Sign in with your
+      admin credentials" %}</p>
+  </div>
+
+  <!-- Login Form -->
+  <form method="post" class="card" style="padding: var(--spacing-2xl);">
+    {% csrf_token %}
+
+    <!-- Username Field -->
+    <div style="margin-bottom: var(--spacing-lg);">
+      <label for="username"
+        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+        {% trans "Username" %} <span style="color: var(--error);">*</span>
+      </label>
+      <input type="text" id="username" name="username" required autofocus autocomplete="username"
+        placeholder='{% trans "Enter your admin username" %}'
+        style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); transition: border-color 0.15s ease;"
+        onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border-color)'">
     </div>
 
-    <!-- Login Form -->
-    <form method="post" class="card" style="padding: var(--spacing-2xl);">
-        {% csrf_token %}
-
-        <!-- Username Field -->
-        <div style="margin-bottom: var(--spacing-lg);">
-            <label for="username" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                Username <span style="color: var(--error);">*</span>
-            </label>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                required
-                autofocus
-                autocomplete="username"
-                placeholder="Enter your admin username"
-                style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); transition: border-color 0.15s ease;"
-                onfocus="this.style.borderColor='var(--primary)'"
-                onblur="this.style.borderColor='var(--border-color)'"
-            >
-        </div>
-
-        <!-- Password Field -->
-        <div style="margin-bottom: var(--spacing-xl);">
-            <label for="password" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                Password <span style="color: var(--error);">*</span>
-            </label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                autocomplete="current-password"
-                placeholder="Enter your password"
-                style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); transition: border-color 0.15s ease;"
-                onfocus="this.style.borderColor='var(--primary)'"
-                onblur="this.style.borderColor='var(--border-color)'"
-            >
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-weight: 700;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: var(--spacing-sm);">
-                <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-            </svg>
-            Sign In to Admin Dashboard
-        </button>
-    </form>
-
-    <!-- Security Note -->
-    <div style="background: var(--info-light); padding: var(--spacing-lg); border-radius: var(--radius-lg); border-left: 4px solid var(--info); margin-top: var(--spacing-xl);">
-        <div style="display: flex; gap: var(--spacing-md); align-items: start;">
-            <svg width="24" height="24" fill="none" stroke="var(--info)" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0;">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="16" x2="12" y2="12"/>
-                <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <div>
-                <p style="margin: 0 0 var(--spacing-sm) 0; font-weight: 600; color: var(--text-primary);">
-                    For Administrators Only
-                </p>
-                <p style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); line-height: 1.7;">
-                    This page is for internal staff with administrator access. If you are a student or teacher, please use the <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600;">main login page</a>.
-                </p>
-            </div>
-        </div>
+    <!-- Password Field -->
+    <div style="margin-bottom: var(--spacing-xl);">
+      <label for="password"
+        style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+        {% trans "Password" %} <span style="color: var(--error);">*</span>
+      </label>
+      <input type="password" id="password" name="password" required autocomplete="current-password"
+        placeholder='{% trans "Enter your password" %}'
+        style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); transition: border-color 0.15s ease;"
+        onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border-color)'">
     </div>
 
-    <!-- Help Text -->
-    <div style="text-align: center; margin-top: var(--spacing-xl);">
-        <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">
-            Need help? Contact the system administrator
-        </p>
-        <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">
-            <a href="/" style="color: var(--primary); text-decoration: none; font-weight: 600;">
-                ← Back to Home
-            </a>
-        </p>
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-weight: 700;">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+        style="margin-right: var(--spacing-sm);">
+        <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+      </svg>
+      {% trans "Sign In to Admin Dashboard" %}
+    </button>
+  </form>
+
+  <!-- Security Note -->
+  <div
+    style="background: var(--info-light); padding: var(--spacing-lg); border-radius: var(--radius-lg); border-left: 4px solid var(--info); margin-top: var(--spacing-xl);">
+    <div style="display: flex; gap: var(--spacing-md); align-items: start;">
+      <svg width="24" height="24" fill="none" stroke="var(--info)" stroke-width="2" viewBox="0 0 24 24"
+        style="flex-shrink: 0;">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+      <div>
+        <p style="margin: 0 0 var(--spacing-sm) 0; font-weight: 600; color: var(--text-primary);">{% trans "For
+          Administrators Only" %}</p>
+        <p
+          style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); line-height: 1.7;">
+          {% blocktrans %}This page is for internal staff with administrator access. If you are a student or teacher,
+          please use the <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600;">main login
+            page</a>.{% endblocktrans %}</p>
+      </div>
     </div>
+  </div>
+
+  <!-- Help Text -->
+  <div style="text-align: center; margin-top: var(--spacing-xl);">
+    <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">{% trans "Need help? Contact
+      the system administrator" %}</p>
+    <p
+      style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">
+      <a href="/" style="color: var(--primary); text-decoration: none; font-weight: 600;">← {% trans "Back to Home"
+        %}</a></p>
+  </div>
 </section>
 
 <style>
-    /* Focus styles for accessibility */
-    input:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px var(--primary-light);
-    }
+  /* Focus styles for accessibility */
+  input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
 
-    /* Button hover effect */
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
-    }
+  /* Button hover effect */
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
 </style>
 {% endblock %}

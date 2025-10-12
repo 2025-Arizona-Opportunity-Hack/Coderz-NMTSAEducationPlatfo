@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}FAQ - Frequently Asked Questions - NMTSA Learning{% endblock %}
+{% block title %}{% trans "FAQ - Frequently Asked Questions - NMTSA Learning" %}{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-background py-12">
@@ -11,78 +11,86 @@
     <div class="mb-8 text-center">
       <h1 class="text-4xl font-bold text-primary mb-4">
         {% trans "Frequently Asked Questions" %}
-    </h1>
-      <p class="text-primary-text text-lg">Find answers to common questions about NMTSA Learning</p>
+      </h1>
+      <p class="text-primary-text text-lg">{% trans "Find answers to common questions about NMTSA Learning" %}</p>
     </div>
 
     <!-- Search Box -->
     <div class="mb-8">
       <div class="relative">
-        <input 
-          type="text" 
-          id="faq-search"
-          placeholder='{% trans "Search FAQs..." %}'
+        <input type="text" id="faq-search" placeholder='{% trans "Search FAQs..." %}'
           class="w-full px-4 py-3 pl-12 border-2 border-default rounded-lg bg-card text-primary-text focus:outline-none focus:ring-2 focus:ring-focus"
-          aria-label='{% trans "Search frequently asked questions" %}'
-        >
-        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          aria-label='{% trans "Search frequently asked questions" %}'>
+        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
     </div>
 
     <!-- FAQ Categories -->
     <div class="space-y-6">
-      
+
       <!-- General Questions -->
       <section class="bg-card rounded-lg border-2 border-default p-6">
         <h2 class="text-2xl font-bold text-primary mb-6 flex items-center">
           <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          General Questions
+          {% trans "General Questions" %}
         </h2>
-        
+
         <div class="space-y-4">
           <!-- FAQ Item -->
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">What is NMTSA Learning?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "What is NMTSA Learning?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              NMTSA Learning is an online Learning Management System (LMS) dedicated to neurologic music therapy education. We provide comprehensive courses for healthcare professionals, therapists, educators, and families with special needs members. Our platform offers video lessons, interactive content, and AI-powered support to enhance your learning experience.
+              {% trans "NMTSA Learning is an online Learning Management System (LMS) dedicated to neurologic music therapy education. We provide comprehensive courses for healthcare professionals, therapists, educators, and families with special needs members. Our platform offers video lessons, interactive content, and AI-powered support to enhance your learning experience." %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Who can use NMTSA Learning?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Who can use NMTSA Learning?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Our platform serves two primary audiences:
+              {% blocktrans %}Our platform serves two primary audiences:
               <ul class="list-disc pl-6 mt-2 space-y-1">
-                <li><strong>Healthcare Professionals & Therapists:</strong> Music therapists, occupational therapists, speech therapists, educators, and other professionals seeking continuing education and certification.</li>
-                <li><strong>Families & Caregivers:</strong> Parents, guardians, and caregivers of individuals with special needs who want to learn therapeutic techniques and strategies.</li>
+                <li><strong>Healthcare Professionals & Therapists:</strong> Music therapists, occupational therapists,
+                  speech therapists, educators, and other professionals seeking continuing education and certification.
+                </li>
+                <li><strong>Families & Caregivers:</strong> Parents, guardians, and caregivers of individuals with
+                  special needs who want to learn therapeutic techniques and strategies.</li>
               </ul>
-              You must be at least 18 years old to create an account.
+              You must be at least 18 years old to create an account.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Is NMTSA Learning free?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Is NMTSA Learning free?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              NMTSA Learning offers both free and paid courses. You can browse our course catalog without an account. Some introductory courses are free, while specialized and certification courses require a one-time purchase. Prices vary by course complexity and content. Once purchased, you have lifetime access to the course materials.
+              {% trans "NMTSA Learning offers both free and paid courses. You can browse our course catalog without an account. Some introductory courses are free, while specialized and certification courses require a one-time purchase. Prices vary by course complexity and content. Once purchased, you have lifetime access to the course materials." %}
             </div>
           </details>
         </div>
@@ -92,21 +100,24 @@
       <section class="bg-card rounded-lg border-2 border-default p-6">
         <h2 class="text-2xl font-bold text-primary mb-6 flex items-center">
           <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          Account & Registration
+          {% trans "Account & Registration" %}
         </h2>
-        
+
         <div class="space-y-4">
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">How do I create an account?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "How do I create an account?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Creating an account is easy:
+              {% blocktrans %}Creating an account is easy:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
                 <li>Click the "Login" button in the top navigation</li>
                 <li>Select "Sign up" on the Auth0 login page</li>
@@ -114,19 +125,21 @@
                 <li>Select your role: Student/Family or Educator/Therapist</li>
                 <li>Complete the onboarding process</li>
               </ol>
-              Teachers must upload credentials for admin verification before creating courses.
+              Teachers must upload credentials for admin verification before creating courses.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">I forgot my password. How do I reset it?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "I forgot my password. How do I reset it?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              To reset your password:
+              {% blocktrans %}To reset your password:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
                 <li>Go to the login page</li>
                 <li>Click "Forgot password?"</li>
@@ -134,26 +147,30 @@
                 <li>Check your email for a password reset link</li>
                 <li>Follow the instructions to create a new password</li>
               </ol>
-              If you don't receive the email within a few minutes, check your spam folder.
+              If you don't receive the email within a few minutes, check your spam folder.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Can I delete my account?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Can I delete my account?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Yes, you can delete your account at any time from your account settings. Please note that account deletion is permanent and will remove:
+              {% blocktrans %}Yes, you can delete your account at any time from your account settings. Please note that account deletion
+              is permanent and will remove:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li>Your profile and personal information</li>
                 <li>Course progress and completion data</li>
                 <li>Certificates and achievements</li>
                 <li>Access to purchased courses</li>
               </ul>
-              <strong>Note:</strong> Account deletion does not automatically issue refunds. For refund inquiries, contact support before deleting your account.
+              <strong>Note:</strong> Account deletion does not automatically issue refunds. For refund inquiries,
+              contact support before deleting your account.{% endblocktrans %}
             </div>
           </details>
         </div>
@@ -163,83 +180,96 @@
       <section class="bg-card rounded-lg border-2 border-default p-6">
         <h2 class="text-2xl font-bold text-primary mb-6 flex items-center">
           <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
-          Courses & Enrollment
+          {% trans "Courses & Enrollment" %}
         </h2>
-        
+
         <div class="space-y-4">
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">How do I enroll in a course?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "How do I enroll in a course?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              To enroll in a course:
+              {% blocktrans %}To enroll in a course:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
-                <li>Browse courses at <a href="{% url 'public_catalog' %}" class="text-[color:var(--primary-hover)] hover:underline">/courses/</a></li>
+                <li>Browse courses at <a href="{% url 'public_catalog' %}"
+                    class="text-[color:var(--primary-hover)] hover:underline">/courses/</a></li>
                 <li>Click on a course to view details</li>
                 <li>Click "Enroll" (for free courses) or "Purchase" (for paid courses)</li>
                 <li>Complete payment via PayPal (if applicable)</li>
                 <li>Access the course from your student dashboard</li>
-              </ol>
+              </ol>{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">How long do I have access to a course?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "How long do I have access to a course?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Once you enroll in a course (free or paid), you have <strong>lifetime access</strong>. You can:
+              {% blocktrans %}Once you enroll in a course (free or paid), you have <strong>lifetime access</strong>. You can:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li>Complete the course at your own pace</li>
                 <li>Re-watch videos as many times as needed</li>
                 <li>Download course materials (if provided)</li>
                 <li>Access updated content when teachers improve the course</li>
               </ul>
-              Your progress is automatically saved and synced across devices.
+              Your progress is automatically saved and synced across devices.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Can I get a certificate after completing a course?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Can I get a certificate after completing a course?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Yes! Upon completing all lessons and assignments in a course, you'll receive a certificate of completion. Certificates include:
+              {% blocktrans %}Yes! Upon completing all lessons and assignments in a course, you'll receive a certificate of completion.
+              Certificates include:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li>Your name and course title</li>
                 <li>Completion date</li>
                 <li>Teacher's signature</li>
                 <li>Unique verification code</li>
               </ul>
-              You can download certificates as PDF files and share them on LinkedIn or with employers.
+              You can download certificates as PDF files and share them on LinkedIn or with employers.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">What if I'm not satisfied with a course?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "What if I'm not satisfied with a course?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              We offer a <strong>30-day money-back guarantee</strong>. You can request a full refund if:
+              {% blocktrans %}We offer a <strong>30-day money-back guarantee</strong>. You can request a full refund if:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li>You request the refund within 30 days of purchase</li>
                 <li>You've completed less than 25% of the course content</li>
               </ul>
-              To request a refund, contact <a href="mailto:support@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with your order details.
+              To request a refund, contact <a href="mailto:support@nmtsalearning.org"
+                class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with your order
+              details.{% endblocktrans %}
             </div>
           </details>
         </div>
@@ -249,40 +279,45 @@
       <section class="bg-card rounded-lg border-2 border-default p-6">
         <h2 class="text-2xl font-bold text-primary mb-6 flex items-center">
           <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
-          For Teachers
+          {% trans "For Teachers" %}
         </h2>
-        
+
         <div class="space-y-4">
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">How do I become a teacher on NMTSA Learning?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "How do I become a teacher on NMTSA Learning?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              To become a teacher:
+              {% blocktrans %}To become a teacher:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
                 <li>Sign up and select "Educator/Therapist" as your role</li>
                 <li>Complete the teacher onboarding process</li>
                 <li>Upload your professional credentials (degree, licenses, certifications)</li>
                 <li>Wait for admin verification (typically 2-5 business days)</li>
                 <li>Once approved, you can create and publish courses</li>
-              </ol>
+              </ol>{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">How do I create a course?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "How do I create a course?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              After teacher verification:
+              {% blocktrans %}After teacher verification:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
                 <li>Go to your Teacher Dashboard</li>
                 <li>Click "Create New Course"</li>
@@ -291,24 +326,27 @@
                 <li>Submit course for admin review</li>
                 <li>Once approved, publish your course</li>
               </ol>
-              <strong>Note:</strong> All courses must be reviewed by admins before going live.
+              <strong>Note:</strong> All courses must be reviewed by admins before going live.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Can I earn money from my courses?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Can I earn money from my courses?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Yes! Teachers can set prices for their courses. You choose whether to offer free or paid courses. Revenue is distributed as follows:
+              {% blocktrans %}Yes! Teachers can set prices for their courses. You choose whether to offer free or paid courses. Revenue
+              is distributed as follows:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li><strong>Teacher Share:</strong> 70% of course revenue</li>
                 <li><strong>Platform Fee:</strong> 30% (covers hosting, support, and infrastructure)</li>
               </ul>
-              Payouts are processed monthly via PayPal. You can track earnings in your Teacher Dashboard.
+              Payouts are processed monthly via PayPal. You can track earnings in your Teacher Dashboard.{% endblocktrans %}
             </div>
           </details>
         </div>
@@ -318,41 +356,47 @@
       <section class="bg-card rounded-lg border-2 border-default p-6">
         <h2 class="text-2xl font-bold text-primary mb-6 flex items-center">
           <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          Technical Support
+          {% trans "Technical Support" %}
         </h2>
-        
+
         <div class="space-y-4">
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">What browsers are supported?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "What browsers are supported?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              NMTSA Learning works best on modern browsers:
+              {% blocktrans %}NMTSA Learning works best on modern browsers:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li>Google Chrome (recommended)</li>
                 <li>Mozilla Firefox</li>
                 <li>Safari (macOS/iOS)</li>
                 <li>Microsoft Edge</li>
               </ul>
-              We recommend using the latest version of your browser for optimal performance and security.
+              We recommend using the latest version of your browser for optimal performance and security.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Videos won't play. What should I do?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Videos won't play. What should I do?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              If videos aren't playing, try these troubleshooting steps:
+              {% blocktrans %}If videos aren't playing, try these troubleshooting steps:
               <ol class="list-decimal pl-6 mt-2 space-y-1">
                 <li>Check your internet connection</li>
                 <li>Refresh the page (Ctrl+R or Cmd+R)</li>
@@ -361,19 +405,22 @@
                 <li>Disable browser extensions (especially ad blockers)</li>
                 <li>Update your browser to the latest version</li>
               </ol>
-              If issues persist, contact <a href="mailto:support@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with details.
+              If issues persist, contact <a href="mailto:support@nmtsalearning.org"
+                class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with details.{% endblocktrans %}
             </div>
           </details>
 
           <details class="faq-item group">
-            <summary class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
-              <span class="font-semibold text-primary-text">Is NMTSA Learning accessible?</span>
-              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            <summary
+              class="flex justify-between items-center cursor-pointer list-none p-4 rounded-lg bg-background hover:bg-secondary/10 transition-colors">
+              <span class="font-semibold text-primary-text">{% trans "Is NMTSA Learning accessible?" %}</span>
+              <svg class="w-5 h-5 text-primary transform group-open:rotate-180 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
             <div class="p-4 pt-2 text-primary-text">
-              Yes! We're committed to accessibility and follow WCAG 2.1 AAA guidelines:
+              {% blocktrans %}Yes! We're committed to accessibility and follow WCAG 2.1 AAA guidelines:
               <ul class="list-disc pl-6 mt-2 space-y-1">
                 <li><strong>Autism-Friendly Design:</strong> Zero animations, clear navigation, predictable layouts</li>
                 <li><strong>Theme Options:</strong> Light, Dark, High Contrast, and Minimal modes</li>
@@ -381,7 +428,7 @@
                 <li><strong>Keyboard Navigation:</strong> Full keyboard accessibility</li>
                 <li><strong>Screen Readers:</strong> ARIA labels and semantic HTML</li>
                 <li><strong>Video Captions:</strong> Transcripts provided for all video content</li>
-              </ul>
+              </ul>{% endblocktrans %}
             </div>
           </details>
         </div>
@@ -393,18 +440,22 @@
     <div class="mt-12 bg-secondary/10 border-2 border-secondary rounded-lg p-8 text-center">
       <h2 class="text-2xl font-bold text-primary mb-4">
         {% trans "Still Have Questions?" %}
-    </h2>
-      <p class="text-primary-text mb-6">Can't find what you're looking for? We're here to help!</p>
+      </h2>
+      <p class="text-primary-text mb-6">{% trans "Can't find what you're looking for? We're here to help!" %}</p>
       <div class="flex flex-wrap justify-center gap-4">
-        <a href="{% url 'contact' %}" class="inline-flex items-center px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-[color:var(--secondary-hover)] focus:outline-none focus:ring-2 focus:ring-focus transition-colors">
+        <a href="{% url 'contact' %}"
+          class="inline-flex items-center px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-[color:var(--secondary-hover)] focus:outline-none focus:ring-2 focus:ring-focus transition-colors">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
           {% trans "Contact Support" %}
         </a>
-        <button onclick="document.getElementById('chat-toggle-btn').click()" class="inline-flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-[color:var(--primary-hover)] focus:outline-none focus:ring-2 focus:ring-focus transition-colors">
+        <button onclick="document.getElementById('chat-toggle-btn').click()"
+          class="inline-flex items-center px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-[color:var(--primary-hover)] focus:outline-none focus:ring-2 focus:ring-focus transition-colors">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
           {% trans "Chat with AI Assistant" %}
         </button>
@@ -415,7 +466,7 @@
     <div class="mt-8 text-center">
       <a href="{% url 'landing' %}" class="inline-flex items-center text-[color:var(--primary-hover)] hover:underline">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
         {% trans "Back to Home" %}
       </a>
@@ -425,30 +476,30 @@
 
 <!-- FAQ Search Script -->
 <script>
-document.getElementById('faq-search').addEventListener('input', function(e) {
+  document.getElementById('faq-search').addEventListener('input', function (e) {
     const searchTerm = e.target.value.toLowerCase();
     const faqItems = document.querySelectorAll('.faq-item');
-    
+
     faqItems.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        const section = item.closest('section');
-        
-        if (text.includes(searchTerm)) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
+      const text = item.textContent.toLowerCase();
+      const section = item.closest('section');
+
+      if (text.includes(searchTerm)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
     });
-    
+
     // Hide sections with no visible items
     document.querySelectorAll('section').forEach(section => {
-        const visibleItems = section.querySelectorAll('.faq-item[style="display: block;"], .faq-item:not([style])');
-        if (searchTerm && visibleItems.length === 0 && section.querySelector('.faq-item')) {
-            section.style.display = 'none';
-        } else {
-            section.style.display = 'block';
-        }
+      const visibleItems = section.querySelectorAll('.faq-item[style="display: block;"], .faq-item:not([style])');
+      if (searchTerm && visibleItems.length === 0 && section.querySelector('.faq-item')) {
+        section.style.display = 'none';
+      } else {
+        section.style.display = 'block';
+      }
     });
-});
+  });
 </script>
 {% endblock %}

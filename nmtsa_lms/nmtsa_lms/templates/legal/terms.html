@@ -1,278 +1,299 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Terms of Service - NMTSA Learning{% endblock %}
+{% block title %}{% trans "Terms of Service - NMTSA Learning" %}{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-background py-12">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-4xl font-bold text-primary mb-4">Terms of Service</h1>
-      <p class="text-muted text-sm">Last Updated: October 12, 2025</p>
+      <h1 class="text-4xl font-bold text-primary mb-4">{% trans "Terms of Service" %}</h1>
+      <p class="text-muted text-sm">{% trans "Last Updated: October 12, 2025" %}</p>
     </div>
 
     <!-- Content -->
     <div class="bg-card rounded-lg border-2 border-default p-6 sm:p-8 space-y-8">
-      
+
       <!-- Introduction -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">1. Acceptance of Terms</h2>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "1. Acceptance of Terms" %}</h2>
         <p class="text-primary-text mb-4">
-          Welcome to NMTSA Learning. These Terms of Service ("Terms") govern your access to and use of our Learning Management System (LMS) platform, including all courses, content, features, and services (collectively, the "Platform").
-        </p>
-        <p class="text-primary-text mb-4">
-          By creating an account, accessing, or using NMTSA Learning, you agree to be bound by these Terms and our <a href="{% url 'privacy_policy' %}" class="text-[color:var(--primary-hover)] hover:underline">Privacy Policy</a>. If you do not agree to these Terms, you may not use the Platform.
+          {% trans "Welcome to NMTSA Learning. These Terms of Service (\"Terms\") govern your access to and use of our
+          Learning Management System (LMS) platform, including all courses, content, features, and services
+          (collectively, the \"Platform\")." %}
         </p>
         <p class="text-primary-text">
-          <strong>Important:</strong> These Terms contain an arbitration clause and class action waiver (Section 12) that affects your legal rights.
+          <strong>{% trans "Important:" %}</strong> {% trans "These Terms contain an arbitration clause and class action
+          waiver (Section 12) that affects your legal rights." %}
         </p>
       </section>
 
       <!-- Eligibility -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">2. Eligibility</h2>
-        <p class="text-primary-text mb-4">You must meet the following requirements to use NMTSA Learning:</p>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "2. Eligibility" %}</h2>
+        <p class="text-primary-text mb-4">{% trans "You must meet the following requirements to use NMTSA Learning:" %}
+        </p>
         <ul class="list-disc pl-6 text-primary-text space-y-2">
-          <li>You are at least 18 years old</li>
-          <li>You have the legal capacity to enter into binding contracts</li>
-          <li>You are not prohibited from using the Platform under applicable laws</li>
-          <li>You provide accurate and complete registration information</li>
-          <li>You maintain the security of your account credentials</li>
+          <li>{% trans "You are at least 18 years old" %}</li>
+          <li>{% trans "You have the legal capacity to enter into binding contracts" %}</li>
+          <li>{% trans "You are not prohibited from using the Platform under applicable laws" %}</li>
+          <li>{% trans "You provide accurate and complete registration information" %}</li>
+          <li>{% trans "You maintain the security of your account credentials" %}</li>
         </ul>
       </section>
 
       <!-- User Accounts -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">3. User Accounts</h2>
-        
-        <h3 class="text-xl font-semibold text-primary mb-3">3.1 Account Types</h3>
-        <p class="text-primary-text mb-4">NMTSA Learning offers three account types:</p>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "3. User Accounts" %}</h2>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "3.1 Account Types" %}</h3>
+        <p class="text-primary-text mb-4">{% trans "NMTSA Learning offers three account types:" %}</p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li><strong>Students/Families:</strong> Enroll in courses, track progress, and access learning materials</li>
-          <li><strong>Teachers/Therapists:</strong> Create and publish courses (subject to admin approval)</li>
-          <li><strong>Administrators:</strong> Manage platform operations, verify teachers, and review courses</li>
+          <li><strong>{% trans "Students/Families:" %}</strong> {% trans "Enroll in courses, track progress, and access
+            learning materials" %}</li>
+          <li><strong>{% trans "Teachers/Therapists:" %}</strong> {% trans "Create and publish courses (subject to admin
+            approval)" %}</li>
+          <li><strong>{% trans "Administrators:" %}</strong> {% trans "Manage platform operations, verify teachers, and
+            review courses" %}</li>
         </ul>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">3.2 Account Security</h3>
-        <p class="text-primary-text mb-4">You are responsible for:</p>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "3.2 Account Security" %}</h3>
+        <p class="text-primary-text mb-4">{% trans "You are responsible for:" %}</p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li>Maintaining the confidentiality of your login credentials</li>
-          <li>All activities that occur under your account</li>
-          <li>Notifying us immediately of any unauthorized access</li>
-          <li>Using strong passwords and enabling security features (e.g., two-factor authentication)</li>
+          <li>{% trans "Maintaining the confidentiality of your login credentials" %}</li>
+          <li>{% trans "All activities that occur under your account" %}</li>
+          <li>{% trans "Notifying us immediately of any unauthorized access" %}</li>
+          <li>{% trans "Using strong passwords and enabling security features (e.g., two-factor authentication)" %}</li>
         </ul>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">3.3 Account Termination</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "3.3 Account Termination" %}</h3>
         <p class="text-primary-text">
-          We reserve the right to suspend or terminate your account if you violate these Terms, engage in fraudulent activity, or for any other reason at our sole discretion. You may delete your account at any time through your account settings.
+          {% trans "We reserve the right to suspend or terminate your account if you violate these Terms, engage in
+          fraudulent activity, or for any other reason at our sole discretion. You may delete your account at any time
+          through your account settings." %}
         </p>
       </section>
 
       <!-- Teacher Responsibilities -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">4. Teacher Responsibilities</h2>
-        <p class="text-primary-text mb-4">If you are a teacher on NMTSA Learning, you agree to:</p>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "4. Teacher Responsibilities" %}</h2>
+        <p class="text-primary-text mb-4">{% trans "If you are a teacher on NMTSA Learning, you agree to:" %}</p>
         <ul class="list-disc pl-6 text-primary-text space-y-2">
-          <li><strong>Verification:</strong> Provide valid professional credentials for admin review</li>
-          <li><strong>Content Quality:</strong> Create accurate, high-quality educational content</li>
-          <li><strong>Original Work:</strong> Ensure all content is original or properly licensed</li>
-          <li><strong>Compliance:</strong> Follow all applicable laws and professional standards</li>
-          <li><strong>Student Privacy:</strong> Protect student data and respect privacy rights</li>
-          <li><strong>Course Review:</strong> Submit courses for admin approval before publishing</li>
-          <li><strong>Updates:</strong> Keep course content current and accurate</li>
-          <li><strong>Support:</strong> Respond to student questions and provide reasonable support</li>
+          <li><strong>{% trans "Verification:" %}</strong> {% trans "Provide valid professional credentials for admin
+            review" %}</li>
+          <li><strong>{% trans "Content Quality:" %}</strong> {% trans "Create accurate, high-quality educational
+            content" %}</li>
+          <li><strong>{% trans "Original Work:" %}</strong> {% trans "Ensure all content is original or properly
+            licensed" %}</li>
+          <li><strong>{% trans "Compliance:" %}</strong> {% trans "Follow all applicable laws and professional
+            standards" %}</li>
+          <li><strong>{% trans "Student Privacy:" %}</strong> {% trans "Protect student data and respect privacy rights"
+            %}</li>
+          <li><strong>{% trans "Course Review:" %}</strong> {% trans "Submit courses for admin approval before
+            publishing" %}</li>
+          <li><strong>{% trans "Updates:" %}</strong> {% trans "Keep course content current and accurate" %}</li>
+          <li><strong>{% trans "Support:" %}</strong> {% trans "Respond to student questions and provide reasonable
+            support" %}</li>
         </ul>
       </section>
 
       <!-- Student Responsibilities -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">5. Student Responsibilities</h2>
-        <p class="text-primary-text mb-4">If you are a student on NMTSA Learning, you agree to:</p>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "5. Student Responsibilities" %}</h2>
+        <p class="text-primary-text mb-4">{% trans "If you are a student on NMTSA Learning, you agree to:" %}</p>
         <ul class="list-disc pl-6 text-primary-text space-y-2">
-          <li><strong>Personal Use:</strong> Use courses for personal educational purposes only</li>
-          <li><strong>No Sharing:</strong> Not share login credentials or course access with others</li>
-          <li><strong>No Recording:</strong> Not record, download, or redistribute course content without permission</li>
-          <li><strong>Respectful Conduct:</strong> Engage respectfully in discussions and communications</li>
-          <li><strong>Academic Integrity:</strong> Complete assignments honestly without plagiarism</li>
-          <li><strong>Copyright:</strong> Respect intellectual property rights of teachers and NMTSA</li>
+          <li><strong>{% trans "Personal Use:" %}</strong> {% trans "Use courses for personal educational purposes only"
+            %}</li>
+          <li><strong>{% trans "No Sharing:" %}</strong> {% trans "Not share login credentials or course access with
+            others" %}</li>
+          <li><strong>{% trans "No Recording:" %}</strong> {% trans "Not record, download, or redistribute course
+            content without permission" %}</li>
+          <li><strong>{% trans "Respectful Conduct:" %}</strong> {% trans "Engage respectfully in discussions and
+            communications" %}</li>
+          <li><strong>{% trans "Academic Integrity:" %}</strong> {% trans "Complete assignments honestly without
+            plagiarism" %}</li>
+          <li><strong>{% trans "Copyright:" %}</strong> {% trans "Respect intellectual property rights of teachers and
+            NMTSA" %}</li>
         </ul>
       </section>
 
       <!-- Payment Terms -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">6. Payment and Refunds</h2>
-        
-        <h3 class="text-xl font-semibold text-primary mb-3">6.1 Course Pricing</h3>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "6. Payment and Refunds" %}</h2>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "6.1 Course Pricing" %}</h3>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li>Course prices are displayed in USD and subject to change</li>
-          <li>All payments are processed securely through PayPal</li>
-          <li>Sales taxes may apply based on your location</li>
-          <li>One-time payments grant lifetime access to purchased courses</li>
+          <li>{% trans "Course prices are displayed in USD and subject to change" %}</li>
+          <li>{% trans "All payments are processed securely through PayPal" %}</li>
+          <li>{% trans "Sales taxes may apply based on your location" %}</li>
+          <li>{% trans "One-time payments grant lifetime access to purchased courses" %}</li>
         </ul>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">6.2 Refund Policy</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "6.2 Refund Policy" %}</h3>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li><strong>30-Day Guarantee:</strong> Full refund if requested within 30 days of purchase and less than 25% of course content has been completed</li>
-          <li><strong>Course Removal:</strong> Full refund if a course is removed from the platform</li>
-          <li><strong>Technical Issues:</strong> Refunds available for persistent technical problems preventing access</li>
-          <li><strong>No Refunds:</strong> After 30 days or if more than 25% of course is completed</li>
+          <li><strong>{% trans "30-Day Guarantee:" %}</strong> {% trans "Full refund if requested within 30 days of
+            purchase and less than 25% of course content has been completed" %}</li>
+          <li><strong>{% trans "Course Removal:" %}</strong> {% trans "Full refund if a course is removed from the
+            platform" %}</li>
+          <li><strong>{% trans "Technical Issues:" %}</strong> {% trans "Refunds available for persistent technical
+            problems preventing access" %}</li>
+          <li><strong>{% trans "No Refunds:" %}</strong> {% trans "After 30 days or if more than 25% of course is
+            completed" %}</li>
         </ul>
         <p class="text-primary-text">
-          To request a refund, contact <a href="mailto:support@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with your order details.
+          {% blocktrans %}To request a refund, contact <a href="mailto:support@nmtsalearning.org"
+            class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a> with your order
+          details.{% endblocktrans %}
         </p>
       </section>
 
       <!-- Intellectual Property -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">7. Intellectual Property Rights</h2>
-        
-        <h3 class="text-xl font-semibold text-primary mb-3">7.1 Platform Content</h3>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "7. Intellectual Property Rights" %}</h2>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "7.1 Platform Content" %}</h3>
         <p class="text-primary-text mb-4">
-          NMTSA Learning and its original content (excluding user-generated content) are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works without our written permission.
+          {% trans "NMTSA Learning and its original content (excluding user-generated content) are protected by
+          copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create
+          derivative works without our written permission." %}
         </p>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">7.2 User Content</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "7.2 User Content" %}</h3>
         <p class="text-primary-text mb-4">
-          When you upload content (courses, videos, discussions), you retain ownership but grant NMTSA Learning a worldwide, non-exclusive, royalty-free license to:
+          {% trans "When you upload content (courses, videos, discussions), you retain ownership but grant NMTSA
+          Learning a worldwide, non-exclusive, royalty-free license to:" %}
         </p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li>Host, store, and display your content on the Platform</li>
-          <li>Distribute content to enrolled students</li>
-          <li>Create backups and transcripts for accessibility</li>
-          <li>Use anonymized data for analytics and improvement</li>
+          <li>{% trans "Host, store, and display your content on the Platform" %}</li>
+          <li>{% trans "Distribute content to enrolled students" %}</li>
+          <li>{% trans "Create backups and transcripts for accessibility" %}</li>
+          <li>{% trans "Use anonymized data for analytics and improvement" %}</li>
         </ul>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">7.3 Copyright Infringement</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "7.3 Copyright Infringement" %}</h3>
         <p class="text-primary-text">
-          We respect intellectual property rights. If you believe content on our Platform infringes your copyright, contact us at <a href="mailto:dmca@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">dmca@nmtsalearning.org</a> with:
+          {% trans "We respect intellectual property rights. If you believe content on our Platform infringes your
+          copyright, contact us at" %} <a href="mailto:dmca@nmtsalearning.org"
+            class="text-[color:var(--primary-hover)] hover:underline">dmca@nmtsalearning.org</a> {% trans "with:" %}
         </p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mt-2">
-          <li>Description of the copyrighted work</li>
-          <li>Location of the infringing content (URL)</li>
-          <li>Your contact information</li>
-          <li>A statement of good faith belief</li>
-          <li>A statement under penalty of perjury</li>
-          <li>Your physical or electronic signature</li>
+          <li>{% trans "Description of the copyrighted work" %}</li>
+          <li>{% trans "Location of the infringing content (URL)" %}</li>
+          <li>{% trans "Your contact information" %}</li>
+          <li>{% trans "A statement of good faith belief" %}</li>
+          <li>{% trans "A statement under penalty of perjury" %}</li>
+          <li>{% trans "Your physical or electronic signature" %}</li>
         </ul>
       </section>
 
       <!-- Prohibited Conduct -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">8. Prohibited Conduct</h2>
-        <p class="text-primary-text mb-4">You may not:</p>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "8. Prohibited Conduct" %}</h2>
+        <p class="text-primary-text mb-4">{% trans "You may not:" %}</p>
         <ul class="list-disc pl-6 text-primary-text space-y-2">
-          <li>Violate any laws or regulations</li>
-          <li>Infringe on intellectual property rights</li>
-          <li>Upload malware, viruses, or malicious code</li>
-          <li>Attempt to gain unauthorized access to the Platform</li>
-          <li>Scrape, crawl, or harvest data from the Platform</li>
-          <li>Impersonate others or provide false information</li>
-          <li>Harass, abuse, or threaten other users</li>
-          <li>Post spam, advertising, or promotional content</li>
-          <li>Manipulate course reviews or ratings</li>
-          <li>Reverse engineer or decompile the Platform</li>
-          <li>Use automated tools (bots) to access the Platform</li>
-          <li>Share login credentials with others</li>
+          <li>{% trans "Violate any laws or regulations" %}</li>
+          <li>{% trans "Infringe on intellectual property rights" %}</li>
+          <li>{% trans "Upload malware, viruses, or malicious code" %}</li>
+          <li>{% trans "Attempt to gain unauthorized access to the Platform" %}</li>
+          <li>{% trans "Scrape, crawl, or harvest data from the Platform" %}</li>
+          <li>{% trans "Impersonate others or provide false information" %}</li>
+          <li>{% trans "Harass, abuse, or threaten other users" %}</li>
+          <li>{% trans "Post spam, advertising, or promotional content" %}</li>
+          <li>{% trans "Manipulate course reviews or ratings" %}</li>
+          <li>{% trans "Reverse engineer or decompile the Platform" %}</li>
+          <li>{% trans "Use automated tools (bots) to access the Platform" %}</li>
+          <li>{% trans "Share login credentials with others" %}</li>
         </ul>
       </section>
 
       <!-- Disclaimers -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">9. Disclaimers and Limitations of Liability</h2>
-        
-        <h3 class="text-xl font-semibold text-primary mb-3">9.1 Educational Content</h3>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "9. Disclaimers and Limitations of Liability" %}</h2>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "9.1 Educational Content" %}</h3>
         <p class="text-primary-text mb-4">
-          <strong>Important:</strong> NMTSA Learning provides educational content for informational purposes only. Courses are not a substitute for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare professionals for medical decisions.
+          <strong>{% trans "Important:" %}</strong> {% trans "NMTSA Learning provides educational content for
+          informational purposes only. Courses are not a substitute for professional medical advice, diagnosis, or
+          treatment. Always consult qualified healthcare professionals for medical decisions." %}
         </p>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">9.2 No Warranties</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "9.2 No Warranties" %}</h3>
         <p class="text-primary-text mb-4">
-          THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+          {% trans "THE PLATFORM IS PROVIDED AS IS AND AS AVAILABLE WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED,
+          INCLUDING BUT NOT LIMITED TO:" %}
         </p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
-          <li>Accuracy, completeness, or reliability of content</li>
-          <li>Fitness for a particular purpose</li>
-          <li>Non-infringement of third-party rights</li>
-          <li>Uninterrupted or error-free operation</li>
-          <li>Security or freedom from viruses</li>
+          <li>{% trans "Accuracy, completeness, or reliability of content" %}</li>
+          <li>{% trans "Fitness for a particular purpose" %}</li>
+          <li>{% trans "Non-infringement of third-party rights" %}</li>
+          <li>{% trans "Uninterrupted or error-free operation" %}</li>
+          <li>{% trans "Security or freedom from viruses" %}</li>
         </ul>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">9.3 Limitation of Liability</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "9.3 Limitation of Liability" %}</h3>
         <p class="text-primary-text">
-          TO THE MAXIMUM EXTENT PERMITTED BY LAW, NMTSA LEARNING SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFITS, DATA LOSS, OR BUSINESS INTERRUPTION, ARISING FROM YOUR USE OF THE PLATFORM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+          {% trans "TO THE MAXIMUM EXTENT PERMITTED BY LAW, NMTSA LEARNING SHALL NOT BE LIABLE FOR ANY INDIRECT,
+          INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFITS, DATA LOSS, OR BUSINESS
+          INTERRUPTION, ARISING FROM YOUR USE OF THE PLATFORM, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES." %}
         </p>
         <p class="text-primary-text mt-4">
-          <strong>Cap on Liability:</strong> In no event shall our total liability exceed the amount you paid to us in the 12 months preceding the claim, or $100 (whichever is greater).
+          <strong>{% trans "Cap on Liability:" %}</strong> {% trans "In no event shall our total liability exceed the
+          amount you paid to us in the 12 months preceding the claim, or $100 (whichever is greater)." %}
         </p>
       </section>
 
       <!-- Indemnification -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">10. Indemnification</h2>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "10. Indemnification" %}</h2>
         <p class="text-primary-text">
-          You agree to indemnify, defend, and hold harmless NMTSA Learning, its affiliates, officers, directors, employees, and agents from any claims, liabilities, damages, losses, costs, or expenses (including reasonable attorneys' fees) arising from:
+          {% trans "You agree to indemnify, defend, and hold harmless NMTSA Learning, its affiliates, officers,
+          directors, employees, and agents from any claims, liabilities, damages, losses, costs, or expenses (including
+          reasonable attorneys' fees) arising from:" %}
         </p>
         <ul class="list-disc pl-6 text-primary-text space-y-2 mt-4">
-          <li>Your use of the Platform</li>
-          <li>Your violation of these Terms</li>
-          <li>Your violation of any third-party rights</li>
-          <li>Content you upload or share</li>
-          <li>Your negligence or misconduct</li>
+          <li>{% trans "Your use of the Platform" %}</li>
+          <li>{% trans "Your violation of these Terms" %}</li>
+          <li>{% trans "Your violation of any third-party rights" %}</li>
+          <li>{% trans "Content you upload or share" %}</li>
+          <li>{% trans "Your negligence or misconduct" %}</li>
         </ul>
       </section>
 
       <!-- Dispute Resolution -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">11. Dispute Resolution</h2>
-        
-        <h3 class="text-xl font-semibold text-primary mb-3">11.1 Informal Resolution</h3>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "11. Dispute Resolution" %}</h2>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "11.1 Informal Resolution" %}</h3>
         <p class="text-primary-text mb-4">
-          Before filing a claim, you agree to contact us at <a href="mailto:legal@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">legal@nmtsalearning.org</a> to attempt informal resolution. We will work in good faith to resolve disputes within 60 days.
+          {% blocktrans %}Before filing a claim, you agree to contact us at <a href="mailto:legal@nmtsalearning.org"
+            class="text-[color:var(--primary-hover)] hover:underline">legal@nmtsalearning.org</a> to attempt informal
+          resolution. We will work in good faith to resolve disputes within 60 days.{% endblocktrans %}
         </p>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">11.2 Binding Arbitration</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "11.2 Binding Arbitration" %}</h3>
         <p class="text-primary-text mb-4">
-          If informal resolution fails, disputes will be resolved through binding arbitration under the rules of the American Arbitration Association (AAA). Arbitration will be conducted in [Your Location] or remotely by videoconference.
+          {% trans "If informal resolution fails, disputes will be resolved through binding arbitration under the rules
+          of the American Arbitration Association (AAA). Arbitration will be conducted in [Your Location] or remotely by
+          videoconference." %}
         </p>
 
-        <h3 class="text-xl font-semibold text-primary mb-3">11.3 Class Action Waiver</h3>
+        <h3 class="text-xl font-semibold text-primary mb-3">{% trans "11.3 Class Action Waiver" %}</h3>
         <p class="text-primary-text">
-          <strong>YOU AND NMTSA LEARNING AGREE THAT DISPUTES WILL BE RESOLVED ON AN INDIVIDUAL BASIS ONLY. YOU WAIVE ANY RIGHT TO PARTICIPATE IN A CLASS ACTION, CLASS ARBITRATION, OR REPRESENTATIVE ACTION.</strong>
+          <strong>{% trans "YOU AND NMTSA LEARNING AGREE THAT DISPUTES WILL BE RESOLVED ON AN INDIVIDUAL BASIS ONLY. YOU
+            WAIVE ANY RIGHT TO PARTICIPATE IN A CLASS ACTION, CLASS ARBITRATION, OR REPRESENTATIVE ACTION." %}</strong>
         </p>
-      </section>
-
-      <!-- General Provisions -->
-      <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">12. General Provisions</h2>
-        <ul class="list-disc pl-6 text-primary-text space-y-2">
-          <li><strong>Governing Law:</strong> These Terms are governed by the laws of [Your State/Country], without regard to conflict of law principles.</li>
-          <li><strong>Severability:</strong> If any provision is found unenforceable, the remaining provisions remain in effect.</li>
-          <li><strong>No Waiver:</strong> Our failure to enforce any right does not waive that right.</li>
-          <li><strong>Assignment:</strong> You may not transfer your rights; we may assign these Terms without restriction.</li>
-          <li><strong>Entire Agreement:</strong> These Terms constitute the entire agreement between you and NMTSA Learning.</li>
-        </ul>
       </section>
 
       <!-- Changes to Terms -->
       <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">13. Changes to These Terms</h2>
+        <h2 class="text-2xl font-bold text-primary mb-4">{% trans "12. Changes to These Terms" %}</h2>
         <p class="text-primary-text">
-          We may update these Terms from time to time. We will notify you of material changes by posting a notice on the Platform or sending an email. Your continued use after changes take effect constitutes acceptance of the revised Terms. If you do not agree, you must stop using the Platform.
+          {% trans "We may update these Terms from time to time. We will notify you of material changes by posting a
+          notice on the Platform or sending an email. Your continued use after changes take effect constitutes
+          acceptance of the revised Terms. If you do not agree, you must stop using the Platform." %}
         </p>
-      </section>
-
-      <!-- Contact Information -->
-      <section>
-        <h2 class="text-2xl font-bold text-primary mb-4">14. Contact Us</h2>
-        <p class="text-primary-text mb-4">
-          For questions about these Terms, please contact us:
-        </p>
-        <div class="bg-background border-2 border-default rounded-lg p-4 text-primary-text">
-          <p><strong>NMTSA Learning</strong></p>
-          <p>Email: <a href="mailto:legal@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">legal@nmtsalearning.org</a></p>
-          <p>Support: <a href="mailto:support@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a></p>
-        </div>
       </section>
 
     </div>
@@ -281,9 +302,9 @@
     <div class="mt-8 text-center">
       <a href="{% url 'landing' %}" class="inline-flex items-center text-[color:var(--primary-hover)] hover:underline">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Home
+        {% trans "Back to Home" %}
       </a>
     </div>
   </div>

@@ -1,86 +1,91 @@
 {# Reusable Card Component - Responsive & Accessible
-   Usage:
-   {% include 'components/card.html' with title='Card Title' content='Card content' %}
+Usage:
+{% include 'components/card.html' with title='Card Title' content='Card content' %}
 
-   Parameters:
-   - title: Card header title (optional)
-   - content: Card body content (required)
-   - footer: Card footer content (optional)
-   - image: Image URL for card top (optional)
-   - image_alt: Alt text for image (required if image provided)
-   - variant: default|highlight|bordered|elevated (default: default)
-   - clickable: true|false - Makes entire card clickable (default: false)
-   - href: URL if clickable (optional)
-   - aria_label: Custom ARIA label for the card (optional)
+Parameters:
+- title: Card header title (optional)
+- content: Card body content (required)
+- footer: Card footer content (optional)
+- image: Image URL for card top (optional)
+- image_alt: Alt text for image (required if image provided)
+- variant: default|highlight|bordered|elevated (default: default)
+- clickable: true|false - Makes entire card clickable (default: false)
+- href: URL if clickable (optional)
+- aria_label: Custom ARIA label for the card (optional)
 #}
 
+{% load i18n %}
+
 {% if clickable and href %}
-<a href="{{ href }}"
-   class="block bg-card border-2 border-default rounded-xl overflow-hidden hover:shadow-lg hover:border-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+<a href="{{ href }}" class="block bg-card border-2 border-default rounded-xl overflow-hidden hover:shadow-lg hover:border-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
           {% if variant == 'highlight' %}border-primary bg-primary-light
           {% elif variant == 'elevated' %}shadow-md
-          {% endif %}"
-   {% if aria_label %}aria-label="{{ aria_label }}"{% else %}aria-label="{{ title }}"{% endif %}
-   role="article">
-    
-    {% if image %}
-    <div class="w-full h-48 overflow-hidden">
-        <img src="{{ image }}" 
-             alt="{{ image_alt|default:title|default:'Card image' }}" 
-             class="w-full h-full object-cover"
-             loading="lazy">
-    </div>
-    {% endif %}
+          {% endif %}" {% if aria_label %}aria-label="{{ aria_label }}" {% else %}aria-label="{{ title }}" {% endif %}
+  role="article">
 
-    {% if title %}
-    <div class="px-4 sm:px-6 py-4 border-b border-default">
-        <h3 class="text-lg sm:text-xl font-bold text-primary">{{ title }}</h3>
-    </div>
+  {% if image %}
+  <div class="w-full h-48 overflow-hidden">
+    {% if image_alt %}
+    <img src="{{ image }}" alt="{{ image_alt }}" class="w-full h-full object-cover" loading="lazy">
+    {% elif title %}
+    <img src="{{ image }}" alt="{{ title }}" class="w-full h-full object-cover" loading="lazy">
+    {% else %}
+    <img src="{{ image }}" alt='{% trans "Card image" %}' class="w-full h-full object-cover" loading="lazy">
     {% endif %}
+  </div>
+  {% endif %}
 
-    <div class="px-4 sm:px-6 py-4 text-secondary">
-        {{ content|safe }}
-    </div>
+  {% if title %}
+  <div class="px-4 sm:px-6 py-4 border-b border-default">
+    <h3 class="text-lg sm:text-xl font-bold text-primary">{{ title }}</h3>
+  </div>
+  {% endif %}
 
-    {% if footer %}
-    <div class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
-        {{ footer|safe }}
-    </div>
-    {% endif %}
+  <div class="px-4 sm:px-6 py-4 text-secondary">
+    {{ content|safe }}
+  </div>
+
+  {% if footer %}
+  <div class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
+    {{ footer|safe }}
+  </div>
+  {% endif %}
 </a>
 {% else %}
 <article class="bg-card border-2 border-default rounded-xl overflow-hidden
                {% if variant == 'highlight' %}border-primary bg-primary-light
                {% elif variant == 'elevated' %}shadow-md
-               {% endif %}"
-         {% if aria_label %}aria-label="{{ aria_label }}"{% elif title %}aria-labelledby="card-title-{{ title|slugify }}"{% endif %}
-         role="article">
-    
-    {% if image %}
-    <div class="w-full h-48 overflow-hidden">
-        <img src="{{ image }}" 
-             alt="{{ image_alt|default:title|default:'Card image' }}" 
-             class="w-full h-full object-cover"
-             loading="lazy">
-    </div>
-    {% endif %}
+               {% endif %}" {% if aria_label %}aria-label="{{ aria_label }}" {% elif title
+  %}aria-labelledby="card-title-{{ title|slugify }}" {% endif %} role="article">
 
-    {% if title %}
-    <header class="px-4 sm:px-6 py-4 border-b border-default">
-        <h3 id="card-title-{{ title|slugify }}" class="text-lg sm:text-xl font-bold text-primary">
-            {{ title }}
-        </h3>
-    </header>
+  {% if image %}
+  <div class="w-full h-48 overflow-hidden">
+    {% if image_alt %}
+    <img src="{{ image }}" alt="{{ image_alt }}" class="w-full h-full object-cover" loading="lazy">
+    {% elif title %}
+    <img src="{{ image }}" alt="{{ title }}" class="w-full h-full object-cover" loading="lazy">
+    {% else %}
+    <img src="{{ image }}" alt='{% trans "Card image" %}' class="w-full h-full object-cover" loading="lazy">
     {% endif %}
+  </div>
+  {% endif %}
 
-    <div class="px-4 sm:px-6 py-4 text-secondary">
-        {{ content|safe }}
-    </div>
+  {% if title %}
+  <header class="px-4 sm:px-6 py-4 border-b border-default">
+    <h3 id="card-title-{{ title|slugify }}" class="text-lg sm:text-xl font-bold text-primary">
+      {{ title }}
+    </h3>
+  </header>
+  {% endif %}
 
-    {% if footer %}
-    <footer class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
-        {{ footer|safe }}
-    </footer>
-    {% endif %}
+  <div class="px-4 sm:px-6 py-4 text-secondary">
+    {{ content|safe }}
+  </div>
+
+  {% if footer %}
+  <footer class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
+    {{ footer|safe }}
+  </footer>
+  {% endif %}
 </article>
 {% endif %}

@@ -1,25 +1,25 @@
 {# Reusable Button Component - Responsive & Accessible
-   Usage:
-   {% include 'components/button.html' with text='Click Me' variant='primary' size='md' href='#' %}
+Usage:
+{% include 'components/button.html' with text='Click Me' variant='primary' size='md' href='#' %}
 
-   Parameters:
-   - text: Button text (required)
-   - variant: primary|secondary|outline|success|danger|warning (default: primary)
-   - size: sm|md|lg (default: md)
-   - href: Link URL (optional, creates <a> instead of <button>)
-   - type: button|submit|reset (default: button, only for <button>)
-   - onclick: JavaScript function (optional)
-   - disabled: true|false (default: false)
-   - loading: true|false - Show loading spinner (default: false)
-   - id: Button ID for JavaScript targeting (optional)
-   - icon: Icon SVG path (optional)
-   - aria_label: Custom ARIA label (optional)
-#}
+Parameters:
+- text: Button text (required)
+- variant: primary|secondary|outline|success|danger|warning (default: primary)
+- size: sm|md|lg (default: md)
+- href: Link URL (optional, creates <a> instead of <button>)
+    - type: button|submit|reset (default: button, only for <button>)
+      - onclick: JavaScript function (optional)
+      - disabled: true|false (default: false)
+      - loading: true|false - Show loading spinner (default: false)
+      - id: Button ID for JavaScript targeting (optional)
+      - icon: Icon SVG path (optional)
+      - aria_label: Custom ARIA label (optional)
+      #}
 
-{% if href %}
-    <a href="{{ href }}"
-       {% if id %}id="{{ id }}"{% endif %}
-       class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+      {% load i18n %}
+
+      {% if href %}
+      <a href="{{ href }}" {% if id %}id="{{ id }}" {% endif %} class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
               {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md
               {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md
               {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light
@@ -29,31 +29,28 @@
               {% else %}bg-primary text-white hover:bg-primary-hover shadow-md{% endif %}
               {% if size == 'sm' %}text-sm px-3 py-1.5
               {% elif size == 'lg' %}text-lg px-6 py-3
-              {% else %}text-base px-4 py-2{% endif %}"
-       {% if onclick %}onclick="{{ onclick }}"{% endif %}
-       {% if disabled %}aria-disabled="true" class="opacity-60 pointer-events-none cursor-not-allowed"{% endif %}
-       {% if aria_label %}aria-label="{{ aria_label }}"{% endif %}
-       role="button">
+              {% else %}text-base px-4 py-2{% endif %}" {% if onclick %}onclick="{{ onclick }}" {% endif %} {% if
+        disabled %}aria-disabled="true" class="opacity-60 pointer-events-none cursor-not-allowed" {% endif %} {% if
+        aria_label %}aria-label="{{ aria_label }}" {% endif %} role="button">
 
         {% if loading %}
-            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" opacity="0.25"/>
-                <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
-            </svg>
-            <span>Processing...</span>
+        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <circle cx="12" cy="12" r="10" opacity="0.25" />
+          <path d="M12 2 A10 10 0 0 1 22 12" opacity="1" />
+        </svg>
+        <span>{% trans "Processing..." %}</span>
         {% else %}
-            {% if icon %}
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    {{ icon|safe }}
-                </svg>
-            {% endif %}
-            <span>{{ text }}</span>
+        {% if icon %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          {{ icon|safe }}
+        </svg>
         {% endif %}
-    </a>
-{% else %}
-    <button type="{{ type|default:'button' }}"
-            {% if id %}id="{{ id }}"{% endif %}
-            class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+        <span>{{ text }}</span>
+        {% endif %}
+      </a>
+      {% else %}
+      <button type="{{ type|default:'button' }}" {% if id %}id="{{ id }}" {% endif %} class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
                    {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
                    {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
                    {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light disabled:opacity-60 disabled:cursor-not-allowed
@@ -63,25 +60,25 @@
                    {% else %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed{% endif %}
                    {% if size == 'sm' %}text-sm px-3 py-1.5
                    {% elif size == 'lg' %}text-lg px-6 py-3
-                   {% else %}text-base px-4 py-2{% endif %}"
-            {% if onclick %}onclick="{{ onclick }}"{% endif %}
-            {% if disabled or loading %}disabled{% endif %}
-            {% if aria_label %}aria-label="{{ aria_label }}"{% else %}aria-label="{{ text }}"{% endif %}>
+                   {% else %}text-base px-4 py-2{% endif %}" {% if onclick %}onclick="{{ onclick }}" {% endif %} {% if
+        disabled or loading %}disabled{% endif %} {% if aria_label %}aria-label="{{ aria_label }}" {% else
+        %}aria-label="{{ text }}" {% endif %}>
 
         {% if loading %}
-            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" role="status">
-                <circle cx="12" cy="12" r="10" opacity="0.25"/>
-                <path d="M12 2 A10 10 0 0 1 22 12" opacity="1"/>
-            </svg>
-            <span>Processing...</span>
-            <span class="sr-only">Loading, please wait</span>
+        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true" role="status">
+          <circle cx="12" cy="12" r="10" opacity="0.25" />
+          <path d="M12 2 A10 10 0 0 1 22 12" opacity="1" />
+        </svg>
+        <span>{% trans "Processing..." %}</span>
+        <span class="sr-only">{% trans "Loading, please wait" %}</span>
         {% else %}
-            {% if icon %}
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    {{ icon|safe }}
-                </svg>
-            {% endif %}
-            <span>{{ text }}</span>
+        {% if icon %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          {{ icon|safe }}
+        </svg>
         {% endif %}
-    </button>
-{% endif %}
+        <span>{{ text }}</span>
+        {% endif %}
+      </button>
+      {% endif %}

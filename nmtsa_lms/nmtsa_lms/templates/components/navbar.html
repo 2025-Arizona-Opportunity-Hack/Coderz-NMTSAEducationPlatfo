@@ -1,17 +1,17 @@
 {% load static %}
+{% load i18n %}
 
-<nav class="w-full bg-card px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-default" role="navigation"
-  aria-label="Main navigation">
+<nav class="w-full bg-card px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-default" role="navigation" aria-label='{% trans "
+  Main navigation" %}'>
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <!-- Logo/Brand -->
     <div class="flex items-center">
       <a href="/"
         class="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-bold text-primary hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
-        aria-label="NMTSA Learning home">
-        <img src="{% static 'images/favicons/android-chrome-192x192.png' %}" 
-             alt="NMTSA Learning logo" 
-             class="w-8 h-8 sm:w-10 sm:h-10" />
-        <span class="inline">NMTSA Learning</span>
+        aria-label='{% trans " NMTSA Learning home" %}'>
+        <img src="{% static 'images/favicons/android-chrome-192x192.png' %}" alt="NMTSA Learning logo"
+          class="w-8 h-8 sm:w-10 sm:h-10" />
+        <span class="inline">{% trans "NMTSA Learning" %}</span>
       </a>
     </div>
 
@@ -23,7 +23,7 @@
         <a href="{% url 'public_catalog' %}"
           class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/courses/' in request.path and '/student/courses/' not in request.path %}text-primary-color font-semibold{% endif %}"
           aria-current="{% if '/courses/' in request.path %}page{% else %}false{% endif %}">
-          Courses
+          {% trans "Courses" %}
         </a>
 
         {% if request.session.user %}
@@ -32,7 +32,7 @@
         <a href="{% url 'admin_dashboard' %}"
           class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/admin-dash/' in request.path %}text-primary-color font-semibold{% endif %}"
           aria-current="{% if '/admin-dash/' in request.path %}page{% else %}false{% endif %}">
-          Dashboard
+          {% trans "Dashboard" %}
         </a>
         {% endif %}
 
@@ -40,7 +40,7 @@
         <a href="{% url 'teacher_dashboard' %}"
           class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/teacher/' in request.path %}text-primary-color font-semibold{% endif %}"
           aria-current="{% if '/teacher/' in request.path %}page{% else %}false{% endif %}">
-          Dashboard
+          {% trans "Dashboard" %}
         </a>
         {% endif %}
 
@@ -48,7 +48,7 @@
         <a href="{% url 'student_courses' %}"
           class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
           aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
-          My Courses
+          {% trans "My Courses" %}
         </a>
         {% endif %}
         {% endif %}
@@ -56,7 +56,7 @@
       <!-- Settings Button -->
       <button onclick="openSettings()" type="button"
         class="settings-nav-btn flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-primary hover:bg-primary-light hover:border-2 hover:border-primary min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
-        aria-label="Open settings menu" aria-haspopup="dialog">
+        aria-label='{% trans "Open settings menu" %}' aria-haspopup="dialog">
         <!-- Theme-aware settings icon: use stroke/currentColor and no fill so it inherits text color classes -->
         <svg width="20" height="20" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none"
           stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -93,22 +93,22 @@
 
           <!-- Role Badge -->
           <div class="px-4 py-3 border-b border-default">
-            <p class="text-xs text-muted mb-1">Signed in as</p>
+            <p class="text-xs text-muted mb-1">{% trans "Signed in as" %}</p>
             <p class="text-sm font-semibold text-primary">
               {% if request.session.user.role == 'student' %}
-              Student
+              {% trans "Student" %}
               {% elif request.session.user.role == 'teacher' %}
               {% if request.session.user.verification_status == 'pending' %}
-              Teacher (Pending)
+              {% trans "Teacher (Pending)" %}
               {% elif request.session.user.verification_status == 'approved' %}
-              Teacher ✓
+              {% trans "Teacher ✓" %}
               {% else %}
-              Teacher
+              {% trans "Teacher" %}
               {% endif %}
               {% elif request.session.user.role == 'admin' or request.user.is_staff %}
-              Administrator
+              {% trans "Administrator" %}
               {% else %}
-              User
+              {% trans "User" %}
               {% endif %}
             </p>
           </div>
@@ -118,26 +118,26 @@
             <a href="{% url 'profile_settings' %}"
               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
               role="menuitem">
-              Profile Settings
+              {% trans "Profile Settings" %}
             </a>
 
             {% if request.session.user.role == 'student' %}
             <a href="{% url 'student_dashboard' %}"
               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
               role="menuitem">
-              My Dashboard
+              {% trans "My Dashboard" %}
             </a>
             {% elif request.session.user.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}"
               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
               role="menuitem">
-              Teacher Dashboard
+              {% trans "Teacher Dashboard" %}
             </a>
             {% elif request.session.user.role == 'admin' or request.user.is_staff %}
             <a href="{% url 'admin_dashboard' %}"
               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
               role="menuitem">
-              Admin Dashboard
+              {% trans "Admin Dashboard" %}
             </a>
             {% endif %}
           </div>
@@ -147,13 +147,13 @@
             <a href="{% url 'admin_logout' %}"
               class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
               role="menuitem">
-              Logout
+              {% trans "Logout" %}
             </a>
             {% else %}
             <a href="{% url 'logout' %}"
               class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
               role="menuitem">
-              Logout
+              {% trans "Logout" %}
             </a>
             {% endif %}
           </div>
@@ -163,8 +163,8 @@
       <!-- Guest User Login Button (Desktop) -->
       <a href="{% url 'login' %}"
         class="hidden lg:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-primary bg-card hover:bg-secondary border-2 border-default rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
-        aria-label="Log in to your account">
-        Login
+        aria-label='{% trans "Log in to your account" %}'>
+        {% trans "Login" %}
       </a>
       {% endif %}
 
@@ -192,7 +192,7 @@
       <a href="{% url 'public_catalog' %}"
         class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/courses/' in request.path and '/student/courses/' not in request.path %}text-primary-color font-semibold{% endif %}"
         role="menuitem">
-        Browse Courses
+        {% trans "Browse Courses" %}
       </a>
 
       {% if request.session.user %}
@@ -201,7 +201,7 @@
       <a href="{% url 'admin_dashboard' %}"
         class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/admin-dash/' in request.path %}text-primary-color font-semibold{% endif %}"
         role="menuitem">
-        Admin Dashboard
+        {% trans "Admin Dashboard" %}
       </a>
       {% endif %}
 
@@ -209,7 +209,7 @@
       <a href="{% url 'teacher_dashboard' %}"
         class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/teacher/' in request.path %}text-primary-color font-semibold{% endif %}"
         role="menuitem">
-        Teacher Dashboard
+        {% trans "Teacher Dashboard" %}
       </a>
       {% endif %}
 
@@ -217,14 +217,14 @@
       <a href="{% url 'student_courses' %}"
         class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/courses/' in request.path %}text-primary-color font-semibold{% endif %}"
         role="menuitem">
-        My Courses
+        {% trans "My Courses" %}
       </a>
       {% endif %}
 
       <!-- User Profile Section -->
       <div class="mt-4 pt-4 border-t border-default">
         <div class="px-4 py-2 mb-2">
-          <p class="text-xs text-muted">Signed in as</p>
+          <p class="text-xs text-muted">{% trans "Signed in as" %}</p>
           <p class="text-sm font-semibold text-primary">
             {% with u=request.session.user %}
             {% if u and 'userinfo' in u %}
@@ -238,20 +238,20 @@
 
         <a href="{% url 'profile_settings' %}"
           class="block px-4 py-3 text-base text-primary hover:bg-secondary rounded-lg min-h-touch" role="menuitem">
-          Profile Settings
+          {% trans "Profile Settings" %}
         </a>
 
         {% if request.user.is_authenticated %}
         <a href="{% url 'admin_logout' %}"
           class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
           role="menuitem">
-          Logout
+          {% trans "Logout" %}
         </a>
         {% else %}
         <a href="{% url 'logout' %}"
           class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
           role="menuitem">
-          Logout
+          {% trans "Logout" %}
         </a>
         {% endif %}
       </div>
@@ -259,12 +259,12 @@
       <!-- Guest User Mobile Menu -->
       <a href="/#about" class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch"
         role="menuitem">
-        About
+        {% trans "About" %}
       </a>
       <a href="{% url 'login' %}"
         class="mx-4 mt-4 inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
         role="menuitem">
-        Login
+        {% trans "Login" %}
       </a>
       {% endif %}
     </div>

@@ -1,74 +1,68 @@
 {# Enhanced Form Field Component with Inline Validation
-   Usage:
-   {% include 'components/form_field.html' with
-      label='Email Address'
-      type='email'
-      name='email'
-      required=True
-      help_text='We will send your receipt here'
-      example='you@example.com'
-   %}
+Usage:
+{% include 'components/form_field.html' with
+label='Email Address'
+type='email'
+name='email'
+required=True
+help_text='We will send your receipt here'
+example='you@example.com'
+%}
 
-   Parameters:
-   - label: Field label text (required)
-   - type: text|email|password|number|tel|url|date (default: text)
-   - name: Field name attribute (required)
-   - value: Field value (optional)
-   - placeholder: Placeholder text (optional)
-   - example: Example format to show (optional)
-   - required: true|false (default: false)
-   - help_text: Helper text below field (optional)
-   - error: Error message (optional)
-   - autocomplete: Autocomplete attribute (optional)
-   - validate: true|false - Enable inline validation (default: false)
-   - min: Min value for number fields (optional)
-   - max: Max value for number fields (optional)
-   - pattern: Regex pattern for validation (optional)
+Parameters:
+- label: Field label text (required)
+- type: text|email|password|number|tel|url|date (default: text)
+- name: Field name attribute (required)
+- value: Field value (optional)
+- placeholder: Placeholder text (optional)
+- example: Example format to show (optional)
+- required: true|false (default: false)
+- help_text: Helper text below field (optional)
+- error: Error message (optional)
+- autocomplete: Autocomplete attribute (optional)
+- validate: true|false - Enable inline validation (default: false)
+- min: Min value for number fields (optional)
+- max: Max value for number fields (optional)
+- pattern: Regex pattern for validation (optional)
 #}
 
+{% load i18n %}
+
 <div class="form-group" style="margin-bottom: var(--spacing-lg);">
-    <!-- Label -->
-    <label for="id_{{ name }}"
-           style="
+  <!-- Label -->
+  <label for="id_{{ name }}" style="
                display: block;
                margin-bottom: var(--spacing-sm);
                font-weight: 600;
                color: var(--text-primary);
                font-size: calc(1rem * var(--font-scale));
            ">
-        {{ label }}
-        {% if required %}
-            <span style="color: #EF5350;" aria-label="required"> *</span>
-        {% endif %}
-    </label>
+    {% trans label %}
+    {% if required %}
+    <span style="color: #EF5350;" aria-label="required"> *</span>
+    {% endif %}
+  </label>
 
-    <!-- Example Format (if provided) -->
-    {% if example %}
-    <div style="
+  <!-- Example Format (if provided) -->
+  {% if example %}
+  <div style="
         margin-bottom: var(--spacing-sm);
         color: var(--text-muted);
         font-size: calc(0.75rem * var(--font-scale));
         font-style: italic;
     ">
-        Example: {{ example }}
-    </div>
-    {% endif %}
+    {% blocktrans %}Example: {{ example }}{% endblocktrans %}
+  </div>
+  {% endif %}
 
-    <!-- Input Field Container -->
-    <div style="position: relative;">
-        <input type="{{ type|default:'text' }}"
-               id="id_{{ name }}"
-               name="{{ name }}"
-               {% if value %}value="{{ value }}"{% endif %}
-               {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
-               {% if required %}required aria-required="true"{% endif %}
-               {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
-               {% if min %}min="{{ min }}"{% endif %}
-               {% if max %}max="{{ max }}"{% endif %}
-               {% if pattern %}pattern="{{ pattern }}"{% endif %}
-               {% if error %}aria-invalid="true" aria-describedby="error_{{ name }}"{% endif %}
-               {% if validate %}data-validate="true"{% endif %}
-               style="
+  <!-- Input Field Container -->
+  <div style="position: relative;">
+    <input type="{{ type|default:'text' }}" id="id_{{ name }}" name="{{ name }}" {% if value %}value="{{ value }}" {%
+      endif %} {% if placeholder %}placeholder="{{ placeholder }}" {% endif %} {% if required %}required
+      aria-required="true" {% endif %} {% if autocomplete %}autocomplete="{{ autocomplete }}" {% endif %} {% if min
+      %}min="{{ min }}" {% endif %} {% if max %}max="{{ max }}" {% endif %} {% if pattern %}pattern="{{ pattern }}" {%
+      endif %} {% if error %}aria-invalid="true" aria-describedby="error_{{ name }}" {% endif %} {% if validate
+      %}data-validate="true" {% endif %} style="
                    width: 100%;
                    padding: var(--spacing-md);
                    padding-right: 40px;
@@ -78,39 +72,37 @@
                    background: var(--bg-primary);
                    color: var(--text-primary);
                    transition: border-color 0.2s;
-               "
-               onfocus="this.style.borderColor='var(--primary)'; this.style.outline='none';"
-               onblur="this.style.borderColor='{% if error %}#EF5350{% else %}var(--border-color){% endif %}';"
-               {% if validate %}oninput="validateField(this)"{% endif %}>
+               " onfocus="this.style.borderColor='var(--primary)'; this.style.outline='none';"
+      onblur="this.style.borderColor='{% if error %}#EF5350{% else %}var(--border-color){% endif %}';" {% if validate
+      %}oninput="validateField(this)" {% endif %}>
 
-        <!-- Validation Icon (hidden by default) -->
-        <div id="icon_{{ name }}"
-             style="
+    <!-- Validation Icon (hidden by default) -->
+    <div id="icon_{{ name }}" style="
                  position: absolute;
                  right: 12px;
                  top: 50%;
                  transform: translateY(-50%);
                  display: none;
              ">
-            <!-- Success Checkmark -->
-            <svg class="success-icon" width="20" height="20" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="m9 12 2 2 4-4"/>
-            </svg>
-            <!-- Error X -->
-            <svg class="error-icon" width="20" height="20" fill="none" stroke="#EF5350" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" style="display: none;">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
-        </div>
+      <!-- Success Checkmark -->
+      <svg class="success-icon" width="20" height="20" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24"
+        aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+      <!-- Error X -->
+      <svg class="error-icon" width="20" height="20" fill="none" stroke="#EF5350" stroke-width="2" viewBox="0 0 24 24"
+        aria-hidden="true" style="display: none;">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="15" y1="9" x2="9" y2="15" />
+        <line x1="9" y1="9" x2="15" y2="15" />
+      </svg>
     </div>
+  </div>
 
-    <!-- Error Message -->
-    {% if error %}
-    <div id="error_{{ name }}"
-         role="alert"
-         style="
+  <!-- Error Message -->
+  {% if error %}
+  <div id="error_{{ name }}" role="alert" style="
              margin-top: var(--spacing-sm);
              color: #C62828;
              font-size: calc(0.875rem * var(--font-scale));
@@ -118,32 +110,33 @@
              align-items: center;
              gap: var(--spacing-sm);
          ">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
-        {{ error }}
-    </div>
-    {% endif %}
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+      aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+      <line x1="9" y1="9" x2="15" y2="15" />
+    </svg>
+    {% trans error %}
+  </div>
+  {% endif %}
 
-    <!-- Help Text -->
-    {% if help_text %}
-    <div style="
+  <!-- Help Text -->
+  {% if help_text %}
+  <div style="
         margin-top: var(--spacing-sm);
         color: var(--text-secondary);
         font-size: calc(0.875rem * var(--font-scale));
         line-height: 1.5;
     ">
-        {{ help_text }}
-    </div>
-    {% endif %}
+    {% trans help_text %}
+  </div>
+  {% endif %}
 </div>
 
 {% if validate %}
 <script>
-// Inline validation function
-function validateField(input) {
+  // Inline validation function
+  function validateField(input) {
     const container = input.closest('.form-group');
     const icon = document.getElementById('icon_' + input.name);
     const successIcon = icon.querySelector('.success-icon');
@@ -152,26 +145,26 @@ function validateField(input) {
     // Debounce validation
     clearTimeout(input.validateTimeout);
     input.validateTimeout = setTimeout(() => {
-        const isValid = input.checkValidity();
+      const isValid = input.checkValidity();
 
-        if (input.value.length === 0) {
-            // Empty field - hide icons
-            icon.style.display = 'none';
-            input.style.borderColor = 'var(--border-color)';
-        } else if (isValid) {
-            // Valid input
-            icon.style.display = 'block';
-            successIcon.style.display = 'block';
-            errorIcon.style.display = 'none';
-            input.style.borderColor = '#66BB6A';
-        } else {
-            // Invalid input
-            icon.style.display = 'block';
-            successIcon.style.display = 'none';
-            errorIcon.style.display = 'block';
-            input.style.borderColor = '#EF5350';
-        }
+      if (input.value.length === 0) {
+        // Empty field - hide icons
+        icon.style.display = 'none';
+        input.style.borderColor = 'var(--border-color)';
+      } else if (isValid) {
+        // Valid input
+        icon.style.display = 'block';
+        successIcon.style.display = 'block';
+        errorIcon.style.display = 'none';
+        input.style.borderColor = '#66BB6A';
+      } else {
+        // Invalid input
+        icon.style.display = 'block';
+        successIcon.style.display = 'none';
+        errorIcon.style.display = 'block';
+        input.style.borderColor = '#EF5350';
+      }
     }, 500); // 500ms debounce
-}
+  }
 </script>
 {% endif %}
