@@ -111,6 +111,7 @@ def build_lesson_document(lesson, module, course) -> Tuple[str, Dict[str, Any]]:
 
     For BlogLesson: includes full blog content
     For VideoLesson: includes only title and tags (NO transcript, NO video content)
+    For PDFLesson: includes PDF text excerpt for semantic search
 
     Args:
         lesson: Lesson model instance
@@ -121,6 +122,9 @@ def build_lesson_document(lesson, module, course) -> Tuple[str, Dict[str, Any]]:
         Tuple of (content, metadata)
     """
     try:
+        from django.conf import settings
+        import os
+        
         # Build searchable content
         content_parts = [
             f"Lesson: {lesson.title}",
@@ -142,6 +146,28 @@ def build_lesson_document(lesson, module, course) -> Tuple[str, Dict[str, Any]]:
                     content_parts.append(f"Content: {blog.content}")
             except Exception:
                 # blog relation doesn't exist or error accessing it
+                pass
+
+        # Add PDF content excerpt if it's a PDF lesson
+        elif lesson.lesson_type == 'pdf':
+            try:
+                from .pdf_extractor import get_pdf_summary
+                pdf = lesson.pdf
+                
+                if pdf and pdf.pdf_file:
+                    # Get PDF file path
+                    pdf_path = os.path.join(settings.MEDIA_ROOT, pdf.pdf_file.name)
+                    
+                    # Extract summary
+                    pdf_summary = get_pdf_summary(pdf_path)
+                    if pdf_summary:
+                        content_parts.append(f"Document Excerpt: {pdf_summary}")
+                    
+                    # Add description if available
+                    if pdf.description:
+                        content_parts.append(f"Description: {pdf.description}")
+            except Exception as e:
+                logger.warning(f"Could not extract PDF content for lesson {lesson.id}: {e}")
                 pass
 
         # For video lessons, do NOT add transcript or video content

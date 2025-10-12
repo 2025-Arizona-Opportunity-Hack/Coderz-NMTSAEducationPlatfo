@@ -50,6 +50,7 @@ class Lesson(models.Model):
     LESSON_TYPES = [
         ('video', 'Video'),
         ('blog', 'Blog'),
+        ('pdf', 'PDF'),
     ]
     title = models.CharField(max_length=200)
     lesson_type = models.CharField(max_length=10, choices=LESSON_TYPES)
@@ -175,3 +176,14 @@ class BlogLesson(models.Model):
 
     def __str__(self):
         return f"Blog: {self.lesson.title}"
+    
+class PDFLesson(models.Model):
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='pdf')
+    pdf_file = models.FileField(upload_to='pdfs/')
+    description = CKEditor5Field('Description', config_name='extends', blank=True, null=True)
+
+    class Meta:
+        db_table = 'pdf_lessons'
+
+    def __str__(self):
+        return f"PDF: {self.lesson.title}"

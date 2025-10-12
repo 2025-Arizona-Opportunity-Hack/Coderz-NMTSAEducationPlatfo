@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from teacher_dash.models import Course, Module, Lesson, BlogLesson
+from teacher_dash.models import Course, Module, Lesson, BlogLesson, PDFLesson
 from lms.supermemory_client import get_supermemory_client
 from lms.course_indexer import (
     build_course_document,
@@ -258,6 +258,33 @@ def blog_lesson_post_save(sender, instance, created, **kwargs):
             return
 
         # Re-index the lesson (includes updated blog content)
+        index_lesson_to_supermemory(lesson, module, course)
+
+        # Re-index parent module
+        index_module_to_supermemory(module, course)
+
+        # Re-index parent course
+        index_course_to_supermemory(course)
+
+    transaction.on_commit(index_on_commit)
+
+
+@receiver(post_save, sender=PDFLesson)
+def pdf_lesson_post_save(sender, instance, created, **kwargs):
+    """
+    Re-index parent lesson after PDFLesson content changes.
+    This ensures PDF content is searchable.
+    """
+    def index_on_commit():
+        lesson = instance.lesson
+
+        # Get parent module and course
+        module, course = get_course_and_module_from_lesson(lesson)
+        if not module or not course:
+            logger.warning(f"PDFLesson for lesson {lesson.slug} has no parent module/course")
+            return
+
+        # Re-index the lesson (includes updated PDF content)
         index_lesson_to_supermemory(lesson, module, course)
 
         # Re-index parent module
