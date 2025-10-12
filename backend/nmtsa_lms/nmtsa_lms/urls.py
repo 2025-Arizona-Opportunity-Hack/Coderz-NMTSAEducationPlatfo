@@ -18,18 +18,35 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from . import views
 
 urlpatterns = [
+    # Django admin panel
     path('admin/', admin.site.urls),
+
+    # Auth0 OAuth endpoints (backend-handled authentication)
     path("", views.index, name="index"),
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),
-    path("callback", views.callback, name="callback"),
+    path("callback", views.callback, name="callback"),  # Now returns JWT tokens
+
+    # Legacy template-based URLs (kept for backup)
     path("auth/", include('authentication.urls')),
     path("student/", include('student_dash.urls')),
     path("teacher/", include('teacher_dash.urls')),
     path("admin-dash/", include('admin_dash.urls')),
+
+    # REST API endpoints (v1)
+    path('api/v1/auth/', include('authentication.api_urls')),
+    path('api/v1/admin/', include('admin_dash.api_urls')),
+    path('api/v1/student/', include('student_dash.api_urls')),
+    # Additional API endpoints will be added as we build them:
+    # path('api/v1/teacher/', include('teacher_dash.api_urls')),
+
+    # API Documentation (Swagger/OpenAPI)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
 
 # Media files URL patterns (for file uploads)
