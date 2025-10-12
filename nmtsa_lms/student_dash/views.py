@@ -727,7 +727,7 @@ def lesson_view(request, course_slug, module_slug, lesson_slug):
     all_lessons = []
     for mod in modules:
         for lesson in mod.lessons.all():
-            lesson.module_id = mod.id
+            lesson.module_slug = mod.slug
             # Add watch percentage for sidebar display
             if lesson.lesson_type == 'video':
                 lesson.watch_percentage = video_progress_map.get(lesson.id, 0)
