@@ -144,7 +144,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: var(--spacing-sm); flex-shrink: 0;">
-                                <a href="{% url 'admin_course_preview' course.id %}"
+                                <a href="{% url 'admin_course_preview' course.slug %}"
                                    class="btn btn-outline btn-sm"
                                    target="_blank"
                                    title="Preview course content">
@@ -154,7 +154,7 @@
                                     </svg>
                                     Preview
                                 </a>
-                                <a href="{% url 'admin_review_course_action' course.id %}"
+                                <a href="{% url 'admin_review_course_action' course.slug %}"
                                    class="btn btn-primary btn-sm">
                                     Review
                                 </a>
