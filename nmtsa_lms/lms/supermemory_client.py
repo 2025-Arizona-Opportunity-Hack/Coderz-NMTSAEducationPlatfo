@@ -248,7 +248,7 @@ class SupermemoryClient:
         self, 
         messages: List[Dict[str, str]], 
         user_id: Optional[str] = None,
-        model: str = "gemini-2.5-flash",
+        model: str = "gemini-2.5-flash-lite",
         temperature: float = 0.2
     ) -> Dict[str, Any]:
         """
