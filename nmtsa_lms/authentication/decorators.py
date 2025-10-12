@@ -131,3 +131,21 @@ def onboarding_complete_required(view_func):
 
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+def optional_login(view_func):
+    """
+    Decorator that allows both authenticated and anonymous users to access views.
+    Populates request with user info if available, but doesn't redirect if not logged in.
+    Sets flags that templates can use to conditionally display content.
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # Set flags for templates and view logic
+        session_user = request.session.get('user')
+        request.is_authenticated_user = bool(session_user)
+        request.user_role = session_user.get('role', None) if session_user else None
+        request.user_id = session_user.get('user_id', None) if session_user else None
+        
+        return view_func(request, *args, **kwargs)
+    return wrapper

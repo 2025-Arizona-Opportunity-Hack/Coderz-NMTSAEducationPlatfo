@@ -30,7 +30,7 @@
                aria-label="Go to student dashboard">
                 Go to Dashboard
             </a>
-            <a href="{% url 'student_catalog' %}" 
+            <a href="{% url 'public_catalog' %}" 
                class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary-color bg-transparent border-2 border-primary hover:bg-primary-light rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Browse available courses">
                 Browse Courses
@@ -60,10 +60,10 @@
            aria-label="Sign up to get started">
             Get Started for Free
         </a>
-        <a href="#about" 
+        <a href="{% url 'public_catalog' %}" 
            class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary-color bg-transparent border-2 border-primary hover:bg-primary-light rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
-           aria-label="Learn more about NMTSA">
-            Learn More
+           aria-label="Browse available courses">
+            Browse Courses
         </a>
         {% endif %}
     </div>

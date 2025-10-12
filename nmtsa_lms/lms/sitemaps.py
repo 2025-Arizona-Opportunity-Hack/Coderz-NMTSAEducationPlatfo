@@ -18,6 +18,7 @@ class StaticViewSitemap(Sitemap):
         """Return list of static page URL names."""
         return [
             'landing',  # Homepage
+            'public_catalog',  # Public course catalog
             # Add other public static pages here
         ]
     
@@ -27,7 +28,7 @@ class StaticViewSitemap(Sitemap):
 
 
 class CourseSitemap(Sitemap):
-    """Sitemap for published courses."""
+    """Sitemap for published courses (public URLs)."""
     changefreq = 'weekly'
     priority = 0.9
     
@@ -36,17 +37,15 @@ class CourseSitemap(Sitemap):
         return Course.objects.filter(
             is_published=True,
             admin_approved=True
-        ).select_related('created_by').order_by('-created_at')
+        ).select_related('published_by').order_by('-published_date')
     
     def lastmod(self, obj):
         """Return last modification date."""
-        return obj.updated_at if hasattr(obj, 'updated_at') else obj.created_at
+        return obj.updated_at if hasattr(obj, 'updated_at') else obj.published_date
     
     def location(self, obj):
-        """Get URL for course detail page."""
-        # Assuming you have a course detail URL pattern
-        # Adjust this based on your actual URL structure
-        return f'/courses/{obj.id}/'
+        """Get URL for public course detail page using slug."""
+        return f'/courses/{obj.slug}/'
 
 
 class TeacherProfileSitemap(Sitemap):

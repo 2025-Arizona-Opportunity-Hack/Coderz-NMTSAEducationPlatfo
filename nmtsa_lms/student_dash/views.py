@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from typing import Any, cast
 import json
 import logging
-from authentication.decorators import student_required, onboarding_complete_required
+from authentication.decorators import student_required, onboarding_complete_required, optional_login
 from authentication.models import User, Enrollment, Payment
 from teacher_dash.models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
 from teacher_dash.forms import DiscussionPostForm, DiscussionReplyForm
@@ -34,6 +34,36 @@ def _get_module_by_slug_or_404(course: Course, slug: str) -> Module:
 def _get_lesson_by_slug_or_404(module: Module, slug: str) -> Lesson:
     """Get lesson by slug."""
     return get_object_or_404(module.lessons, slug=slug)
+
+
+def _check_enrollment_and_auth(request, course):
+    """
+    Check user authentication and enrollment status for a course.
+    Returns: (is_authenticated, is_enrolled, enrollment_object, user_object)
+    
+    This helper is used to determine what UI elements to show:
+    - Anonymous users: Show "Sign in to enroll" prompts
+    - Authenticated but not enrolled: Show "Enroll now" buttons
+    - Enrolled users: Show "Continue learning" and full access
+    """
+    session_user = request.session.get('user')
+    
+    if not session_user:
+        # Anonymous user
+        return (False, False, None, None)
+    
+    user_id = session_user.get('user_id')
+    try:
+        user = User.objects.get(id=user_id)
+        enrollment = Enrollment.objects.filter(
+            user=user, 
+            course=course, 
+            is_active=True
+        ).first()
+        
+        return (True, bool(enrollment), enrollment, user)
+    except User.DoesNotExist:
+        return (False, False, None, None)
 
 
 @student_required
@@ -1091,3 +1121,202 @@ def discussion_delete(request, course_slug, post_id):
     if was_reply and parent_id:
         return redirect('student_discussion_detail', course_slug=course.slug, post_id=parent_id)
     return redirect('student_course_discussions', course_slug=course.slug)
+
+
+# ===== Public Course Browsing Views (No Authentication Required) =====
+
+@optional_login
+def public_catalog(request):
+    """
+    Public course catalog - accessible to all users (authenticated or not).
+    Shows course overview information but requires enrollment for actual content access.
+    """
+    from lms.supermemory_client import get_supermemory_client
+
+    # Base queryset - only show published courses
+    qs = Course.objects.filter(is_published=True).select_related('published_by').prefetch_related('tags')
+
+    # Filters from query params
+    q = request.GET.get('q', '').strip()
+    price_min = request.GET.get('price_min')
+    price_max = request.GET.get('price_max')
+    tag = request.GET.get('tag', '').strip()
+    sort = request.GET.get('sort', 'newest')
+
+    # Use Supermemory for natural language search if query exists
+    if q:
+        supermemory_client = get_supermemory_client()
+
+        if supermemory_client:
+            try:
+                # Perform multi-tier search (courses, modules, lessons)
+                search_results = supermemory_client.multi_tier_search(
+                    query=q,
+                    limit_per_tier=50
+                )
+
+                if search_results:
+                    # Extract course slugs from search results
+                    course_slugs = [result["slug"] for result in search_results]
+
+                    # Filter queryset by matching slugs
+                    qs = qs.filter(slug__in=course_slugs)
+
+                    # Create a slug -> score mapping for sorting
+                    slug_to_result = {result["slug"]: result for result in search_results}
+
+                    # Apply additional filters
+                    if price_min:
+                        try:
+                            qs = qs.filter(price__gte=float(price_min))
+                        except ValueError:
+                            pass
+
+                    if price_max:
+                        try:
+                            qs = qs.filter(price__lte=float(price_max))
+                        except ValueError:
+                            pass
+
+                    if tag:
+                        qs = qs.filter(tags__name__iexact=tag)
+
+                    # Convert to list and sort by relevance score
+                    courses_list = list(qs)
+                    courses_list.sort(
+                        key=lambda c: slug_to_result.get(c.slug, {}).get("score", 0),
+                        reverse=True
+                    )
+
+                    # For each course, check enrollment status if user is authenticated
+                    if request.is_authenticated_user and request.user_id:
+                        user = User.objects.get(id=request.user_id)
+                        enrolled_course_ids = set(
+                            Enrollment.objects.filter(user=user, is_active=True)
+                            .values_list('course_id', flat=True)
+                        )
+                        for course in courses_list:
+                            course.user_enrolled = course.id in enrolled_course_ids
+                    else:
+                        for course in courses_list:
+                            course.user_enrolled = False
+
+                    context = {
+                        'courses': courses_list,
+                        'filters': {
+                            'q': q,
+                            'price_min': price_min or '',
+                            'price_max': price_max or '',
+                            'tag': tag,
+                            'sort': 'relevance',  # Override sort to relevance
+                        },
+                        'search_results': search_results,  # Include for debugging/display
+                        'is_public_view': True,
+                    }
+                    return render(request, 'student_dash/course_catalog.html', context)
+
+                else:
+                    # No results from Supermemory, fallback to empty queryset
+                    qs = Course.objects.none()
+
+            except Exception as e:
+                logger.error(f"Supermemory search error: {e}")
+                # Fallback to traditional search on error
+                qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+
+        else:
+            # Supermemory not available, fallback to traditional search
+            logger.warning("Supermemory client not available, using traditional search")
+            qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+
+    # Apply other filters (no search query)
+    if price_min:
+        try:
+            qs = qs.filter(price__gte=float(price_min))
+        except ValueError:
+            pass
+
+    if price_max:
+        try:
+            qs = qs.filter(price__lte=float(price_max))
+        except ValueError:
+            pass
+
+    if tag:
+        qs = qs.filter(tags__name__iexact=tag)
+
+    # Apply sorting (only when not using Supermemory search)
+    if not q or not get_supermemory_client():
+        if sort == 'popular':
+            qs = qs.order_by('-num_enrollments', '-published_date')
+        elif sort == 'price_asc':
+            qs = qs.order_by('price')
+        elif sort == 'price_desc':
+            qs = qs.order_by('-price')
+        else:  # newest
+            qs = qs.order_by('-published_date')
+
+    # Check enrollment status for authenticated users
+    courses_list = list(qs)
+    if request.is_authenticated_user and request.user_id:
+        user = User.objects.get(id=request.user_id)
+        enrolled_course_ids = set(
+            Enrollment.objects.filter(user=user, is_active=True)
+            .values_list('course_id', flat=True)
+        )
+        for course in courses_list:
+            course.user_enrolled = course.id in enrolled_course_ids
+    else:
+        for course in courses_list:
+            course.user_enrolled = False
+
+    context = {
+        'courses': courses_list,
+        'filters': {
+            'q': q,
+            'price_min': price_min or '',
+            'price_max': price_max or '',
+            'tag': tag,
+            'sort': sort,
+        },
+        'is_public_view': True,
+    }
+    return render(request, 'student_dash/course_catalog.html', context)
+
+
+@optional_login
+def public_course_detail(request, course_slug):
+    """
+    Public course detail page - accessible to all users (authenticated or not).
+    Shows course metadata, modules, and lesson outlines.
+    Does NOT expose actual video files or blog content - those require enrollment.
+    """
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
+
+    # Check authentication and enrollment status
+    is_authenticated, is_enrolled, enrollment, user = _check_enrollment_and_auth(request, course)
+
+    # Get course modules and lessons (metadata only - no video/blog content)
+    modules = course.modules.all().prefetch_related('lessons').order_by('id')
+
+    # Count total lessons
+    total_lessons = sum([module.lessons.count() for module in modules])
+
+    # Calculate total duration
+    total_duration = 0
+    for module in modules:
+        for lesson in module.lessons.all():
+            if lesson.duration:
+                total_duration += lesson.duration
+
+    context = {
+        'course': course,
+        'enrollment': enrollment,
+        'modules': modules,
+        'total_lessons': total_lessons,
+        'total_duration': total_duration,
+        'is_authenticated': is_authenticated,
+        'is_enrolled': is_enrolled,
+        'is_public_view': True,
+    }
+    return render(request, 'student_dash/course_detail.html', context)

@@ -113,6 +113,12 @@ def teacher_onboarding(request):
         request.session.modified = True
 
         messages.success(request, 'Profile submitted successfully! Your application is pending admin verification.')
+        
+        # Check if there's a stored next URL to redirect to after onboarding
+        next_url = request.session.pop('next_url', None)
+        if next_url:
+            return redirect(next_url)
+        
         return redirect('teacher_dashboard')
 
     context = {
@@ -162,6 +168,12 @@ def student_onboarding(request):
         request.session.modified = True
 
         messages.success(request, 'Profile completed successfully! Welcome to NMTSA Learning.')
+        
+        # Check if there's a stored next URL to redirect to after onboarding
+        next_url = request.session.pop('next_url', None)
+        if next_url:
+            return redirect(next_url)
+        
         return redirect('student_dashboard')
 
     context = {
