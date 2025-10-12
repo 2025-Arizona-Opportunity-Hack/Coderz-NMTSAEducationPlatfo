@@ -30,6 +30,11 @@ def index(request):
     )
 
 def login(request):
+    # Store the next URL in session if provided
+    next_url = request.GET.get('next', '')
+    if next_url:
+        request.session['next_url'] = next_url
+    
     return oauth.auth0.authorize_redirect(
         request, request.build_absolute_uri(reverse("callback"))
     )
@@ -45,6 +50,9 @@ def callback(request):
     # Extract user info from token
     userinfo = token.get('userinfo', {})
     auth0_id = userinfo.get('sub')
+    
+    # Get the stored next URL if available
+    next_url = request.session.pop('next_url', None)
 
     if auth0_id:
         # Import here to avoid circular dependency
@@ -57,15 +65,26 @@ def callback(request):
             # User exists - check onboarding status
             if not user.role:
                 # No role selected yet - redirect to role selection
+                # Store next_url for after onboarding
+                if next_url:
+                    request.session['next_url'] = next_url
                 return redirect(reverse("select_role"))
             elif not user.onboarding_complete:
                 # Role selected but onboarding not complete
+                # Store next_url for after onboarding
+                if next_url:
+                    request.session['next_url'] = next_url
                 if user.role == 'teacher':
                     return redirect(reverse("teacher_onboarding"))
                 elif user.role == 'student':
                     return redirect(reverse("student_onboarding"))
             else:
-                # Onboarding complete - redirect to dashboard
+                # Onboarding complete
+                # If there's a next URL and user has completed onboarding, redirect there
+                if next_url:
+                    return redirect(next_url)
+                
+                # Otherwise redirect to role-based dashboard
                 if user.role == 'teacher':
                     return redirect(reverse("teacher_dashboard"))
                 elif user.role == 'student':
@@ -75,6 +94,9 @@ def callback(request):
 
         except User.DoesNotExist:
             # New user - redirect to role selection
+            # Store next_url for after onboarding
+            if next_url:
+                request.session['next_url'] = next_url
             return redirect(reverse("select_role"))
 
     # Fallback to index
@@ -88,7 +110,7 @@ def logout(request):
         f"https://{settings.AUTH0_DOMAIN}/v2/logout?"
         + urlencode(
             {
-                "returnTo": request.build_absolute_uri(reverse("index")),
+                "returnTo": request.build_absolute_uri(reverse("landing")),
                 "client_id": settings.AUTH0_CLIENT_ID,
             },
             quote_via=quote_plus,

@@ -35,6 +35,21 @@ from teacher_dash.models import BlogLesson, Course, Lesson, Module, VideoLesson,
 User = get_user_model()
 
 
+def _get_course_by_slug_or_404(slug: str, **kwargs) -> Course:
+    """Get course by slug."""
+    return get_object_or_404(Course, slug=slug, **kwargs)
+
+
+def _get_module_by_slug_or_404(course: Course, slug: str) -> Module:
+    """Get module by slug."""
+    return get_object_or_404(course.modules, slug=slug)
+
+
+def _get_lesson_by_slug_or_404(module: Module, slug: str) -> Lesson:
+    """Get lesson by slug."""
+    return get_object_or_404(module.lessons, slug=slug)
+
+
 def _get_logged_in_teacher(request: HttpRequest) -> Any:
     session_user = request.session.get("user")
     if not session_user:
@@ -132,7 +147,7 @@ def course_create(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             course = form.save(teacher=teacher)
             messages.success(request, "Course created. You can now add modules and lessons.")
-            return redirect("teacher_course_detail", course_id=course.pk)
+            return redirect("teacher_course_detail", course_slug=course.slug)
     else:
         form = CourseForm()
 
@@ -144,13 +159,13 @@ def course_create(request: HttpRequest) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def course_detail(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_detail(request: HttpRequest, course_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(
-        Course.objects.prefetch_related("modules", "modules__lessons"),
-        pk=course_id,
+    course = _get_course_by_slug_or_404(
+        course_slug,
         published_by=teacher,
     )
+    course = Course.objects.prefetch_related("modules", "modules__lessons").get(pk=course.pk)
     teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
     is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
     
@@ -168,12 +183,12 @@ def course_detail(request: HttpRequest, course_id: int) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def course_edit(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_edit(request: HttpRequest, course_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     if request.method == "POST":
         form = CourseForm(request.POST, instance=course)
@@ -181,7 +196,7 @@ def course_edit(request: HttpRequest, course_id: int) -> HttpResponse:
             form.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
-            return redirect("teacher_course_detail", course_id=course.pk)
+            return redirect("teacher_course_detail", course_slug=course.slug)
     else:
         form = CourseForm(instance=course)
 
@@ -193,27 +208,27 @@ def course_edit(request: HttpRequest, course_id: int) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def course_delete(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_delete(request: HttpRequest, course_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     if request.method == "POST":
         course.delete()
         messages.success(request, "Course deleted.")
         return redirect("teacher_dashboard")
-    return redirect("teacher_course_detail", course_id=course.pk)
+    return redirect("teacher_course_detail", course_slug=course.slug)
 
 
 @teacher_required
 @onboarding_complete_required
-def module_create(request: HttpRequest, course_id: int) -> HttpResponse:
+def module_create(request: HttpRequest, course_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     if request.method == "POST":
         form = ModuleForm(request.POST)
@@ -230,18 +245,18 @@ def module_create(request: HttpRequest, course_id: int) -> HttpResponse:
                 {"course": course, "module_form": form},
             )
 
-    return redirect("teacher_course_detail", course_id=course.pk)
+    return redirect("teacher_course_detail", course_slug=course.slug)
 
 
 @teacher_required
 @onboarding_complete_required
-def module_edit(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+def module_edit(request: HttpRequest, course_slug: str, module_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules, pk=module_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
 
     if request.method == "POST":
         form = ModuleForm(request.POST, instance=module)
@@ -249,7 +264,7 @@ def module_edit(request: HttpRequest, course_id: int, module_id: int) -> HttpRes
             form.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
-            return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
+            return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
     else:
         form = ModuleForm(instance=module)
 
@@ -265,10 +280,11 @@ def module_edit(request: HttpRequest, course_id: int, module_id: int) -> HttpRes
 
 @teacher_required
 @onboarding_complete_required
-def module_detail(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+def module_detail(request: HttpRequest, course_slug: str, module_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules.prefetch_related("lessons"), pk=module_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    module = Module.objects.prefetch_related("lessons").get(pk=module.pk)
     teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
     is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
     
@@ -291,19 +307,19 @@ def module_detail(request: HttpRequest, course_id: int, module_id: int) -> HttpR
 
 @teacher_required
 @onboarding_complete_required
-def module_delete(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+def module_delete(request: HttpRequest, course_slug: str, module_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules, pk=module_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
     if request.method == "POST":
         course.modules.remove(module)
         module.delete()
         success_message = _handle_course_content_change(course)
         messages.success(request, success_message)
-    return redirect("teacher_course_detail", course_id=course.pk)
+    return redirect("teacher_course_detail", course_slug=course.slug)
 
 
 def _get_lesson_forms(request: HttpRequest, instance: Lesson | None = None) -> Tuple[LessonForm, VideoLessonForm, BlogLessonForm]:
@@ -359,13 +375,13 @@ def _extract_video_duration_minutes(file_field: Any) -> Tuple[int | None, str | 
 
 @teacher_required
 @onboarding_complete_required
-def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules, pk=module_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
 
     lesson_form, video_form, blog_form = _get_lesson_forms(request)
 
@@ -427,7 +443,7 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
                     blog.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
-            return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
+            return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
 
         messages.error(request, "Please correct the errors below.")
         return render(
@@ -462,14 +478,14 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
 
 @teacher_required
 @onboarding_complete_required
-def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id: int) -> HttpResponse:
+def lesson_edit(request: HttpRequest, course_slug: str, module_slug: str, lesson_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules, pk=module_id)
-    lesson = get_object_or_404(module.lessons, pk=lesson_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
     lesson_form, video_form, blog_form = _get_lesson_forms(request, instance=lesson)
 
@@ -513,7 +529,7 @@ def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id:
                     blog.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
-            return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
+            return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
 
         messages.error(request, "Please correct the errors below.")
 
@@ -537,28 +553,28 @@ def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id:
 
 @teacher_required
 @onboarding_complete_required
-def lesson_delete(request: HttpRequest, course_id: int, module_id: int, lesson_id: int) -> HttpResponse:
+def lesson_delete(request: HttpRequest, course_slug: str, module_slug: str, lesson_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
-    module = get_object_or_404(course.modules, pk=module_id)
-    lesson = get_object_or_404(module.lessons, pk=lesson_id)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
     if request.method == "POST":
         module.lessons.remove(lesson)
         lesson.delete()
         success_message = _handle_course_content_change(course)
         messages.success(request, success_message)
-    return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
+    return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
 
 
 @teacher_required
 @onboarding_complete_required
-def course_preview(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_preview(request: HttpRequest, course_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     modules = course.modules.prefetch_related("lessons", "lessons__video", "lessons__blog")
     context = {
@@ -569,7 +585,7 @@ def course_preview(request: HttpRequest, course_id: int) -> HttpResponse:
 
 
 @onboarding_complete_required
-def lesson_preview(request: HttpRequest, course_id: int, module_id: int, lesson_id: int) -> JsonResponse:
+def lesson_preview(request: HttpRequest, course_slug: str, module_slug: str, lesson_slug: str) -> JsonResponse:
     """
     Preview lesson content - accessible by course owner (teacher) or admins
     """
@@ -584,14 +600,14 @@ def lesson_preview(request: HttpRequest, course_id: int, module_id: int, lesson_
 
     # Fetch course - admins can access any course, teachers only their own
     if user_role == "admin":
-        course = get_object_or_404(Course, pk=course_id)
+        course = _get_course_by_slug_or_404(course_slug)
     elif user_role == "teacher":
-        course = get_object_or_404(Course, pk=course_id, published_by=user)
+        course = _get_course_by_slug_or_404(course_slug, published_by=user)
     else:
         return JsonResponse({"error": "Access denied"}, status=403)
 
-    module = get_object_or_404(course.modules, pk=module_id)
-    lesson = get_object_or_404(module.lessons, pk=lesson_id)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
     response_data = {
         "id": lesson.id,
@@ -626,9 +642,9 @@ def lesson_preview(request: HttpRequest, course_id: int, module_id: int, lesson_
 
 @teacher_required
 @onboarding_complete_required
-def course_analytics(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_analytics(request: HttpRequest, course_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     # Get all lessons in this course through the modules
     course_lessons = Lesson.objects.filter(module__course=course)
@@ -652,12 +668,12 @@ def verification_status(request: HttpRequest) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def course_publish(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_publish(request: HttpRequest, course_slug: str) -> HttpResponse:
     if not _check_teacher_approval(request):
         return redirect("teacher_verification_status")
-        
+
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     profile = TeacherProfile.objects.filter(user=teacher).first()
 
     if request.method == "POST":
@@ -680,19 +696,19 @@ def course_publish(request: HttpRequest, course_id: int) -> HttpResponse:
                     messages.info(request, "Awaiting admin review. You'll be able to publish after approval.")
         else:
             messages.error(request, "Your teacher profile must be approved to publish courses.")
-    return redirect("teacher_course_detail", course_id=course.pk)
+    return redirect("teacher_course_detail", course_slug=course.slug)
 
 
 @teacher_required
 @onboarding_complete_required
-def course_unpublish(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_unpublish(request: HttpRequest, course_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     if request.method == "POST":
         course.is_published = False
         course.save(update_fields=["is_published"])
         messages.success(request, "Course unpublished.")
-    return redirect("teacher_course_detail", course_id=course.pk)
+    return redirect("teacher_course_detail", course_slug=course.slug)
 
 
 def _notify_admins_course_submitted(course: Course) -> None:
@@ -781,10 +797,10 @@ def serve_video(request: HttpRequest, video_path: str) -> FileResponse | HttpRes
 
 @teacher_required
 @onboarding_complete_required
-def course_discussions(request: HttpRequest, course_id: int) -> HttpResponse:
+def course_discussions(request: HttpRequest, course_slug: str) -> HttpResponse:
     """View and moderate course discussions"""
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     # Get sort parameter
     sort_param = request.GET.get('sort', 'recent')
@@ -819,10 +835,10 @@ def course_discussions(request: HttpRequest, course_id: int) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def discussion_create(request: HttpRequest, course_id: int) -> HttpResponse:
+def discussion_create(request: HttpRequest, course_slug: str) -> HttpResponse:
     """Create a new discussion post as teacher"""
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     if request.method == 'POST':
         form = DiscussionPostForm(request.POST)
@@ -833,7 +849,7 @@ def discussion_create(request: HttpRequest, course_id: int) -> HttpResponse:
             post.parent_post = None  # Top-level post
             post.save()
             messages.success(request, "Your discussion post has been created!")
-            return redirect('teacher_discussion_detail', course_id=course_id, post_id=post.id)
+            return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post.id)
     else:
         form = DiscussionPostForm()
 
@@ -847,10 +863,10 @@ def discussion_create(request: HttpRequest, course_id: int) -> HttpResponse:
 
 @teacher_required
 @onboarding_complete_required
-def discussion_detail(request: HttpRequest, course_id: int, post_id: int) -> HttpResponse:
+def discussion_detail(request: HttpRequest, course_slug: str, post_id: int) -> HttpResponse:
     """View a single discussion post with all replies"""
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
     post = get_object_or_404(
         DiscussionPost.objects.select_related('user', 'course').prefetch_related('replies__user'),
@@ -877,13 +893,13 @@ def discussion_detail(request: HttpRequest, course_id: int, post_id: int) -> Htt
 
 @teacher_required
 @onboarding_complete_required
-def discussion_reply(request: HttpRequest, course_id: int, post_id: int) -> HttpResponse:
+def discussion_reply(request: HttpRequest, course_slug: str, post_id: int) -> HttpResponse:
     """Reply to a discussion post"""
     if request.method != 'POST':
-        return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
+        return redirect('teacher_discussion_detail', course_slug=course_slug, post_id=post_id)
 
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     parent_post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
     form = DiscussionReplyForm(request.POST)
@@ -898,23 +914,23 @@ def discussion_reply(request: HttpRequest, course_id: int, post_id: int) -> Http
         for error in form.errors.values():
             messages.error(request, str(error))
 
-    return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
+    return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post_id)
 
 
 @teacher_required
 @onboarding_complete_required
-def discussion_edit(request: HttpRequest, course_id: int, post_id: int) -> HttpResponse:
+def discussion_edit(request: HttpRequest, course_slug: str, post_id: int) -> HttpResponse:
     """Edit a discussion post or reply"""
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
     # Check if user can edit
     if not post.can_edit(teacher):
         messages.error(request, "You don't have permission to edit this post.")
         if post.parent_post:
-            return redirect('teacher_discussion_detail', course_id=course_id, post_id=post.parent_post.id)
-        return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
+            return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post.parent_post.id)
+        return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post_id)
 
     if request.method == 'POST':
         form = DiscussionPostForm(request.POST, instance=post)
@@ -926,8 +942,8 @@ def discussion_edit(request: HttpRequest, course_id: int, post_id: int) -> HttpR
             edited_post.save()
             messages.success(request, "Post has been updated!")
             if post.parent_post:
-                return redirect('teacher_discussion_detail', course_id=course_id, post_id=post.parent_post.id)
-            return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
+                return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post.parent_post.id)
+            return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post_id)
     else:
         form = DiscussionPostForm(instance=post)
 
@@ -942,13 +958,13 @@ def discussion_edit(request: HttpRequest, course_id: int, post_id: int) -> HttpR
 
 @teacher_required
 @onboarding_complete_required
-def discussion_delete(request: HttpRequest, course_id: int, post_id: int) -> HttpResponse:
+def discussion_delete(request: HttpRequest, course_slug: str, post_id: int) -> HttpResponse:
     """Delete a discussion post or reply (teacher moderation)"""
     if request.method != 'POST':
-        return redirect('teacher_course_discussions', course_id=course_id)
+        return redirect('teacher_course_discussions', course_slug=course_slug)
 
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
     # Teachers can delete any post in their course
@@ -961,19 +977,19 @@ def discussion_delete(request: HttpRequest, course_id: int, post_id: int) -> Htt
 
     # Redirect appropriately
     if was_reply and parent_id:
-        return redirect('teacher_discussion_detail', course_id=course_id, post_id=parent_id)
-    return redirect('teacher_course_discussions', course_id=course_id)
+        return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=parent_id)
+    return redirect('teacher_course_discussions', course_slug=course.slug)
 
 
 @teacher_required
 @onboarding_complete_required
-def discussion_pin_toggle(request: HttpRequest, course_id: int, post_id: int) -> HttpResponse:
+def discussion_pin_toggle(request: HttpRequest, course_slug: str, post_id: int) -> HttpResponse:
     """Pin or unpin a discussion post"""
     if request.method != 'POST':
-        return redirect('teacher_course_discussions', course_id=course_id)
+        return redirect('teacher_course_discussions', course_slug=course_slug)
 
     teacher = _get_logged_in_teacher(request)
-    course = get_object_or_404(Course, pk=course_id, published_by=teacher)
+    course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     post = get_object_or_404(DiscussionPost, id=post_id, course=course, parent_post__isnull=True)
 
     # Toggle pin status
@@ -985,4 +1001,4 @@ def discussion_pin_toggle(request: HttpRequest, course_id: int, post_id: int) ->
     else:
         messages.success(request, "Post has been unpinned!")
 
-    return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
+    return redirect('teacher_discussion_detail', course_slug=course.slug, post_id=post_id)

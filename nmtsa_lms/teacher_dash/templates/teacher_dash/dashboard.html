@@ -150,10 +150,10 @@
                         </p>
                     </div>
                     <div style="display: flex; gap: var(--spacing-sm);">
-                        <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
+                        <a href="{% url 'teacher_course_detail' course.slug %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
                             View
                         </a>
-                        <a href="{% url 'teacher_course_edit' course.id %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
+                        <a href="{% url 'teacher_course_edit' course.slug %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
                             Edit
                         </a>
                     </div>
@@ -186,10 +186,10 @@
                         </p>
                     </div>
                     <div style="display: flex; gap: var(--spacing-sm);">
-                        <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
+                        <a href="{% url 'teacher_course_detail' course.slug %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
                             Manage
                         </a>
-                        <a href="{% url 'teacher_course_analytics' course.id %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
+                        <a href="{% url 'teacher_course_analytics' course.slug %}" class="btn btn-outline btn-sm" style="text-decoration: none;">
                             Analytics
                         </a>
                     </div>

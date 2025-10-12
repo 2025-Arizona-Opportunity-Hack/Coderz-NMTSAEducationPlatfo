@@ -22,6 +22,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 from lms.sitemaps import sitemaps
 from . import views
+from student_dash import views as student_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,12 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path("callback", views.callback, name="callback"),
     path("auth/", include('authentication.urls')),
+    
+    # Public course browsing (no authentication required)
+    path("courses/", student_views.public_catalog, name="public_catalog"),
+    path("courses/<slug:course_slug>/", student_views.public_course_detail, name="public_course_detail"),
+    
+    # Protected student, teacher, admin routes
     path("student/", include('student_dash.urls')),
     path("teacher/", include('teacher_dash.urls')),
     path("admin-dash/", include('admin_dash.urls')),

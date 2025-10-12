@@ -2,6 +2,13 @@
 
 {% block title %}Course Catalog - NMTSA Learning{% endblock %}
 
+{% block description %}Browse our comprehensive collection of neurologic music therapy courses. Professional education for autism support, healthcare professionals, and families.{% endblock %}
+
+{% block keywords %}neurologic music therapy courses, NMT certification, autism therapy courses, music therapy education, professional development courses, healthcare education online{% endblock %}
+
+{% block og_title %}Course Catalog - NMTSA Learning{% endblock %}
+{% block og_description %}Browse our comprehensive collection of neurologic music therapy courses for professionals and families.{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1 class="page-title">Browse Courses</h1>
@@ -117,7 +124,8 @@
                 {% endif %}
 
                 <h3 style="margin-top: 0; margin-bottom: var(--spacing-sm);">
-                    <a href="/courses/{{ course.id }}/" style="text-decoration: none; color: var(--text-primary);">
+                    <a href="{% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                       style="text-decoration: none; color: var(--text-primary);">
                         {{ course.title }}
                     </a>
                 </h3>
@@ -130,32 +138,52 @@
                 <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-md); flex-wrap: wrap;">
                     <span style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); display: flex; align-items: center; gap: 4px;">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                         </svg>
-                        {{ course.duration|default:"4 hours" }}
+                        {{ course.modules.count }} modules
                     </span>
                     <span style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); display: flex; align-items: center; gap: 4px;">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                         </svg>
-                        {{ course.enrollments|default:0 }} students
+                        {{ course.num_enrollments }} students
                     </span>
                 </div>
 
-                <!-- Price and Enroll Button -->
+                <!-- Price and Action Button -->
                 <div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--spacing-md); border-top: 1px solid var(--border-color);">
                     <span style="font-size: calc(1.25rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
-                        {% if course.price == 0 %}
-                        Free
+                        {% if course.is_paid %}
+                            ${{ course.price }}
                         {% else %}
-                        ${{ course.price }}
+                            <span style="color: #66BB6A;">Free</span>
                         {% endif %}
                     </span>
-                    <a href="/courses/{{ course.id }}/" class="btn btn-primary btn-sm" style="text-decoration: none;">
-                        View Course
-                    </a>
+                    
+                    {% if course.user_enrolled %}
+                        <!-- Enrolled - Continue learning -->
+                        <a href="{% url 'student_learning' course.slug %}" 
+                           class="btn btn-sm"
+                           style="padding: 8px 16px; background: #66BB6A; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            Continue Learning
+                        </a>
+                    {% elif request.is_authenticated_user %}
+                        <!-- Authenticated but not enrolled -->
+                        <a href="{% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                           class="btn btn-primary btn-sm"
+                           style="padding: 8px 16px; background: var(--primary); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            View Course
+                        </a>
+                    {% else %}
+                        <!-- Anonymous user -->
+                        <a href="{% url 'login' %}?next={% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                           class="btn btn-sm"
+                           style="padding: 8px 16px; background: var(--primary); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            Sign In to Enroll
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}

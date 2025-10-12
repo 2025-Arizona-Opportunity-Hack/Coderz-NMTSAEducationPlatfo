@@ -4,8 +4,11 @@ Provides memory-enhanced AI capabilities for chat and course recommendations
 Uses the official Supermemory Python SDK
 """
 import os
+import logging
 from typing import Optional, Dict, List, Any
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 try:
     from supermemory import Supermemory
@@ -200,14 +203,159 @@ class SupermemoryClient:
             print(f"Error in chat completion: {e}")
             return None
     
+    def index_course(self, content: str, metadata: Dict[str, Any]) -> Optional[str]:
+        """
+        Index a course to Supermemory.
+
+        Args:
+            content: Searchable course content
+            metadata: Course metadata (must include 'slug' key)
+
+        Returns:
+            Document ID if successful, None otherwise
+        """
+        if not metadata.get('slug'):
+            logger.error("Cannot index course: missing slug in metadata")
+            return None
+
+        return self.add_memory(
+            content=content,
+            metadata=metadata,
+            container_tag='nmtsa-courses',
+            custom_id=metadata['slug']  # Use slug as unique ID
+        )
+
+    def index_module(self, content: str, metadata: Dict[str, Any]) -> Optional[str]:
+        """
+        Index a module to Supermemory.
+
+        Args:
+            content: Searchable module content
+            metadata: Module metadata (must include 'slug' and 'course_slug' keys)
+
+        Returns:
+            Document ID if successful, None otherwise
+        """
+        if not metadata.get('slug'):
+            logger.error("Cannot index module: missing slug in metadata")
+            return None
+
+        return self.add_memory(
+            content=content,
+            metadata=metadata,
+            container_tag='nmtsa-modules',
+            custom_id=metadata['slug']  # Use slug as unique ID
+        )
+
+    def index_lesson(self, content: str, metadata: Dict[str, Any]) -> Optional[str]:
+        """
+        Index a lesson to Supermemory.
+
+        Args:
+            content: Searchable lesson content
+            metadata: Lesson metadata (must include 'slug', 'module_slug', and 'course_slug' keys)
+
+        Returns:
+            Document ID if successful, None otherwise
+        """
+        if not metadata.get('slug'):
+            logger.error("Cannot index lesson: missing slug in metadata")
+            return None
+
+        return self.add_memory(
+            content=content,
+            metadata=metadata,
+            container_tag='nmtsa-lessons',
+            custom_id=metadata['slug']  # Use slug as unique ID
+        )
+
+    def search_by_type(
+        self,
+        query: str,
+        search_type: str,
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """
+        Search a specific entity type (course, module, or lesson).
+
+        Args:
+            query: Search query
+            search_type: One of 'course', 'module', 'lesson'
+            limit: Maximum number of results
+
+        Returns:
+            List of search results with content, metadata, and score
+        """
+        container_tag_map = {
+            'course': 'nmtsa-courses',
+            'module': 'nmtsa-modules',
+            'lesson': 'nmtsa-lessons',
+        }
+
+        container_tag = container_tag_map.get(search_type)
+        if not container_tag:
+            logger.error(f"Invalid search_type: {search_type}")
+            return []
+
+        return self.search_memories(
+            query=query,
+            limit=limit,
+            container_tag=container_tag
+        )
+
+    def multi_tier_search(
+        self,
+        query: str,
+        limit_per_tier: int = 50
+    ) -> List[Dict[str, Any]]:
+        """
+        Perform multi-tier search across courses, modules, and lessons.
+        Returns aggregated results with weighted scoring.
+
+        Args:
+            query: Natural language search query
+            limit_per_tier: Maximum results per search tier
+
+        Returns:
+            List of aggregated course results sorted by relevance
+            [{"slug": "abc123", "score": 0.95, "match_type": "course"}, ...]
+        """
+        try:
+            # Import here to avoid circular dependency
+            from lms.search_aggregator import aggregate_search_results
+
+            # Perform 3 parallel searches
+            course_results = self.search_by_type(query, 'course', limit_per_tier)
+            module_results = self.search_by_type(query, 'module', limit_per_tier)
+            lesson_results = self.search_by_type(query, 'lesson', limit_per_tier)
+
+            logger.info(
+                f"Multi-tier search for '{query}': "
+                f"{len(course_results)} courses, {len(module_results)} modules, "
+                f"{len(lesson_results)} lessons"
+            )
+
+            # Aggregate and weight results
+            aggregated = aggregate_search_results(
+                course_results,
+                module_results,
+                lesson_results
+            )
+
+            return aggregated
+
+        except Exception as e:
+            logger.error(f"Error in multi_tier_search: {e}")
+            return []
+
     def search_courses(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """
         Search courses using semantic search via Supermemory
-        
+
         Args:
             query: Search query
             limit: Maximum number of results
-            
+
         Returns:
             List of course objects with id, title, description, relevance_score
         """
@@ -218,14 +366,14 @@ class SupermemoryClient:
                 limit=limit,
                 container_tag='nmtsa-courses'
             )
-            
+
             # Extract course data from memories
             courses = []
             for memory in memories:
                 metadata = memory.get('metadata', {})
                 content = memory.get('content', '')
                 score = memory.get('score', 0)
-                
+
                 if metadata and 'course_id' in metadata:
                     courses.append({
                         'id': metadata.get('course_id'),
@@ -236,9 +384,9 @@ class SupermemoryClient:
                         'is_published': metadata.get('is_published', False),
                         'tags': metadata.get('tags', [])
                     })
-            
+
             return courses
-                
+
         except Exception as e:
             print(f"Course search error: {e}")
             return []

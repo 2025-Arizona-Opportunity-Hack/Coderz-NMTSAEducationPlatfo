@@ -15,6 +15,13 @@
 
         <!-- Desktop Navigation Links (hidden on mobile) -->
         <div class="hidden lg:flex items-center gap-2">
+            <!-- Browse Courses - Available to ALL users -->
+            <a href="{% url 'public_catalog' %}" 
+               class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/courses/' in request.path and '/student/courses/' not in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
+               aria-current="{% if '/courses/' in request.path %}page{% else %}false{% endif %}">
+                Browse Courses
+            </a>
+            
             {% if request.session.user %}
                 <!-- Authenticated User Menu -->
                 {% if request.session.user.role == 'admin' %}
@@ -38,12 +45,6 @@
                        class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
                         My Courses
-                    </a>
-
-                    <a href="{% url 'student_catalog' %}" 
-                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/catalog/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       aria-current="{% if '/student/catalog/' in request.path %}page{% else %}false{% endif %}">
-                        Browse Courses
                     </a>
                 {% endif %}
             {% endif %}
@@ -207,6 +208,13 @@
          role="menu"
          aria-label="Mobile navigation">
         <div class="flex flex-col gap-2 mt-4">
+            <!-- Browse Courses - Available to ALL users -->
+            <a href="{% url 'public_catalog' %}" 
+               class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/courses/' in request.path and '/student/courses/' not in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
+               role="menuitem">
+                Browse Courses
+            </a>
+            
             {% if request.session.user %}
                 <!-- Authenticated User Mobile Menu -->
                 {% if request.session.user.role == 'admin' %}
@@ -230,12 +238,6 @@
                        class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        role="menuitem">
                         My Courses
-                    </a>
-
-                    <a href="{% url 'student_catalog' %}" 
-                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/catalog/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       role="menuitem">
-                        Browse Courses
                     </a>
                 {% endif %}
 

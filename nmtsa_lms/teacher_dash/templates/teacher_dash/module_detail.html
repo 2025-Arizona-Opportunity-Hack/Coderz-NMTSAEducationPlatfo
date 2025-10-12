@@ -145,7 +145,7 @@
 
 {% block content %}
 <div class="page-header">
-    <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-link">← Back to Course</a>
+    <a href="{% url 'teacher_course_detail' course.slug %}" class="btn btn-link">← Back to Course</a>
     <h1 class="page-title">{{ module.title }}</h1>
     <p class="page-description">Manage lessons within this module.</p>
 </div>
@@ -195,8 +195,8 @@
             </div>
             <div class="lesson-card_actions">
                 {% if is_teacher_approved %}
-                <a href="{% url 'teacher_lesson_edit' course.id module.id lesson.id %}" class="btn btn-outline btn-sm">Edit</a>
-                <form method="post" action="{% url 'teacher_lesson_delete' course.id module.id lesson.id %}" onsubmit="return confirm('Delete this lesson?');">
+                <a href="{% url 'teacher_lesson_edit' course.slug module.slug lesson.slug %}" class="btn btn-outline btn-sm">Edit</a>
+                <form method="post" action="{% url 'teacher_lesson_delete' course.slug module.slug lesson.slug %}" onsubmit="return confirm('Delete this lesson?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline btn-sm">Delete</button>
                 </form>
@@ -216,7 +216,7 @@
         <h2 style="margin: 0;">Add Lesson</h2>
         <small style="color: var(--text-muted);">Draft a new lesson below</small>
     </div>
-    <form method="post" action="{% url 'teacher_lesson_create' course.id module.id %}" enctype="multipart/form-data" class="card module-form">
+    <form method="post" action="{% url 'teacher_lesson_create' course.slug module.slug %}" enctype="multipart/form-data" class="card module-form">
         {% csrf_token %}
         {{ lesson_form.non_field_errors }}
         <div class="form-grid">
