@@ -1,157 +1,102 @@
-import { useState, FormEvent } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LogIn, AlertCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { LogIn } from "lucide-react";
+import { Spinner } from "@heroui/spinner";
+import { Button } from "@heroui/button";
 
-import { authService } from "../services/auth.service";
 import { useAuthStore } from "../store/useAuthStore";
 
+/**
+ * Login Page - Auth0 OAuth Only
+ * 
+ * Redirects users to Auth0 Universal Login.
+ * No local email/password authentication.
+ * 
+ * @accessibility
+ * - Button is keyboard accessible
+ * - Loading states are announced
+ * - Focus is managed during redirect
+ */
 export function Login() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { setAuth } = useAuthStore();
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated: localAuth } = useAuthStore();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  // If already authenticated, user will be redirected by ProtectedRoute
+  useEffect(() => {
+    if (isAuthenticated || localAuth) {
+      // User is authenticated, they shouldn't be here
+      // Let the auth handler redirect them
+    }
+  }, [isAuthenticated, localAuth]);
 
-  const from = (location.state as any)?.from?.pathname || "/dashboard";
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
+  const handleLogin = async () => {
     try {
-      const { profile } = await authService.signIn(formData);
-
-      if (profile) {
-        setAuth(profile);
-
-        if (profile.role === "instructor") {
-          navigate("/instructor/dashboard");
-        } else if (profile.role === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate(from, { replace: true });
-        }
-      }
-    } catch (err: any) {
-      setError(
-        err.message || "Failed to sign in. Please check your credentials.",
-      );
-    } finally {
-      setIsLoading(false);
+      await loginWithRedirect({
+        appState: {
+          returnTo: window.location.pathname,
+        },
+      });
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
 
+  // Show loading while Auth0 initializes
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading authentication"
+      >
+        <div className="text-center">
+          <Spinner size="lg" color="primary" label="Loading..." />
+          <p className="mt-4 text-default-600 text-sm">
+            Preparing sign in...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 text-center">
         <div>
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-            <LogIn aria-hidden="true" className="h-6 w-6 text-blue-600" />
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-primary-100">
+            <LogIn aria-hidden="true" className="h-8 w-8 text-primary-600" />
           </div>
-          <h1 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Sign in to your account
+          <h1 className="mt-6 text-3xl font-bold text-foreground">
+            Welcome to NMTSA Learn
           </h1>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
-            <Link
-              className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-1"
-              to="/register"
-            >
-              create a new account
-            </Link>
+          <p className="mt-2 text-default-600">
+            Sign in to access your courses and continue learning
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div
-              aria-live="polite"
-              className="rounded-md bg-red-50 p-4"
-              role="alert"
-            >
-              <div className="flex">
-                <AlertCircle
-                  aria-hidden="true"
-                  className="h-5 w-5 text-red-400"
-                />
-                <div className="ml-3">
-                  <p className="text-sm text-red-800">{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700"
-                htmlFor="email"
-              >
-                Email address
-              </label>
-              <input
-                required
-                aria-describedby={error ? "login-error" : undefined}
-                autoComplete="email"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <input
-                required
-                aria-describedby={error ? "login-error" : undefined}
-                autoComplete="current-password"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <Link
-                className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-1"
-                to="/forgot-password"
-              >
-                Forgot your password?
-              </Link>
-            </div>
-          </div>
-
-          <button
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoading}
-            type="submit"
+        <div className="mt-8 space-y-4">
+          <Button
+            color="primary"
+            size="lg"
+            startContent={<LogIn className="h-5 w-5" />}
+            onPress={handleLogin}
+            className="w-full"
+            aria-label="Sign in with Auth0"
           >
-            {isLoading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
+            Sign In with Auth0
+          </Button>
+
+          <p className="text-sm text-default-500">
+            By signing in, you agree to our Terms of Service and Privacy Policy.
+          </p>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-default-200">
+          <p className="text-sm text-default-600">
+            New to NMTSA Learn? Click "Sign In with Auth0" to create an account.
+          </p>
+        </div>
       </div>
     </div>
   );

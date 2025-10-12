@@ -1,20 +1,77 @@
-// API Types for NMTSA Learn Backend
+/**
+ * API Types for NMTSA Learn Backend
+ * 
+ * This module defines TypeScript interfaces that match the Django backend API
+ * response formats. Key considerations:
+ * - Django uses snake_case, but we use camelCase in frontend
+ * - Transform functions handle conversion between formats
+ * - All types follow WCAG 2.1 accessibility requirements where applicable
+ * 
+ * @module types/api
+ */
 
+// ============================================================================
+// Django-Specific Response Types
+// ============================================================================
+
+/**
+ * Django REST Framework pagination response wrapper
+ * Used for all list endpoints that return paginated data
+ */
+export interface DjangoPaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+/**
+ * Standard Django error response format
+ * Includes validation errors in field-specific format
+ */
+export interface DjangoErrorResponse {
+  detail?: string;
+  message?: string;
+  errors?: Record<string, string[]>;
+  [key: string]: any;
+}
+
+// ============================================================================
+// Authentication & User Types
+// ============================================================================
+
+/**
+ * User profile information
+ * Maps to Django CustomUser model
+ */
 export interface Profile {
   id: string;
   email: string;
   fullName: string;
-  role: "student" | "instructor" | "admin";
+  role: "student" | "teacher" | "admin";
   avatarUrl?: string;
   bio?: string;
   createdAt: string;
   updatedAt: string;
+  // Django-specific fields
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  isActive?: boolean;
+  dateJoined?: string;
 }
 
+/**
+ * Authentication response from login/register endpoints
+ * Includes JWT access and refresh tokens
+ */
 export interface AuthResponse {
   user: Profile;
-  token: string;
+  token: string; // JWT access token
+  access?: string; // Alternative format from Django
   refreshToken?: string;
+  refresh?: string; // Alternative format from Django
+  tokenType?: string; // Usually "Bearer"
 }
 
 export interface ApiError {
@@ -38,6 +95,14 @@ export interface PaginatedResponse<T> {
   };
 }
 
+// ============================================================================
+// Course & Learning Types
+// ============================================================================
+
+/**
+ * Course information
+ * Maps to Django Course model
+ */
 export interface Course {
   id: string;
   title: string;
@@ -51,12 +116,16 @@ export interface Course {
   };
   category: string;
   difficulty: "beginner" | "intermediate" | "advanced";
-  duration: number; // in minutes
+  duration: number; // in minutes (duration_minutes in Django)
   credits: number;
-  rating?: number;
-  enrollmentCount?: number;
+  rating?: number; // average_rating in Django
+  enrollmentCount?: number; // enrollment_count in Django
   createdAt: string;
   updatedAt: string;
+  // Django-specific fields
+  isPublished?: boolean;
+  prerequisites?: string | string[]; // Can be string or array
+  learningObjectives?: string[];
 }
 
 export interface Enrollment {
@@ -222,6 +291,10 @@ export interface ContinueLearningItem {
   };
 }
 
+/**
+ * Course application status
+ * Matches Django ApplicationStatus choices
+ */
 export type ApplicationStatus =
   | "pending"
   | "under_review"
@@ -229,6 +302,10 @@ export type ApplicationStatus =
   | "rejected"
   | "cancelled";
 
+/**
+ * Course application
+ * Used for teacher verification applications
+ */
 export interface Application {
   id: string;
   userId: string;

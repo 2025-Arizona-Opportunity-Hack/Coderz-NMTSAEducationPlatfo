@@ -1,10 +1,24 @@
+/**
+ * Register Page - Redirects to Auth0
+ * 
+ * Since Auth0 handles both registration and login through Universal Login,
+ * this page redirects to the login page.
+ */
+
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 export function Register() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect to login - Auth0 Universal Login handles registration
+    navigate("/login", { replace: true });
+  }, [navigate]);
+
   return (
-    <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-6 text-center">Register</h1>
-      <p className="text-gray-600 text-center">
-        Registration coming in Step 2...
-      </p>
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-default-600">Redirecting to sign in...</p>
     </div>
   );
 }

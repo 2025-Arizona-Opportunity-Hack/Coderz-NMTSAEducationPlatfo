@@ -11,6 +11,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.6.0",
     "@heroui/accordion": "^2.2.24",
     "@heroui/avatar": "^2.2.22",
     "@heroui/button": "2.2.27",

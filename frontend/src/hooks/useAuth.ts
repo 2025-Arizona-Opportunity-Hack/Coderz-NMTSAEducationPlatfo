@@ -1,40 +1,13 @@
-import { useEffect } from "react";
-
-import { authService } from "../services/auth.service";
-import { useAuthStore } from "../store/useAuthStore";
-
+/**
+ * useAuth Hook
+ * 
+ * This hook is now a no-op since Auth0ProviderWithHistory handles
+ * all authentication state management.
+ * 
+ * Kept for backward compatibility with existing code.
+ */
 export function useAuth() {
-  const { setAuth, clearAuth, setLoading } = useAuthStore();
-
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("auth-token");
-
-        if (token) {
-          // Verify token and get current user
-          const profile = await authService.getCurrentUser();
-
-          if (profile) {
-            setAuth(profile);
-          } else {
-            // Token invalid, clear it
-            localStorage.removeItem("auth-token");
-            clearAuth();
-          }
-        } else {
-          clearAuth();
-        }
-      } catch (error) {
-        console.error("Auth initialization error:", error);
-        localStorage.removeItem("auth-token");
-        clearAuth();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initAuth();
-  }, [setAuth, clearAuth, setLoading]);
+  // Auth0ProviderWithHistory now handles all auth state
+  // This hook is kept for backward compatibility but does nothing
+  return;
 }

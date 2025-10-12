@@ -1,103 +1,116 @@
-import type { Profile, AuthResponse, ApiError } from "../types/api";
+/**
+ * Authentication Service
+ * 
+ * Handles user authentication via Auth0 OAuth only.
+ * All authentication flows go through Auth0 - no local email/password.
+ * Works with Django backend that validates Auth0 JWT tokens.
+ * 
+ * @module services/auth
+ */
+
+import type { Profile } from "../types/api";
 
 import api from "../config/api";
 
-export interface SignUpData {
-  email: string;
-  password: string;
-  fullName: string;
-  role?: "student" | "instructor";
+/**
+ * Auth0 logout handler
+ * Will be set by the Auth0Provider wrapper
+ */
+let auth0LogoutFn: (() => void) | null = null;
+
+/**
+ * Set the Auth0 logout function
+ * Called by Auth0Provider during initialization
+ * 
+ * @param {Function} fn - Function that triggers Auth0 logout
+ */
+export function setAuth0Logout(fn: () => void): void {
+  auth0LogoutFn = fn;
 }
 
-export interface SignInData {
-  email: string;
-  password: string;
-}
-
+/**
+ * Authentication Service
+ * Provides methods for Auth0-based authentication and profile management
+ * 
+ * @note All sign-in/sign-up flows go through Auth0. Local email/password is not supported.
+ */
 export const authService = {
-  async signUp(data: SignUpData) {
+  /**
+   * Initiate Auth0 login
+   * Redirects user to Auth0 Universal Login
+   * 
+   * @throws {Error} Auth0 is not configured or unavailable
+   * 
+   * @accessibility
+   * - Login page should be keyboard accessible
+   * - Screen readers should announce redirect
+   */
+  async login(): Promise<void> {
+    throw new Error(
+      "Please use Auth0Provider's loginWithRedirect method. " +
+      "This method is deprecated in OAuth-only mode."
+    );
+  },
+
+  /**
+   * Sign out current user via Auth0
+   * Clears Auth0 session and local application state
+   * 
+   * @returns {Promise<void>}
+   * 
+   * @accessibility
+   * - Logout action should be announced to screen readers
+   */
+  async signOut(): Promise<void> {
     try {
-      const response = await api.post<AuthResponse>("/auth/register", data);
-      const { token, user } = response.data;
-
-      // Store token
-      localStorage.setItem("auth-token", token);
-
-      return { user, token };
+      // Clear local storage
+      localStorage.removeItem("auth-storage");
+      
+      // Trigger Auth0 logout if available
+      if (auth0LogoutFn) {
+        auth0LogoutFn();
+      } else {
+        // Fallback: redirect to home
+        window.location.href = "/";
+      }
     } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to sign up");
+      console.error("Logout error:", error);
+      // Always redirect even if logout fails
+      window.location.href = "/";
     }
   },
 
-  async signIn(data: SignInData) {
-    try {
-      const response = await api.post<AuthResponse>("/auth/login", data);
-      const { token, user } = response.data;
-
-      // Store token
-      localStorage.setItem("auth-token", token);
-
-      return { profile: user, token };
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to sign in");
-    }
-  },
-
-  async signOut() {
-    try {
-      await api.post("/auth/logout");
-      localStorage.removeItem("auth-token");
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to sign out");
-    }
-  },
-
-  async resetPassword(email: string) {
-    try {
-      await api.post("/auth/forgot-password", {
-        email,
-        redirectUrl: `${window.location.origin}/reset-password`,
-      });
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to send reset email");
-    }
-  },
-
-  async updatePassword(newPassword: string) {
-    try {
-      await api.post("/auth/update-password", { password: newPassword });
-    } catch (error) {
-      const apiError = error as ApiError;
-
-      throw new Error(apiError.message || "Failed to update password");
-    }
-  },
-
-  async getProfile(userId: string): Promise<Profile | null> {
-    try {
-      const response = await api.get<Profile>(`/users/${userId}`);
-
-      return response.data;
-    } catch {
-      return null;
-    }
-  },
-
+  /**
+   * Get current authenticated user profile from backend
+   * Backend validates Auth0 token and returns user data with roles
+   * 
+   * @returns {Promise<Profile | null>} Current user profile or null if not authenticated
+   * 
+   * @accessibility
+   * - Profile data should be cached to reduce API calls
+   * - Should handle session expiry gracefully
+   */
   async getCurrentUser(): Promise<Profile | null> {
     try {
-      const response = await api.get<Profile>("/auth/me");
-
+      const response = await api.get<Profile>("/auth/me/");
       return response.data;
-    } catch {
+    } catch (error) {
+      console.error("Failed to get current user:", error);
       return null;
     }
+  },
+
+  /**
+   * Get Auth0 access token
+   * This method is deprecated - use Auth0Provider's getAccessTokenSilently instead
+   * 
+   * @deprecated Use Auth0Provider context
+   * @throws {Error} Always throws in OAuth-only mode
+   */
+  async getAccessToken(): Promise<string> {
+    throw new Error(
+      "Use Auth0Provider's getAccessTokenSilently method instead. " +
+      "Local token management is not supported in OAuth-only mode."
+    );
   },
 };
