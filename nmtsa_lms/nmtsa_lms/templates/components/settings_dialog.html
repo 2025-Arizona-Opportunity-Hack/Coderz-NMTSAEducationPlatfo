@@ -2,485 +2,530 @@
 {% load i18n %}
 
 <!-- Settings Dialog Overlay -->
-<div id="settings-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 9998;" onclick="closeSettings()"></div>
+<div id="settings-overlay"
+  style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 9998;"
+  onclick="closeSettings()"></div>
 
 <!-- Settings Dialog -->
-<div id="settings-dialog" 
-     role="dialog" 
-     aria-labelledby="settings-title"
-     aria-modal="true"
-     style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); z-index: 9999; padding: var(--spacing-xl);">
-    
-    <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
-        <h2 id="settings-title" style="margin: 0; font-size: calc(1.5rem * var(--font-scale)); color: var(--text-primary);">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: var(--spacing-sm);" aria-hidden="true">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 1v6m0 6v6m8.66-16.5-3 5.2M6.34 14.3l-3 5.2M23 12h-6M7 12H1m15.66 8.5-3-5.2M6.34 9.7l-3-5.2"/>
+<div id="settings-dialog" role="dialog" aria-labelledby="settings-title" aria-modal="true"
+  style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); z-index: 9999; padding: var(--spacing-xl);">
+
+  <!-- Header -->
+  <div
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
+    <h2 id="settings-title" style="margin: 0; font-size: calc(1.5rem * var(--font-scale)); color: var(--text-primary);">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+        style="vertical-align: middle; margin-right: var(--spacing-sm);" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 1v6m0 6v6m8.66-16.5-3 5.2M6.34 14.3l-3 5.2M23 12h-6M7 12H1m15.66 8.5-3-5.2M6.34 9.7l-3-5.2" />
+      </svg>
+      {% trans "Settings" %}
+    </h2>
+    <button onclick="closeSettings()"
+      style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: var(--spacing-sm); border-radius: var(--radius-md); transition: background 0.2s;"
+      aria-label="{% trans 'Close settings' %}">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Settings Sections -->
+  <div style="display: flex; flex-direction: column; gap: var(--spacing-xl);">
+
+    <!-- Appearance Section -->
+    <section>
+      <h3
+        style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+        </svg>
+        {% trans "Appearance" %}
+      </h3>
+
+      <!-- Theme Selection -->
+      <div style="margin-bottom: var(--spacing-lg);">
+        <label
+          style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
+          {% trans "Theme" %}
+        </label>
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--spacing-sm);">
+          <button onclick="setTheme('light')" id="settings-theme-light" class="settings-theme-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Light theme">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              style="margin: 0 auto var(--spacing-xs);">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
             </svg>
-            Settings
-        </h2>
-        <button onclick="closeSettings()" 
-                style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: var(--spacing-sm); border-radius: var(--radius-md); transition: background 0.2s;"
-                aria-label="Close settings">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
+            <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
+              Light</div>
+            <div
+              style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">
+              Modern & clean</div>
+          </button>
+
+          <button onclick="setTheme('dark')" id="settings-theme-dark" class="settings-theme-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Dark theme">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              style="margin: 0 auto var(--spacing-xs);">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
-        </button>
-    </div>
+            <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
+              Dark</div>
+            <div
+              style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">
+              Easier on eyes</div>
+          </button>
 
-    <!-- Settings Sections -->
-    <div style="display: flex; flex-direction: column; gap: var(--spacing-xl);">
-        
-        <!-- Appearance Section -->
-        <section>
-            <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
-                </svg>
-                Appearance
-            </h3>
+          <button onclick="setTheme('contrast')" id="settings-theme-contrast" class="settings-theme-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="High contrast theme">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              style="margin: 0 auto var(--spacing-xs);">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2v20" />
+            </svg>
+            <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
+              High Contrast</div>
+            <div
+              style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">
+              Better visibility</div>
+          </button>
 
-            <!-- Theme Selection -->
-            <div style="margin-bottom: var(--spacing-lg);">
-                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
-                    Theme
-                </label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--spacing-sm);">
-                    <button onclick="setTheme('light')"
-                            id="settings-theme-light"
-                            class="settings-theme-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Light theme">
-                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-xs);">
-                            <circle cx="12" cy="12" r="5"/>
-                            <line x1="12" y1="1" x2="12" y2="3"/>
-                            <line x1="12" y1="21" x2="12" y2="23"/>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                            <line x1="1" y1="12" x2="3" y2="12"/>
-                            <line x1="21" y1="12" x2="23" y2="12"/>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                        </svg>
-                        <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">Light</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">Modern & clean</div>
-                    </button>
+          <button onclick="setTheme('minimal')" id="settings-theme-minimal" class="settings-theme-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Minimal theme">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              style="margin: 0 auto var(--spacing-xs);">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+            <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
+              Minimal</div>
+            <div
+              style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">
+              Screen reader friendly</div>
+          </button>
+        </div>
+      </div>
 
-                    <button onclick="setTheme('dark')"
-                            id="settings-theme-dark"
-                            class="settings-theme-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Dark theme">
-                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-xs);">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                        </svg>
-                        <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">Dark</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">Easier on eyes</div>
-                    </button>
+      <!-- Font Size Selection -->
+      <div>
+        <label
+          style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
+          {% trans "Text Size" %}
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-sm);">
+          <button onclick="setFontSize('small')" id="settings-font-small" class="settings-font-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Small font size">
+            <div
+              style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
+              A-</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Small</div>
+          </button>
 
-                    <button onclick="setTheme('contrast')"
-                            id="settings-theme-contrast"
-                            class="settings-theme-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="High contrast theme">
-                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-xs);">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 2v20"/>
-                        </svg>
-                        <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">High Contrast</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">Better visibility</div>
-                    </button>
-
-                    <button onclick="setTheme('minimal')"
-                            id="settings-theme-minimal"
-                            class="settings-theme-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Minimal theme">
-                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-xs);">
-                            <path d="M4 7h16M4 12h16M4 17h16"/>
-                        </svg>
-                        <div style="font-size: calc(0.875rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">Minimal</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-xs);">Screen reader friendly</div>
-                    </button>
-                </div>
+          <button onclick="setFontSize('medium')" id="settings-font-medium" class="settings-font-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Medium font size">
+            <div
+              style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">A
             </div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Medium</div>
+          </button>
 
-            <!-- Font Size Selection -->
-            <div>
-                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
-                    Text Size
-                </label>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-sm);">
-                    <button onclick="setFontSize('small')"
-                            id="settings-font-small"
-                            class="settings-font-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Small font size">
-                        <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">A-</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Small</div>
-                    </button>
+          <button onclick="setFontSize('large')" id="settings-font-large" class="settings-font-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Large font size">
+            <div
+              style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
+              A+</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Large</div>
+          </button>
 
-                    <button onclick="setFontSize('medium')"
-                            id="settings-font-medium"
-                            class="settings-font-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Medium font size">
-                        <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">A</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Medium</div>
-                    </button>
+          <button onclick="setFontSize('xlarge')" id="settings-font-xlarge" class="settings-font-btn"
+            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
+            aria-label="Extra large font size">
+            <div
+              style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
+              A++</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">X-Large</div>
+          </button>
+        </div>
+      </div>
+    </section>
 
-                    <button onclick="setFontSize('large')"
-                            id="settings-font-large"
-                            class="settings-font-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Large font size">
-                        <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">A+</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Large</div>
-                    </button>
+    <!-- Language Section -->
+    <section>
+      <h3
+        style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+        {% trans "Language" %}
+      </h3>
+      <div>
+        <label for="language-select"
+          style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
+          {% trans "Interface Language" %}
+        </label>
+        <form id="language-form" action="{% url 'set_language' %}" method="post" style="margin: 0;">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+          <select id="language-select" name="language" onchange="document.getElementById('language-form').submit()"
+            style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); font-size: calc(1rem * var(--font-scale)); cursor: pointer;">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang_code, lang_name in LANGUAGES %}
+            <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
+              {{ lang_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </form>
+        <p
+          style="margin-top: var(--spacing-sm); font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">
+          {% trans "Changes apply immediately. Page will reload with selected language." %}
+        </p>
+      </div>
+    </section>
 
-                    <button onclick="setFontSize('xlarge')"
-                            id="settings-font-xlarge"
-                            class="settings-font-btn"
-                            style="padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer; text-align: center; transition: all 0.2s;"
-                            aria-label="Extra large font size">
-                        <div style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--spacing-xs);">A++</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">X-Large</div>
-                    </button>
-                </div>
+    <!-- Accessibility Section -->
+    <section>
+      <h3
+        style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v12M9 12h6" />
+        </svg>
+        {% trans "Accessibility" %}
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+        <!-- Reduce Motion -->
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Reduce Motion
             </div>
-        </section>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Minimize animations
+              and transitions</div>
+          </div>
+          <input type="checkbox" id="reduce-motion" onchange="toggleReduceMotion(this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
 
-        <!-- Language Section -->
-        <section>
-            <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="2" y1="12" x2="22" y2="12"/>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                </svg>
-                Language
-            </h3>
-            <div>
-                <label for="language-select" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary); font-size: calc(0.875rem * var(--font-scale));">
-                    Interface Language
-                </label>
-                <form id="language-form" action="{% url 'set_language' %}" method="post" style="margin: 0;">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                    <select id="language-select" 
-                            name="language"
-                            onchange="document.getElementById('language-form').submit()"
-                            style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); font-size: calc(1rem * var(--font-scale)); cursor: pointer;">
-                        {% get_current_language as LANGUAGE_CODE %}
-                        {% get_available_languages as LANGUAGES %}
-                        {% for lang_code, lang_name in LANGUAGES %}
-                            <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
-                                {{ lang_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </form>
-                <p style="margin-top: var(--spacing-sm); font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">
-                    Changes apply immediately. Page will reload with selected language.
-                </p>
+        <!-- Screen Reader Mode -->
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Screen Reader
+              Optimization</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Enhanced for screen
+              readers</div>
+          </div>
+          <input type="checkbox" id="screen-reader-mode" onchange="toggleScreenReaderMode(this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
+
+        <!-- Keyboard Navigation Hints -->
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Keyboard
+              Navigation Hints</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Show keyboard
+              shortcuts</div>
+          </div>
+          <input type="checkbox" id="keyboard-hints" onchange="toggleKeyboardHints(this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
+      </div>
+    </section>
+
+    <!-- Notifications Section (if user is authenticated) -->
+    {% if request.user.is_authenticated or request.session.user %}
+    <section>
+      <h3
+        style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        {% trans "Notifications" %}
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Course Updates
             </div>
-        </section>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Notify about new
+              lessons and content</div>
+          </div>
+          <input type="checkbox" id="notify-courses" checked onchange="toggleNotification('courses', this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
 
-        <!-- Accessibility Section -->
-        <section>
-            <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v12M9 12h6"/>
-                </svg>
-                Accessibility
-            </h3>
-            
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
-                <!-- Reduce Motion -->
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Reduce Motion</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Minimize animations and transitions</div>
-                    </div>
-                    <input type="checkbox" id="reduce-motion" onchange="toggleReduceMotion(this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Discussion
+              Replies</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Notify when someone
+              replies to your posts</div>
+          </div>
+          <input type="checkbox" id="notify-discussions" checked
+            onchange="toggleNotification('discussions', this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
 
-                <!-- Screen Reader Mode -->
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Screen Reader Optimization</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Enhanced for screen readers</div>
-                    </div>
-                    <input type="checkbox" id="screen-reader-mode" onchange="toggleScreenReaderMode(this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
+        <label
+          style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Email
+              Notifications</div>
+            <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Receive email
+              updates</div>
+          </div>
+          <input type="checkbox" id="notify-email" checked onchange="toggleNotification('email', this.checked)"
+            style="width: 20px; height: 20px; cursor: pointer;">
+        </label>
+      </div>
+    </section>
+    {% endif %}
 
-                <!-- Keyboard Navigation Hints -->
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Keyboard Navigation Hints</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Show keyboard shortcuts</div>
-                    </div>
-                    <input type="checkbox" id="keyboard-hints" onchange="toggleKeyboardHints(this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
-            </div>
-        </section>
+  </div>
 
-        <!-- Notifications Section (if user is authenticated) -->
-        {% if request.user.is_authenticated or request.session.user %}
-        <section>
-            <h3 style="margin: 0 0 var(--spacing-md) 0; font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary); display: flex; align-items: center; gap: var(--spacing-sm);">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                Notifications
-            </h3>
-            
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Course Updates</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Notify about new lessons and content</div>
-                    </div>
-                    <input type="checkbox" id="notify-courses" checked onchange="toggleNotification('courses', this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
-
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Discussion Replies</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Notify when someone replies to your posts</div>
-                    </div>
-                    <input type="checkbox" id="notify-discussions" checked onchange="toggleNotification('discussions', this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
-
-                <label style="display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); cursor: pointer;">
-                    <div>
-                        <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-xs);">Email Notifications</div>
-                        <div style="font-size: calc(0.75rem * var(--font-scale)); color: var(--text-secondary);">Receive email updates</div>
-                    </div>
-                    <input type="checkbox" id="notify-email" checked onchange="toggleNotification('email', this.checked)" style="width: 20px; height: 20px; cursor: pointer;">
-                </label>
-            </div>
-        </section>
-        {% endif %}
-
-    </div>
-
-    <!-- Footer Actions -->
-    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: var(--spacing-md);">
-        <button onclick="resetSettings()" 
-                style="padding: var(--spacing-sm) var(--spacing-lg); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; font-weight: 600; transition: all 0.2s;">
-            Reset to Defaults
-        </button>
-        <button onclick="closeSettings()" 
-                class="btn btn-primary"
-                style="padding: var(--spacing-sm) var(--spacing-lg); border: none; border-radius: var(--radius-md); background: var(--primary); color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">
-            Done
-        </button>
-    </div>
+  <!-- Footer Actions -->
+  <div
+    style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: var(--spacing-md);">
+    <button onclick="resetSettings()"
+      style="padding: var(--spacing-sm) var(--spacing-lg); border: 2px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; font-weight: 600; transition: all 0.2s;">
+      {% trans "Reset to Defaults" %}
+    </button>
+    <button onclick="closeSettings()" class="btn btn-primary"
+      style="padding: var(--spacing-sm) var(--spacing-lg); border: none; border-radius: var(--radius-md); background: var(--primary); color: white; cursor: pointer; font-weight: 600; transition: all 0.2s;">
+      {% trans "Done" %}
+    </button>
+  </div>
 </div>
 
 <script>
-    // Open settings dialog
-    function openSettings() {
-        const overlay = document.getElementById('settings-overlay');
-        const dialog = document.getElementById('settings-dialog');
-        
-        overlay.style.display = 'block';
-        dialog.style.display = 'block';
-        
-        // Set focus to dialog for accessibility
-        dialog.focus();
-        
-        // Update button states to reflect current settings
-        updateSettingsUI();
-        
-        // Prevent body scroll when dialog is open
-        document.body.style.overflow = 'hidden';
-    }
+  // Open settings dialog
+  function openSettings() {
+    const overlay = document.getElementById('settings-overlay');
+    const dialog = document.getElementById('settings-dialog');
 
-    // Close settings dialog
-    function closeSettings() {
-        const overlay = document.getElementById('settings-overlay');
-        const dialog = document.getElementById('settings-dialog');
-        
-        overlay.style.display = 'none';
-        dialog.style.display = 'none';
-        
-        // Re-enable body scroll
-        document.body.style.overflow = '';
-    }
+    overlay.style.display = 'block';
+    dialog.style.display = 'block';
 
-    // Update settings UI to reflect current values
-    function updateSettingsUI() {
-        // Update theme buttons
-        const currentTheme = localStorage.getItem('nmtsa-theme') || 'light';
-        document.querySelectorAll('.settings-theme-btn').forEach(btn => {
-            btn.style.borderColor = 'var(--border-color)';
-            btn.style.backgroundColor = 'var(--bg-secondary)';
-        });
-        const activeThemeBtn = document.getElementById('settings-theme-' + currentTheme);
-        if (activeThemeBtn) {
-            activeThemeBtn.style.borderColor = 'var(--primary)';
-            activeThemeBtn.style.backgroundColor = 'var(--primary-light)';
-        }
+    // Set focus to dialog for accessibility
+    dialog.focus();
 
-        // Update font size buttons
-        const currentFontSize = localStorage.getItem('nmtsa-font-size') || 'medium';
-        document.querySelectorAll('.settings-font-btn').forEach(btn => {
-            btn.style.borderColor = 'var(--border-color)';
-            btn.style.backgroundColor = 'var(--bg-secondary)';
-        });
-        const activeFontBtn = document.getElementById('settings-font-' + currentFontSize);
-        if (activeFontBtn) {
-            activeFontBtn.style.borderColor = 'var(--primary)';
-            activeFontBtn.style.backgroundColor = 'var(--primary-light)';
-        }
+    // Update button states to reflect current settings
+    updateSettingsUI();
 
-        // Language is now handled by Django i18n - no need to set from localStorage
-        // The current language is already selected via Django template tags
+    // Prevent body scroll when dialog is open
+    document.body.style.overflow = 'hidden';
+  }
 
-        // Update accessibility checkboxes
-        document.getElementById('reduce-motion').checked = localStorage.getItem('nmtsa-reduce-motion') === 'true';
-        document.getElementById('screen-reader-mode').checked = localStorage.getItem('nmtsa-screen-reader') === 'true';
-        document.getElementById('keyboard-hints').checked = localStorage.getItem('nmtsa-keyboard-hints') === 'true';
+  // Close settings dialog
+  function closeSettings() {
+    const overlay = document.getElementById('settings-overlay');
+    const dialog = document.getElementById('settings-dialog');
 
-        // Update notification checkboxes (if they exist)
-        const notifyCourses = document.getElementById('notify-courses');
-        const notifyDiscussions = document.getElementById('notify-discussions');
-        const notifyEmail = document.getElementById('notify-email');
-        
-        if (notifyCourses) notifyCourses.checked = localStorage.getItem('nmtsa-notify-courses') !== 'false';
-        if (notifyDiscussions) notifyDiscussions.checked = localStorage.getItem('nmtsa-notify-discussions') !== 'false';
-        if (notifyEmail) notifyEmail.checked = localStorage.getItem('nmtsa-notify-email') !== 'false';
-    }
+    overlay.style.display = 'none';
+    dialog.style.display = 'none';
 
-    // Language switching is now handled by Django i18n form submission
-    // See the language-form in the Language Section above
+    // Re-enable body scroll
+    document.body.style.overflow = '';
+  }
 
-    // Toggle reduce motion
-    function toggleReduceMotion(enabled) {
-        localStorage.setItem('nmtsa-reduce-motion', enabled);
-        if (enabled) {
-            document.documentElement.style.setProperty('--transition-speed', '0s');
-        } else {
-            document.documentElement.style.removeProperty('--transition-speed');
-        }
-    }
-
-    // Toggle screen reader mode
-    function toggleScreenReaderMode(enabled) {
-        localStorage.setItem('nmtsa-screen-reader', enabled);
-        if (enabled) {
-            document.body.setAttribute('data-screen-reader', 'true');
-        } else {
-            document.body.removeAttribute('data-screen-reader');
-        }
-    }
-
-    // Toggle keyboard hints
-    function toggleKeyboardHints(enabled) {
-        localStorage.setItem('nmtsa-keyboard-hints', enabled);
-        if (enabled) {
-            document.body.setAttribute('data-keyboard-hints', 'true');
-        } else {
-            document.body.removeAttribute('data-keyboard-hints');
-        }
-    }
-
-    // Toggle notification preference
-    function toggleNotification(type, enabled) {
-        localStorage.setItem('nmtsa-notify-' + type, enabled);
-        console.log('Notification preference updated:', type, enabled);
-        // TODO: Send to backend to update user preferences
-    }
-
-    // Reset all settings to defaults
-    function resetSettings() {
-        if (confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
-            // Clear all settings (language is handled by Django session, not localStorage)
-            localStorage.removeItem('nmtsa-theme');
-            localStorage.removeItem('nmtsa-font-size');
-            localStorage.removeItem('nmtsa-reduce-motion');
-            localStorage.removeItem('nmtsa-screen-reader');
-            localStorage.removeItem('nmtsa-keyboard-hints');
-            localStorage.removeItem('nmtsa-notify-courses');
-            localStorage.removeItem('nmtsa-notify-discussions');
-            localStorage.removeItem('nmtsa-notify-email');
-            
-            // Reset to defaults
-            setTheme('light');
-            setFontSize('medium');
-            toggleReduceMotion(false);
-            toggleScreenReaderMode(false);
-            toggleKeyboardHints(false);
-            
-            // Update UI
-            updateSettingsUI();
-            
-            // Show confirmation
-            alert('Settings have been reset to defaults.');
-        }
-    }
-
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const dialog = document.getElementById('settings-dialog');
-            if (dialog.style.display === 'block') {
-                closeSettings();
-            }
-        }
+  // Update settings UI to reflect current values
+  function updateSettingsUI() {
+    // Update theme buttons
+    const currentTheme = localStorage.getItem('nmtsa-theme') || 'light';
+    document.querySelectorAll('.settings-theme-btn').forEach(btn => {
+      btn.style.borderColor = 'var(--border-color)';
+      btn.style.backgroundColor = 'var(--bg-secondary)';
     });
+    const activeThemeBtn = document.getElementById('settings-theme-' + currentTheme);
+    if (activeThemeBtn) {
+      activeThemeBtn.style.borderColor = 'var(--primary)';
+      activeThemeBtn.style.backgroundColor = 'var(--primary-light)';
+    }
 
-    // Initialize accessibility settings on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const reduceMotion = localStorage.getItem('nmtsa-reduce-motion') === 'true';
-        const screenReader = localStorage.getItem('nmtsa-screen-reader') === 'true';
-        const keyboardHints = localStorage.getItem('nmtsa-keyboard-hints') === 'true';
-        
-        if (reduceMotion) toggleReduceMotion(true);
-        if (screenReader) toggleScreenReaderMode(true);
-        if (keyboardHints) toggleKeyboardHints(true);
+    // Update font size buttons
+    const currentFontSize = localStorage.getItem('nmtsa-font-size') || 'medium';
+    document.querySelectorAll('.settings-font-btn').forEach(btn => {
+      btn.style.borderColor = 'var(--border-color)';
+      btn.style.backgroundColor = 'var(--bg-secondary)';
     });
+    const activeFontBtn = document.getElementById('settings-font-' + currentFontSize);
+    if (activeFontBtn) {
+      activeFontBtn.style.borderColor = 'var(--primary)';
+      activeFontBtn.style.backgroundColor = 'var(--primary-light)';
+    }
+
+    // Language is now handled by Django i18n - no need to set from localStorage
+    // The current language is already selected via Django template tags
+
+    // Update accessibility checkboxes
+    document.getElementById('reduce-motion').checked = localStorage.getItem('nmtsa-reduce-motion') === 'true';
+    document.getElementById('screen-reader-mode').checked = localStorage.getItem('nmtsa-screen-reader') === 'true';
+    document.getElementById('keyboard-hints').checked = localStorage.getItem('nmtsa-keyboard-hints') === 'true';
+
+    // Update notification checkboxes (if they exist)
+    const notifyCourses = document.getElementById('notify-courses');
+    const notifyDiscussions = document.getElementById('notify-discussions');
+    const notifyEmail = document.getElementById('notify-email');
+
+    if (notifyCourses) notifyCourses.checked = localStorage.getItem('nmtsa-notify-courses') !== 'false';
+    if (notifyDiscussions) notifyDiscussions.checked = localStorage.getItem('nmtsa-notify-discussions') !== 'false';
+    if (notifyEmail) notifyEmail.checked = localStorage.getItem('nmtsa-notify-email') !== 'false';
+  }
+
+  // Language switching is now handled by Django i18n form submission
+  // See the language-form in the Language Section above
+
+  // Toggle reduce motion
+  function toggleReduceMotion(enabled) {
+    localStorage.setItem('nmtsa-reduce-motion', enabled);
+    if (enabled) {
+      document.documentElement.style.setProperty('--transition-speed', '0s');
+    } else {
+      document.documentElement.style.removeProperty('--transition-speed');
+    }
+  }
+
+  // Toggle screen reader mode
+  function toggleScreenReaderMode(enabled) {
+    localStorage.setItem('nmtsa-screen-reader', enabled);
+    if (enabled) {
+      document.body.setAttribute('data-screen-reader', 'true');
+    } else {
+      document.body.removeAttribute('data-screen-reader');
+    }
+  }
+
+  // Toggle keyboard hints
+  function toggleKeyboardHints(enabled) {
+    localStorage.setItem('nmtsa-keyboard-hints', enabled);
+    if (enabled) {
+      document.body.setAttribute('data-keyboard-hints', 'true');
+    } else {
+      document.body.removeAttribute('data-keyboard-hints');
+    }
+  }
+
+  // Toggle notification preference
+  function toggleNotification(type, enabled) {
+    localStorage.setItem('nmtsa-notify-' + type, enabled);
+    console.log('Notification preference updated:', type, enabled);
+    // TODO: Send to backend to update user preferences
+  }
+
+  // Reset all settings to defaults
+  function resetSettings() {
+    if (confirm("{% trans 'Are you sure you want to reset all settings to defaults? This action cannot be undone.' %}")) {
+      // Clear all settings (language is handled by Django session, not localStorage)
+      localStorage.removeItem('nmtsa-theme');
+      localStorage.removeItem('nmtsa-font-size');
+      localStorage.removeItem('nmtsa-reduce-motion');
+      localStorage.removeItem('nmtsa-screen-reader');
+      localStorage.removeItem('nmtsa-keyboard-hints');
+      localStorage.removeItem('nmtsa-notify-courses');
+      localStorage.removeItem('nmtsa-notify-discussions');
+      localStorage.removeItem('nmtsa-notify-email');
+
+      // Reset to defaults
+      setTheme('light');
+      setFontSize('medium');
+      toggleReduceMotion(false);
+      toggleScreenReaderMode(false);
+      toggleKeyboardHints(false);
+
+      // Update UI
+      updateSettingsUI();
+
+      // Show confirmation
+      alert("{% trans 'Settings have been reset to defaults.' %}");
+    }
+  }
+
+  // Close on Escape key
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      const dialog = document.getElementById('settings-dialog');
+      if (dialog.style.display === 'block') {
+        closeSettings();
+      }
+    }
+  });
+
+  // Initialize accessibility settings on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    const reduceMotion = localStorage.getItem('nmtsa-reduce-motion') === 'true';
+    const screenReader = localStorage.getItem('nmtsa-screen-reader') === 'true';
+    const keyboardHints = localStorage.getItem('nmtsa-keyboard-hints') === 'true';
+
+    if (reduceMotion) toggleReduceMotion(true);
+    if (screenReader) toggleScreenReaderMode(true);
+    if (keyboardHints) toggleKeyboardHints(true);
+  });
 </script>
 
 <style>
-    /* Hover effects for settings buttons */
-    .settings-theme-btn:hover,
-    .settings-font-btn:hover {
-        border-color: var(--primary) !important;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
+  /* Hover effects for settings buttons */
+  .settings-theme-btn:hover,
+  .settings-font-btn:hover {
+    border-color: var(--primary) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 
-    /* Focus styles for accessibility */
-    #settings-dialog:focus {
-        outline: 3px solid var(--primary);
-        outline-offset: 2px;
-    }
+  /* Focus styles for accessibility */
+  #settings-dialog:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
 
-    /* Scrollbar styling for settings dialog */
-    #settings-dialog::-webkit-scrollbar {
-        width: 8px;
-    }
+  /* Scrollbar styling for settings dialog */
+  #settings-dialog::-webkit-scrollbar {
+    width: 8px;
+  }
 
-    #settings-dialog::-webkit-scrollbar-track {
-        background: var(--bg-secondary);
-        border-radius: 4px;
-    }
+  #settings-dialog::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+  }
 
-    #settings-dialog::-webkit-scrollbar-thumb {
-        background: var(--border-color);
-        border-radius: 4px;
-    }
+  #settings-dialog::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+  }
 
-    #settings-dialog::-webkit-scrollbar-thumb:hover {
-        background: var(--text-secondary);
-    }
+  #settings-dialog::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
 </style>

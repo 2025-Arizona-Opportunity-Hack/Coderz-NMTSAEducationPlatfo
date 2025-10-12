@@ -1,178 +1,162 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}Complete Your Profile - NMTSA Learning{% endblock %}
+{% block title %}{% trans "Complete Your Profile - NMTSA Learning" %}{% endblock %}
 
 {% block content %}
 <section style="max-width: 900px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
-    <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
-        <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
-        {% trans "Welcome! Let's Personalize Your Learning" %}
+  <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
+    <h1
+      style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+      {% trans "Welcome! Let's Personalize Your Learning" %}
     </h1>
-        <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
-            {% trans "Tell us a bit about yourself so we can recommend the best courses for you" %}
-        </p>
+    <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
+      {% trans "Tell us a bit about yourself so we can recommend the best courses for you" %}
+    </p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Your Role -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+      <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
+        {% trans "About You" %}
+      </h2>
+
+      <div style="display: grid; gap: var(--spacing-lg);">
+        <!-- Relationship -->
+        <div>
+          <label for="relationship"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            {% blocktrans %}What is your relationship to the person receiving care? <span style="color: var(--error);">*</span>{% endblocktrans %}
+          </label>
+          <select id="relationship" name="relationship" required
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);">
+            <option value="">-- Please select --</option>
+            {% for value, label in relationship_choices %}
+            <option value="{{ value }}" {% if student_profile.relationship==value %}selected{% endif %}>
+              {{ label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
     </div>
 
-    <form method="post">
-        {% csrf_token %}
+    <!-- Care Recipient Information (Optional) -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+      <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
+        Care Recipient Information
+        <span
+          style="font-size: calc(0.875rem * var(--font-scale)); font-weight: normal; color: var(--text-secondary);">(Optional)</span>
+      </h2>
 
-        <!-- Your Role -->
-        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
-            <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
-        {% trans "About You" %}
-    </h2>
-
-            <div style="display: grid; gap: var(--spacing-lg);">
-                <!-- Relationship -->
-                <div>
-                    <label for="relationship" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "What is your relationship to the person receiving care? <span style="color: var(--error);">*</span>" %}
-                    </label>
-                    <select
-                        id="relationship"
-                        name="relationship"
-                        required
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);"
-                    >
-                        <option value="">-- Please select --</option>
-                        {% for value, label in relationship_choices %}
-                        <option value="{{ value }}" {% if student_profile.relationship == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+      <div style="display: grid; gap: var(--spacing-lg);">
+        <!-- Care Recipient Name -->
+        <div>
+          <label for="care_recipient_name"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            {% trans "Care Recipient's Name" %}
+          </label>
+          <input type="text" id="care_recipient_name" name="care_recipient_name"
+            value="{{ student_profile.care_recipient_name }}"
+            placeholder='{% trans "First name or nickname (optional for privacy)" %}'
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));">
+          <p
+            style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            {% trans "This helps us personalize recommendations (completely optional)" %}
+          </p>
         </div>
 
-        <!-- Care Recipient Information (Optional) -->
-        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
-            <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
-                Care Recipient Information
-                <span style="font-size: calc(0.875rem * var(--font-scale)); font-weight: normal; color: var(--text-secondary);">(Optional)</span>
-            </h2>
-
-            <div style="display: grid; gap: var(--spacing-lg);">
-                <!-- Care Recipient Name -->
-                <div>
-                    <label for="care_recipient_name" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Care Recipient's Name
-                    </label>
-                    <input
-                        type="text"
-                        id="care_recipient_name"
-                        name="care_recipient_name"
-                        value="{{ student_profile.care_recipient_name }}"
-                        placeholder='{% trans "First name or nickname (optional for privacy)" %}'
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
-                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        {% trans "This helps us personalize recommendations (completely optional)" %}
-                    </p>
-                </div>
-
-                <!-- Age -->
-                <div>
-                    <label for="care_recipient_age" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Age" %}
-                    </label>
-                    <input
-                        type="number"
-                        id="care_recipient_age"
-                        name="care_recipient_age"
-                        value="{{ student_profile.care_recipient_age }}"
-                        min="0"
-                        max="120"
-                        placeholder='{% trans "Age in years" %}'
-                        style="width: 200px; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
-                </div>
-            </div>
+        <!-- Age -->
+        <div>
+          <label for="care_recipient_age"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            {% trans "Age" %}
+          </label>
+          <input type="number" id="care_recipient_age" name="care_recipient_age"
+            value="{{ student_profile.care_recipient_age }}" min="0" max="120" placeholder='{% trans "Age in years" %}'
+            style="width: 200px; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));">
         </div>
+      </div>
+    </div>
 
-        <!-- Learning Goals and Needs -->
-        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
-            <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
+    <!-- Learning Goals and Needs -->
+    <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+      <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
         {% trans "Your Learning Goals" %}
-    </h2>
+      </h2>
 
-            <div style="display: grid; gap: var(--spacing-lg);">
-                <!-- Special Needs -->
-                <div>
-                    <label for="special_needs" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Special Needs or Conditions
-                    </label>
-                    <textarea
-                        id="special_needs"
-                        name="special_needs"
-                        rows="3"
-                        placeholder='{% trans "Tell us about any special needs, conditions, or considerations (e.g., autism, sensory sensitivities, communication challenges)" %}'
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.special_needs }}</textarea>
-                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        This helps us recommend the most relevant courses
-                    </p>
-                </div>
-
-                <!-- Learning Goals -->
-                <div>
-                    <label for="learning_goals" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        What do you hope to learn?
-                    </label>
-                    <textarea
-                        id="learning_goals"
-                        name="learning_goals"
-                        rows="3"
-                        placeholder='{% trans "What skills or knowledge are you looking to gain? (e.g., improve communication, reduce anxiety, develop motor skills)" %}'
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.learning_goals }}</textarea>
-                </div>
-
-                <!-- Interests -->
-                <div>
-                    <label for="interests" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Areas of Interest" %}
-                    </label>
-                    <textarea
-                        id="interests"
-                        name="interests"
-                        rows="3"
-                        placeholder='{% trans "What topics interest you most? (e.g., music therapy techniques, sensory activities, behavioral strategies)" %}'
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.interests }}</textarea>
-                </div>
-
-                <!-- Accessibility Needs -->
-                <div>
-                    <label for="accessibility_needs" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Accessibility Requirements" %}
-                    </label>
-                    <textarea
-                        id="accessibility_needs"
-                        name="accessibility_needs"
-                        rows="3"
-                        placeholder='{% trans "Do you have any accessibility needs for learning? (e.g., captions, audio descriptions, simplified language)" %}'
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.accessibility_needs }}</textarea>
-                </div>
-            </div>
+      <div style="display: grid; gap: var(--spacing-lg);">
+        <!-- Special Needs -->
+        <div>
+          <label for="special_needs"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            Special Needs or Conditions
+          </label>
+          <textarea id="special_needs" name="special_needs" rows="3"
+            placeholder='{% trans "Tell us about any special needs, conditions, or considerations (e.g., autism, sensory sensitivities, communication challenges)" %}'
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;">{{ student_profile.special_needs }}</textarea>
+          <p
+            style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            {% trans "This helps us recommend the most relevant courses" %}
+          </p>
         </div>
 
-        <!-- Privacy Note -->
-        <div style="background: var(--success-light); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 4px solid var(--success); margin-bottom: var(--spacing-xl);">
-            <h3 style="margin-bottom: var(--spacing-md); font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary);">
+        <!-- Learning Goals -->
+        <div>
+          <label for="learning_goals"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            What do you hope to learn?
+          </label>
+          <textarea id="learning_goals" name="learning_goals" rows="3"
+            placeholder='{% trans "What skills or knowledge are you looking to gain? (e.g., improve communication, reduce anxiety, develop motor skills)" %}'
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;">{{ student_profile.learning_goals }}</textarea>
+        </div>
+
+        <!-- Interests -->
+        <div>
+          <label for="interests"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            {% trans "Areas of Interest" %}
+          </label>
+          <textarea id="interests" name="interests" rows="3"
+            placeholder='{% trans "What topics interest you most? (e.g., music therapy techniques, sensory activities, behavioral strategies)" %}'
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;">{{ student_profile.interests }}</textarea>
+        </div>
+
+        <!-- Accessibility Needs -->
+        <div>
+          <label for="accessibility_needs"
+            style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+            {% trans "Accessibility Requirements" %}
+          </label>
+          <textarea id="accessibility_needs" name="accessibility_needs" rows="3"
+            placeholder='{% trans "Do you have any accessibility needs for learning? (e.g., captions, audio descriptions, simplified language)" %}'
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;">{{ student_profile.accessibility_needs }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Note -->
+    <div
+      style="background: var(--success-light); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 4px solid var(--success); margin-bottom: var(--spacing-xl);">
+      <h3
+        style="margin-bottom: var(--spacing-md); font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary);">
         {% trans "Your Privacy Matters" %}
-    </h3>
-            <p style="margin: 0; color: var(--text-secondary); line-height: 1.8;">
-                {% trans "All information you provide is kept confidential and is used only to personalize your learning experience and recommend appropriate courses. You can update or remove this information at any time in your profile settings." %}
-            </p>
-        </div>
+      </h3>
+      <p style="margin: 0; color: var(--text-secondary); line-height: 1.8;">
+        {% blocktrans %}All information you provide is kept confidential and is used only to personalize your learning
+        experience and recommend appropriate courses. You can update or remove this information at any time in your
+        profile settings.{% endblocktrans %}
+      </p>
+    </div>
 
-        <!-- Submit Button -->
-        <div style="text-align: center;">
-            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 250px;">{% trans "Complete Profile & Start Learning" %}</button>
-        </div>
-    </form>
+    <!-- Submit Button -->
+    <div style="text-align: center;">
+      <button type="submit" class="btn btn-primary btn-lg" style="min-width: 250px;">{% trans "Complete Profile & Start Learning" %}</button>
+    </div>
+  </form>
 </section>
 {% endblock %}

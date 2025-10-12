@@ -1,117 +1,127 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}Select Your Role - NMTSA Learning{% endblock %}
+{% block title %}{% trans "Select Your Role - NMTSA Learning" %}{% endblock %}
 
 {% block content %}
 <section style="max-width: 800px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
-    <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
-        <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
-        {% trans "Welcome to NMTSA Learning" %}
+  <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
+    <h1
+      style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+      {% trans "Welcome to NMTSA Learning" %}
     </h1>
-        <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
-            To personalize your experience, please tell us about yourself
-        </p>
+    <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
+      {% trans "To personalize your experience, please tell us about yourself" %}
+    </p>
+  </div>
+
+  <form method="post" style="margin-bottom: var(--spacing-2xl);">
+    {% csrf_token %}
+
+    <div style="display: grid; gap: var(--spacing-xl); margin-bottom: var(--spacing-2xl);">
+      <!-- Student Option -->
+      <label class="card"
+        style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
+        <input type="radio" name="role" value="student" required style="display: none;">
+        <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
+          <div class="role-icon-student"
+            style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--secondary), var(--secondary-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <div>
+            <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
+              {% trans "I am a Student / Family Member" %}
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
+              {% trans "I want to learn about neurologic music therapy techniques for autism support and care" %}
+            </p>
+          </div>
+        </div>
+      </label>
+
+      <!-- Teacher Option -->
+      <label class="card"
+        style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
+        <input type="radio" name="role" value="teacher" required style="display: none;">
+        <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
+          <div class="role-icon-teacher"
+            style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
+              {% trans "I am an Educator / Therapist" %}
+            </h3>
+            <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
+              {% trans "I want to create and share educational content about neurologic music therapy" %}
+            </p>
+          </div>
+        </div>
+      </label>
     </div>
 
-    <form method="post" style="margin-bottom: var(--spacing-2xl);">
-        {% csrf_token %}
-
-        <div style="display: grid; gap: var(--spacing-xl); margin-bottom: var(--spacing-2xl);">
-            <!-- Student Option -->
-            <label class="card" style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
-                <input type="radio" name="role" value="student" required style="display: none;">
-                <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
-                    <div class="role-icon-student" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--secondary), var(--secondary-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
-        {% trans "I am a Student / Family Member" %}
-    </h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
-                            I want to learn about neurologic music therapy techniques for autism support and care
-                        </p>
-                    </div>
-                </div>
-            </label>
-
-            <!-- Teacher Option -->
-            <label class="card" style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
-                <input type="radio" name="role" value="teacher" required style="display: none;">
-                <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
-                    <div class="role-icon-teacher" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
-        {% trans "I am an Educator / Therapist" %}
-    </h3>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
-                            {% trans "I want to create and share educational content about neurologic music therapy" %}
-                        </p>
-                    </div>
-                </div>
-            </label>
-        </div>
-
-        <div style="text-align: center;">
-            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">{% trans "Continue" %}</button>
-        </div>
-    </form>
-
-    <div style="background: var(--bg-card); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-        <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); text-align: center; margin: 0; line-height: 1.7;">
-            <strong style="color: var(--text-primary);">Note:</strong> Educators and therapists will need to submit credentials for verification before creating courses
-        </p>
+    <div style="text-align: center;">
+      <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">{% trans "Continue" %}</button>
     </div>
+  </form>
+
+  <div
+    style="background: var(--bg-card); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+    <p
+      style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); text-align: center; margin: 0; line-height: 1.7;">
+      <strong style="color: var(--text-primary);">{% trans "Note:" %}</strong> {% trans "Educators and therapists will
+      need to submit credentials for verification before creating courses" %}
+    </p>
+  </div>
 </section>
 
 <style>
-    /* Radio button styling - Highlight entire card when selected */
-    label.card:has(input[type="radio"]:checked) {
-        border-color: var(--primary-hover) !important;
-        border-width: 3px !important;
-        background-color: var(--primary-light) !important;
-    }
+  /* Radio button styling - Highlight entire card when selected */
+  label.card:has(input[type="radio"]:checked) {
+    border-color: var(--primary-hover) !important;
+    border-width: 3px !important;
+    background-color: var(--primary-light) !important;
+  }
 
-    /* Ensure text remains readable on selected card background */
-    label.card:has(input[type="radio"]:checked) h3 {
-        color: var(--text-primary);
-    }
+  /* Ensure text remains readable on selected card background */
+  label.card:has(input[type="radio"]:checked) h3 {
+    color: var(--text-primary);
+  }
 
-    label.card:hover {
-        border-color: var(--primary);
-        transform: translateY(-2px);
-    }
+  label.card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
 
-    /* Ensure proper focus states for accessibility */
-    label.card:focus-within {
-        outline: 3px solid var(--focus-ring);
-        outline-offset: 2px;
-    }
+  /* Ensure proper focus states for accessibility */
+  label.card:focus-within {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
 
-    /* Ensure icon backgrounds have sufficient contrast in all themes */
-    .role-icon-student,
-    .role-icon-teacher {
-        /* Fallback for themes where gradients might not be dark enough */
-        min-width: 60px;
-    }
+  /* Ensure icon backgrounds have sufficient contrast in all themes */
+  .role-icon-student,
+  .role-icon-teacher {
+    /* Fallback for themes where gradients might not be dark enough */
+    min-width: 60px;
+  }
 
-    /* High contrast theme: Use solid dark backgrounds for icon boxes */
-    [data-theme="contrast"] .role-icon-student {
-        background: var(--secondary-hover) !important;
-    }
+  /* High contrast theme: Use solid dark backgrounds for icon boxes */
+  [data-theme="contrast"] .role-icon-student {
+    background: var(--secondary-hover) !important;
+  }
 
-    [data-theme="contrast"] .role-icon-teacher {
-        background: var(--accent-hover) !important;
-    }
+  [data-theme="contrast"] .role-icon-teacher {
+    background: var(--accent-hover) !important;
+  }
 </style>
 {% endblock %}
