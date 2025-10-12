@@ -133,6 +133,11 @@ class ChatManager {
         this.chatContainer.classList.remove('hidden');
         this.toggleButton.setAttribute('aria-expanded', 'true');
         
+        // Hide the floating action button when chat is open
+        if (this.toggleButton) {
+            this.toggleButton.style.display = 'none';
+        }
+        
         // Load messages
         this.loadMessages();
         
@@ -154,6 +159,11 @@ class ChatManager {
         this.isOpen = false;
         this.chatContainer.classList.add('hidden');
         this.toggleButton.setAttribute('aria-expanded', 'false');
+        
+        // Show the floating action button when chat is closed
+        if (this.toggleButton) {
+            this.toggleButton.style.display = 'flex';
+        }
         
         // Stop refresh interval
         this.stopRefreshInterval();
@@ -274,10 +284,10 @@ class ChatManager {
             contentDiv.appendChild(senderSpan);
         }
         
-        // Message text
+        // Message text (render markdown)
         const textDiv = document.createElement('div');
-        textDiv.className = 'message-text';
-        textDiv.textContent = this.escapeHtml(message.content);
+        textDiv.className = 'message-text markdown-content';
+        textDiv.innerHTML = this.renderMarkdown(message.content);
         contentDiv.appendChild(textDiv);
         
         // Timestamp
@@ -502,7 +512,51 @@ class ChatManager {
     }
     
     /**
-     * Escape HTML to prevent XSS
+     * Render markdown content safely
+     * @param {string} text - Markdown text to render
+     * @returns {string} - Sanitized HTML
+     */
+    renderMarkdown(text) {
+        // Check if marked and DOMPurify are available
+        if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+            console.warn('[Chat] Markdown libraries not loaded, falling back to plain text');
+            return this.escapeHtml(text);
+        }
+        
+        try {
+            // Configure marked options for better rendering
+            marked.setOptions({
+                breaks: true,        // Convert \n to <br>
+                gfm: true,           // GitHub Flavored Markdown
+                headerIds: false,    // Don't add IDs to headers
+                mangle: false,       // Don't escape autolinked email addresses
+                sanitize: false      // We'll use DOMPurify instead
+            });
+            
+            // Parse markdown
+            const rawHtml = marked.parse(text);
+            
+            // Sanitize HTML to prevent XSS attacks
+            const cleanHtml = DOMPurify.sanitize(rawHtml, {
+                ALLOWED_TAGS: [
+                    'p', 'br', 'strong', 'em', 'u', 's', 'code', 'pre',
+                    'a', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3',
+                    'h4', 'h5', 'h6', 'hr', 'table', 'thead', 'tbody', 'tr',
+                    'th', 'td', 'img'
+                ],
+                ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'class'],
+                ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+            });
+            
+            return cleanHtml;
+        } catch (error) {
+            console.error('[Chat] Markdown rendering error:', error);
+            return this.escapeHtml(text);
+        }
+    }
+    
+    /**
+     * Escape HTML to prevent XSS (fallback for plain text)
      * @param {string} text - Text to escape
      * @returns {string} - Escaped text
      */

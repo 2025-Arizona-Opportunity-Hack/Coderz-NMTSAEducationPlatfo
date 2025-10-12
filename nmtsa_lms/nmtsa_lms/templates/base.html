@@ -194,11 +194,11 @@
                         &copy; 2025 NMTSA. All rights reserved.
                     </p>
                     <nav aria-label="Legal links" class="flex flex-wrap justify-center gap-4">
-                        <a href="/privacy/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Privacy Policy</a>
+                        <a href="{% url 'privacy_policy' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Privacy Policy</a>
                         <span class="text-muted" aria-hidden="true">|</span>
-                        <a href="/terms/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Terms of Service</a>
+                        <a href="{% url 'terms_of_service' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Terms of Service</a>
                         <span class="text-muted" aria-hidden="true">|</span>
-                        <a href="/cookies/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Cookie Policy</a>
+                        <a href="{% url 'cookie_policy' %}" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Cookie Policy</a>
                     </nav>
                 </div>
             </div>
@@ -299,6 +299,11 @@
 
     <!-- Chat Component (Available for all users) -->
     {% include 'components/chat.html' %}
+    
+    <!-- Markdown and Sanitization Libraries for Chat -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-/lRpMYN5lLCVnF9d+KYXFTlmUvXZ2hNTpw4p4OxT9nZ8i8KqXKxL6kQ2dGJmF7Jd" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js" integrity="sha384-qCsW4ttL0zPUJfyy0MBlxJYMqKYCdPt6d7RMsyFRhJX0BdYKJLlHGqD3nW3lOvHx" crossorigin="anonymous"></script>
+    
     <script src="{% static 'js/chat.js' %}"></script>
 
     {% block extra_js %}{% endblock %}

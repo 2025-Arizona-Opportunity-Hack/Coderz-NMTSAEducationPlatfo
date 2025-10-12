@@ -1,400 +1,378 @@
 {% load static %}
 
-<nav class="w-full bg-card px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-default" 
-     role="navigation" 
-     aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <!-- Logo/Brand -->
-        <div class="flex items-center">
-            <a href="/" 
-               class="text-xl sm:text-2xl font-bold text-primary hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
-               aria-label="NMTSA Learning home">
-                NMTSA Learning
-            </a>
-        </div>
-
-        <!-- Desktop Navigation Links (hidden on mobile) -->
-        <div class="hidden lg:flex items-center gap-2">
-            <!-- Browse Courses - Available to ALL users -->
-            <a href="{% url 'public_catalog' %}" 
-               class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/courses/' in request.path and '/student/courses/' not in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-               aria-current="{% if '/courses/' in request.path %}page{% else %}false{% endif %}">
-                Browse Courses
-            </a>
-            
-            {% if request.session.user %}
-                <!-- Authenticated User Menu -->
-                {% if request.session.user.role == 'admin' %}
-                    <a href="{% url 'admin_dashboard' %}" 
-                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/admin-dash/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       aria-current="{% if '/admin-dash/' in request.path %}page{% else %}false{% endif %}">
-                        Admin Dashboard
-                    </a>
-                {% endif %}
-
-                {% if request.session.user.role == 'teacher' %}
-                    <a href="{% url 'teacher_dashboard' %}" 
-                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/teacher/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       aria-current="{% if '/teacher/' in request.path %}page{% else %}false{% endif %}">
-                        Teacher Dashboard
-                    </a>
-                {% endif %}
-
-                {% if request.session.user.role == 'student' %}
-                    <a href="{% url 'student_courses' %}" 
-                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
-                        My Courses
-                    </a>
-                {% endif %}
-            {% endif %}
-        </div>
-
-        <!-- Right Side Actions -->
-        <div class="flex items-center gap-2 sm:gap-3">
-            <!-- Settings Button -->
-            <button onclick="openSettings()"
-                    type="button"
-                    class="settings-nav-btn flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-primary min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
-                    aria-label="Open settings menu"
-                    aria-haspopup="dialog">
-                <!-- Theme-aware settings icon: use stroke/currentColor and no fill so it inherits text color classes -->
-                <svg width="20" height="20" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M18.1 11c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7m0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5" />
-                    <path d="m32.8 14.7-2.8-.9-.6-1.5 1.4-2.6c.3-.6.2-1.4-.3-1.9l-2.4-2.4c-.5-.5-1.3-.6-1.9-.3l-2.6 1.4-1.5-.6-.9-2.8C21 2.5 20.4 2 19.7 2h-3.4c-.7 0-1.3.5-1.4 1.2L14 6c-.6.1-1.1.3-1.6.6L9.8 5.2c-.6-.3-1.4-.2-1.9.3L5.5 7.9c-.5.5-.6 1.3-.3 1.9l1.3 2.5c-.2.5-.4 1.1-.6 1.6l-2.8.9c-.6.2-1.1.8-1.1 1.5v3.4c0 .7.5 1.3 1.2 1.5l2.8.9.6 1.5-1.4 2.6c-.3.6-.2 1.4.3 1.9l2.4 2.4c.5.5 1.3.6 1.9.3l2.6-1.4 1.5.6.9 2.9c.2.6.8 1.1 1.5 1.1h3.4c.7 0 1.3-.5 1.5-1.1l.9-2.9 1.5-.6 2.6 1.4c.6.3 1.4.2 1.9-.3l2.4-2.4c.5-.5.6-1.3.3-1.9l-1.4-2.6.6-1.5 2.9-.9c.6-.2 1.1-.8 1.1-1.5v-3.4c0-.7-.5-1.4-1.2-1.6m-.8 4.7-3.6 1.1-.1.5-.9 2.1-.3.5 1.8 3.3-2 2-3.3-1.8-.5.3q-1.05.6-2.1.9l-.5.1-1.1 3.6h-2.8l-1.1-3.6-.5-.1-2.1-.9-.5-.3-3.3 1.8-2-2 1.8-3.3-.3-.5Q8 22.05 7.7 21l-.1-.5L4 19.4v-2.8l3.4-1 .2-.5c.2-.8.5-1.5.9-2.2l.3-.5-1.7-3.3 2-2 3.2 1.8.5-.3c.7-.4 1.4-.7 2.2-.9l.5-.2L16.6 4h2.8l1.1 3.5.5.2q1.05.3 2.1.9l.5.3 3.3-1.8 2 2-1.8 3.3.3.5q.6 1.05.9 2.1l.1.5 3.6 1.1z" />
-                    
-                </svg>
-            </button>
-
-            {% if request.user.is_authenticated or request.session.user %}
-                <!-- User Profile Dropdown (Desktop) -->
-                <div class="hidden lg:block relative">
-                    <button onclick="toggleUserMenu()"
-                            id="user-menu-btn"
-                            type="button"
-                            class="flex items-center gap-2 px-3 py-2 border-2 border-default rounded-lg bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch focus:outline-none focus:ring-2 focus:ring-focus"
-                            aria-label="User menu"
-                            aria-expanded="false"
-                            aria-haspopup="true">
-                        {% with u=request.session.user %}
-                        {% if u and 'userinfo' in u and u.userinfo.picture %}
-                            <img src="{{ u.userinfo.picture }}" 
-                                 alt="Profile picture" 
-                                 class="w-6 h-6 rounded-full">
-                        {% else %}
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        {% endif %}
-
-                        <span class="text-sm font-medium max-w-[120px] truncate">
-                            {% if u and 'userinfo' in u %}
-                                {{ u.full_name|default:u.userinfo.name|default:"User" }}
-                            {% else %}
-                                {{ request.user.get_full_name|default:request.user.username|default:"User" }}
-                            {% endif %}
-                        </span>
-                        {% endwith %}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                            <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown Menu -->
-                    <div id="user-menu"
-                         class="hidden absolute right-0 top-full mt-2 w-56 bg-card border-2 border-default rounded-lg shadow-lg z-50"
-                         role="menu"
-                         aria-label="User menu">
-
-                        <!-- Role Badge -->
-                        <div class="px-4 py-3 border-b border-default">
-                            <p class="text-xs text-muted mb-1">Signed in as</p>
-                            <p class="text-sm font-semibold text-primary">
-                                {% if request.session.user.role == 'student' %}
-                                Student
-                                {% elif request.session.user.role == 'teacher' %}
-                                    {% if request.session.user.verification_status == 'pending' %}
-                                    Teacher (Pending)
-                                    {% elif request.session.user.verification_status == 'approved' %}
-                                    Teacher ✓
-                                    {% else %}
-                                    Teacher
-                                    {% endif %}
-                                {% elif request.session.user.role == 'admin' or request.user.is_staff %}
-                                Administrator
-                                {% else %}
-                                User
-                                {% endif %}
-                            </p>
-                        </div>
-
-                        <!-- Menu Items -->
-                        <div class="py-2">
-                            <a href="{% url 'profile_settings' %}" 
-                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
-                               role="menuitem">
-                                Profile Settings
-                            </a>
-
-                            {% if request.session.user.role == 'student' %}
-                            <a href="{% url 'student_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
-                               role="menuitem">
-                                My Dashboard
-                            </a>
-                            {% elif request.session.user.role == 'teacher' %}
-                            <a href="{% url 'teacher_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
-                               role="menuitem">
-                                Teacher Dashboard
-                            </a>
-                            {% elif request.session.user.role == 'admin' or request.user.is_staff %}
-                            <a href="{% url 'admin_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
-                               role="menuitem">
-                                Admin Dashboard
-                            </a>
-                            {% endif %}
-                        </div>
-
-                        <div class="border-t border-default py-2">
-                            {% if request.user.is_authenticated %}
-                            <a href="{% url 'admin_logout' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
-                               role="menuitem">
-                                Logout
-                            </a>
-                            {% else %}
-                            <a href="{% url 'logout' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
-                               role="menuitem">
-                                Logout
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <!-- Guest User Login Button (Desktop) -->
-                <a href="{% url 'login' %}" 
-                   class="hidden lg:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
-                   aria-label="Log in to your account">
-                    Login
-                </a>
-            {% endif %}
-
-            <!-- Mobile Menu Toggle Button -->
-            <button onclick="toggleMobileMenu()"
-                    id="mobile-menu-btn"
-                    type="button"
-                    class="lg:hidden flex items-center justify-center p-2 border-2 border-default rounded-lg bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
-                    aria-label="Toggle navigation menu"
-                    aria-expanded="false"
-                    aria-controls="mobile-menu">
-                <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 12h18M3 6h18M3 18h18"/>
-                </svg>
-                <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
+<nav class="w-full bg-card px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-default" role="navigation"
+  aria-label="Main navigation">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- Logo/Brand -->
+    <div class="flex items-center">
+      <a href="/"
+        class="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-bold text-primary hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
+        aria-label="NMTSA Learning home">
+        <img src="{% static 'images/favicons/android-chrome-192x192.png' %}" 
+             alt="NMTSA Learning logo" 
+             class="w-8 h-8 sm:w-10 sm:h-10" />
+        <span class="inline">NMTSA Learning</span>
+      </a>
     </div>
 
-    <!-- Mobile Menu (Hidden by default) -->
-    <div id="mobile-menu" 
-         class="lg:hidden hidden mt-4 pb-4 border-t border-default"
-         role="menu"
-         aria-label="Mobile navigation">
-        <div class="flex flex-col gap-2 mt-4">
-            <!-- Browse Courses - Available to ALL users -->
-            <a href="{% url 'public_catalog' %}" 
-               class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/courses/' in request.path and '/student/courses/' not in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-               role="menuitem">
-                Browse Courses
+    <!-- Right Side Actions -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Desktop Navigation Links (hidden on mobile) -->
+      <div class="hidden lg:flex items-center gap-2">
+        <!-- Browse Courses - Available to ALL users -->
+        <a href="{% url 'public_catalog' %}"
+          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/courses/' in request.path and '/student/courses/' not in request.path %}text-primary-color font-semibold{% endif %}"
+          aria-current="{% if '/courses/' in request.path %}page{% else %}false{% endif %}">
+          Courses
+        </a>
+
+        {% if request.session.user %}
+        <!-- Authenticated User Menu -->
+        {% if request.session.user.role == 'admin' %}
+        <a href="{% url 'admin_dashboard' %}"
+          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/admin-dash/' in request.path %}text-primary-color font-semibold{% endif %}"
+          aria-current="{% if '/admin-dash/' in request.path %}page{% else %}false{% endif %}">
+          Dashboard
+        </a>
+        {% endif %}
+
+        {% if request.session.user.role == 'teacher' %}
+        <a href="{% url 'teacher_dashboard' %}"
+          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/teacher/' in request.path %}text-primary-color font-semibold{% endif %}"
+          aria-current="{% if '/teacher/' in request.path %}page{% else %}false{% endif %}">
+          Dashboard
+        </a>
+        {% endif %}
+
+        {% if request.session.user.role == 'student' %}
+        <a href="{% url 'student_courses' %}"
+          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
+          aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
+          My Courses
+        </a>
+        {% endif %}
+        {% endif %}
+      </div>
+      <!-- Settings Button -->
+      <button onclick="openSettings()" type="button"
+        class="settings-nav-btn flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-primary hover:bg-primary-light hover:border-2 hover:border-primary min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
+        aria-label="Open settings menu" aria-haspopup="dialog">
+        <!-- Theme-aware settings icon: use stroke/currentColor and no fill so it inherits text color classes -->
+        <svg width="20" height="20" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none"
+          stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path
+            d="M18.1 11c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7m0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5" />
+          <path
+            d="m32.8 14.7-2.8-.9-.6-1.5 1.4-2.6c.3-.6.2-1.4-.3-1.9l-2.4-2.4c-.5-.5-1.3-.6-1.9-.3l-2.6 1.4-1.5-.6-.9-2.8C21 2.5 20.4 2 19.7 2h-3.4c-.7 0-1.3.5-1.4 1.2L14 6c-.6.1-1.1.3-1.6.6L9.8 5.2c-.6-.3-1.4-.2-1.9.3L5.5 7.9c-.5.5-.6 1.3-.3 1.9l1.3 2.5c-.2.5-.4 1.1-.6 1.6l-2.8.9c-.6.2-1.1.8-1.1 1.5v3.4c0 .7.5 1.3 1.2 1.5l2.8.9.6 1.5-1.4 2.6c-.3.6-.2 1.4.3 1.9l2.4 2.4c.5.5 1.3.6 1.9.3l2.6-1.4 1.5.6.9 2.9c.2.6.8 1.1 1.5 1.1h3.4c.7 0 1.3-.5 1.5-1.1l.9-2.9 1.5-.6 2.6 1.4c.6.3 1.4.2 1.9-.3l2.4-2.4c.5-.5.6-1.3.3-1.9l-1.4-2.6.6-1.5 2.9-.9c.6-.2 1.1-.8 1.1-1.5v-3.4c0-.7-.5-1.4-1.2-1.6m-.8 4.7-3.6 1.1-.1.5-.9 2.1-.3.5 1.8 3.3-2 2-3.3-1.8-.5.3q-1.05.6-2.1.9l-.5.1-1.1 3.6h-2.8l-1.1-3.6-.5-.1-2.1-.9-.5-.3-3.3 1.8-2-2 1.8-3.3-.3-.5Q8 22.05 7.7 21l-.1-.5L4 19.4v-2.8l3.4-1 .2-.5c.2-.8.5-1.5.9-2.2l.3-.5-1.7-3.3 2-2 3.2 1.8.5-.3c.7-.4 1.4-.7 2.2-.9l.5-.2L16.6 4h2.8l1.1 3.5.5.2q1.05.3 2.1.9l.5.3 3.3-1.8 2 2-1.8 3.3.3.5q.6 1.05.9 2.1l.1.5 3.6 1.1z" />
+        </svg>
+      </button>
+
+      {% if request.user.is_authenticated or request.session.user %}
+      <!-- User Profile Dropdown (Desktop) -->
+      <div class="hidden lg:block relative">
+        <button onclick="toggleUserMenu()" id="user-menu-btn" type="button"
+          class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-default bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch focus:outline-none focus:ring-2 focus:ring-focus overflow-hidden"
+          aria-label="User menu" aria-expanded="false" aria-haspopup="true">
+          {% with u=request.session.user %}
+          {% if u and 'userinfo' in u and u.userinfo.picture %}
+          <img src="{{ u.userinfo.picture }}" alt="Profile picture" class="w-full h-full object-cover">
+          {% else %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          {% endif %}
+          {% endwith %}
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="user-menu"
+          class="hidden absolute right-0 top-full mt-2 w-56 bg-card border-2 border-default rounded-lg shadow-lg z-50"
+          role="menu" aria-label="User menu">
+
+          <!-- Role Badge -->
+          <div class="px-4 py-3 border-b border-default">
+            <p class="text-xs text-muted mb-1">Signed in as</p>
+            <p class="text-sm font-semibold text-primary">
+              {% if request.session.user.role == 'student' %}
+              Student
+              {% elif request.session.user.role == 'teacher' %}
+              {% if request.session.user.verification_status == 'pending' %}
+              Teacher (Pending)
+              {% elif request.session.user.verification_status == 'approved' %}
+              Teacher ✓
+              {% else %}
+              Teacher
+              {% endif %}
+              {% elif request.session.user.role == 'admin' or request.user.is_staff %}
+              Administrator
+              {% else %}
+              User
+              {% endif %}
+            </p>
+          </div>
+
+          <!-- Menu Items -->
+          <div class="py-2">
+            <a href="{% url 'profile_settings' %}"
+              class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
+              role="menuitem">
+              Profile Settings
             </a>
-            
-            {% if request.session.user %}
-                <!-- Authenticated User Mobile Menu -->
-                {% if request.session.user.role == 'admin' %}
-                    <a href="{% url 'admin_dashboard' %}" 
-                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/admin-dash/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       role="menuitem">
-                        Admin Dashboard
-                    </a>
-                {% endif %}
 
-                {% if request.session.user.role == 'teacher' %}
-                    <a href="{% url 'teacher_dashboard' %}" 
-                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/teacher/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       role="menuitem">
-                        Teacher Dashboard
-                    </a>
-                {% endif %}
-
-                {% if request.session.user.role == 'student' %}
-                    <a href="{% url 'student_courses' %}" 
-                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
-                       role="menuitem">
-                        My Courses
-                    </a>
-                {% endif %}
-
-                <!-- User Profile Section -->
-                <div class="mt-4 pt-4 border-t border-default">
-                    <div class="px-4 py-2 mb-2">
-                        <p class="text-xs text-muted">Signed in as</p>
-                        <p class="text-sm font-semibold text-primary">
-                            {% with u=request.session.user %}
-                            {% if u and 'userinfo' in u %}
-                                {{ u.full_name|default:u.userinfo.name|default:"User" }}
-                            {% else %}
-                                {{ request.user.get_full_name|default:request.user.username|default:"User" }}
-                            {% endif %}
-                            {% endwith %}
-                        </p>
-                    </div>
-
-                    <a href="{% url 'profile_settings' %}" 
-                       class="block px-4 py-3 text-base text-primary hover:bg-secondary rounded-lg min-h-touch"
-                       role="menuitem">
-                        Profile Settings
-                    </a>
-
-                    {% if request.user.is_authenticated %}
-                    <a href="{% url 'admin_logout' %}" 
-                       class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
-                       role="menuitem">
-                        Logout
-                    </a>
-                    {% else %}
-                    <a href="{% url 'logout' %}" 
-                       class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
-                       role="menuitem">
-                        Logout
-                    </a>
-                    {% endif %}
-                </div>
-            {% else %}
-                <!-- Guest User Mobile Menu -->
-                <a href="/#about" 
-                   class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch"
-                   role="menuitem">
-                    About
-                </a>
-                <a href="{% url 'login' %}" 
-                   class="mx-4 mt-4 inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
-                   role="menuitem">
-                    Login
-                </a>
+            {% if request.session.user.role == 'student' %}
+            <a href="{% url 'student_dashboard' %}"
+              class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
+              role="menuitem">
+              My Dashboard
+            </a>
+            {% elif request.session.user.role == 'teacher' %}
+            <a href="{% url 'teacher_dashboard' %}"
+              class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
+              role="menuitem">
+              Teacher Dashboard
+            </a>
+            {% elif request.session.user.role == 'admin' or request.user.is_staff %}
+            <a href="{% url 'admin_dashboard' %}"
+              class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
+              role="menuitem">
+              Admin Dashboard
+            </a>
             {% endif %}
+          </div>
+
+          <div class="border-t border-default py-2">
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'admin_logout' %}"
+              class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
+              role="menuitem">
+              Logout
+            </a>
+            {% else %}
+            <a href="{% url 'logout' %}"
+              class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
+              role="menuitem">
+              Logout
+            </a>
+            {% endif %}
+          </div>
         </div>
+      </div>
+      {% else %}
+      <!-- Guest User Login Button (Desktop) -->
+      <a href="{% url 'login' %}"
+        class="hidden lg:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-primary bg-card hover:bg-secondary border-2 border-default rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
+        aria-label="Log in to your account">
+        Login
+      </a>
+      {% endif %}
+
+      <!-- Mobile Menu Toggle Button -->
+      <button onclick="toggleMobileMenu()" id="mobile-menu-btn" type="button"
+        class="lg:hidden flex items-center justify-center p-2 border-2 border-default rounded-lg bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
+        aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+          aria-hidden="true">
+          <path d="M3 12h18M3 6h18M3 18h18" />
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
+  </div>
+
+  <!-- Mobile Menu (Hidden by default) -->
+  <div id="mobile-menu" class="lg:hidden hidden mt-4 pb-4 border-t border-default" role="menu"
+    aria-label="Mobile navigation">
+    <div class="flex flex-col gap-2 mt-4">
+      <!-- Browse Courses - Available to ALL users -->
+      <a href="{% url 'public_catalog' %}"
+        class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/courses/' in request.path and '/student/courses/' not in request.path %}text-primary-color font-semibold{% endif %}"
+        role="menuitem">
+        Browse Courses
+      </a>
+
+      {% if request.session.user %}
+      <!-- Authenticated User Mobile Menu -->
+      {% if request.session.user.role == 'admin' %}
+      <a href="{% url 'admin_dashboard' %}"
+        class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/admin-dash/' in request.path %}text-primary-color font-semibold{% endif %}"
+        role="menuitem">
+        Admin Dashboard
+      </a>
+      {% endif %}
+
+      {% if request.session.user.role == 'teacher' %}
+      <a href="{% url 'teacher_dashboard' %}"
+        class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/teacher/' in request.path %}text-primary-color font-semibold{% endif %}"
+        role="menuitem">
+        Teacher Dashboard
+      </a>
+      {% endif %}
+
+      {% if request.session.user.role == 'student' %}
+      <a href="{% url 'student_courses' %}"
+        class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/courses/' in request.path %}text-primary-color font-semibold{% endif %}"
+        role="menuitem">
+        My Courses
+      </a>
+      {% endif %}
+
+      <!-- User Profile Section -->
+      <div class="mt-4 pt-4 border-t border-default">
+        <div class="px-4 py-2 mb-2">
+          <p class="text-xs text-muted">Signed in as</p>
+          <p class="text-sm font-semibold text-primary">
+            {% with u=request.session.user %}
+            {% if u and 'userinfo' in u %}
+            {{ u.full_name|default:u.userinfo.name|default:"User" }}
+            {% else %}
+            {{ request.user.get_full_name|default:request.user.username|default:"User" }}
+            {% endif %}
+            {% endwith %}
+          </p>
+        </div>
+
+        <a href="{% url 'profile_settings' %}"
+          class="block px-4 py-3 text-base text-primary hover:bg-secondary rounded-lg min-h-touch" role="menuitem">
+          Profile Settings
+        </a>
+
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'admin_logout' %}"
+          class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
+          role="menuitem">
+          Logout
+        </a>
+        {% else %}
+        <a href="{% url 'logout' %}"
+          class="block px-4 py-3 text-base text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] rounded-lg min-h-touch"
+          role="menuitem">
+          Logout
+        </a>
+        {% endif %}
+      </div>
+      {% else %}
+      <!-- Guest User Mobile Menu -->
+      <a href="/#about" class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch"
+        role="menuitem">
+        About
+      </a>
+      <a href="{% url 'login' %}"
+        class="mx-4 mt-4 inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
+        role="menuitem">
+        Login
+      </a>
+      {% endif %}
+    </div>
+  </div>
 </nav>
 
 <script>
-    // Toggle user menu dropdown (desktop)
-    function toggleUserMenu() {
-        const menu = document.getElementById('user-menu');
-        const btn = document.getElementById('user-menu-btn');
-        if (!menu || !btn) return;
+  // Toggle user menu dropdown (desktop)
+  function toggleUserMenu() {
+    const menu = document.getElementById('user-menu');
+    const btn = document.getElementById('user-menu-btn');
+    if (!menu || !btn) return;
 
-        const isHidden = menu.classList.contains('hidden');
-        
-        if (isHidden) {
-            menu.classList.remove('hidden');
-            btn.setAttribute('aria-expanded', 'true');
-        } else {
-            menu.classList.add('hidden');
-            btn.setAttribute('aria-expanded', 'false');
-        }
+    const isHidden = menu.classList.contains('hidden');
+
+    if (isHidden) {
+      menu.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+    } else {
+      menu.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
     }
+  }
 
-    // Toggle mobile menu
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobile-menu');
-        const btn = document.getElementById('mobile-menu-btn');
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const closeIcon = document.getElementById('close-icon');
-        
-        if (!menu || !btn) return;
+  // Toggle mobile menu
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('mobile-menu-btn');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-        const isHidden = menu.classList.contains('hidden');
-        
-        if (isHidden) {
-            menu.classList.remove('hidden');
-            hamburgerIcon.classList.add('hidden');
-            closeIcon.classList.remove('hidden');
-            btn.setAttribute('aria-expanded', 'true');
-            // Prevent body scroll when menu is open
-            document.body.style.overflow = 'hidden';
-        } else {
-            menu.classList.add('hidden');
-            hamburgerIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-            btn.setAttribute('aria-expanded', 'false');
-            // Restore body scroll
-            document.body.style.overflow = '';
-        }
+    if (!menu || !btn) return;
+
+    const isHidden = menu.classList.contains('hidden');
+
+    if (isHidden) {
+      menu.classList.remove('hidden');
+      hamburgerIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      menu.classList.add('hidden');
+      hamburgerIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      // Restore body scroll
+      document.body.style.overflow = '';
     }
+  }
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        const userMenu = document.getElementById('user-menu');
-        const userBtn = document.getElementById('user-menu-btn');
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function (event) {
+    const userMenu = document.getElementById('user-menu');
+    const userBtn = document.getElementById('user-menu-btn');
 
-        // Close user menu if clicking outside
-        if (userMenu && userBtn && !userMenu.contains(event.target) && !userBtn.contains(event.target)) {
-            userMenu.classList.add('hidden');
-            userBtn.setAttribute('aria-expanded', 'false');
+    // Close user menu if clicking outside
+    if (userMenu && userBtn && !userMenu.contains(event.target) && !userBtn.contains(event.target)) {
+      userMenu.classList.add('hidden');
+      userBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Close mobile menu on escape key
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
+
+      if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        hamburgerIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        mobileBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      const userMenu = document.getElementById('user-menu');
+      const userBtn = document.getElementById('user-menu-btn');
+      if (userMenu && !userMenu.classList.contains('hidden')) {
+        userMenu.classList.add('hidden');
+        userBtn.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+
+  // Close mobile menu when resizing to desktop
+  window.addEventListener('resize', function () {
+    if (window.innerWidth >= 1024) { // lg breakpoint
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
+
+      if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        if (hamburgerIcon && closeIcon) {
+          hamburgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
         }
-    });
-
-    // Close mobile menu on escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileBtn = document.getElementById('mobile-menu-btn');
-            const hamburgerIcon = document.getElementById('hamburger-icon');
-            const closeIcon = document.getElementById('close-icon');
-            
-            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                hamburgerIcon.classList.remove('hidden');
-                closeIcon.classList.add('hidden');
-                mobileBtn.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
-
-            const userMenu = document.getElementById('user-menu');
-            const userBtn = document.getElementById('user-menu-btn');
-            if (userMenu && !userMenu.classList.contains('hidden')) {
-                userMenu.classList.add('hidden');
-                userBtn.setAttribute('aria-expanded', 'false');
-            }
+        if (mobileBtn) {
+          mobileBtn.setAttribute('aria-expanded', 'false');
         }
-    });
-
-    // Close mobile menu when resizing to desktop
-    window.addEventListener('resize', function() {
-        if (window.innerWidth >= 1024) { // lg breakpoint
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileBtn = document.getElementById('mobile-menu-btn');
-            const hamburgerIcon = document.getElementById('hamburger-icon');
-            const closeIcon = document.getElementById('close-icon');
-            
-            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                if (hamburgerIcon && closeIcon) {
-                    hamburgerIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
-                }
-                if (mobileBtn) {
-                    mobileBtn.setAttribute('aria-expanded', 'false');
-                }
-                document.body.style.overflow = '';
-            }
-        }
-    });
+        document.body.style.overflow = '';
+      }
+    }
+  });
 </script>

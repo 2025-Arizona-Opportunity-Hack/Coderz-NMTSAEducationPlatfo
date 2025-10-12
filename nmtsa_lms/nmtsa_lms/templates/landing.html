@@ -26,42 +26,42 @@
         {% if request.session.user %}
             {% if request.session.user.role == 'student' %}
             <a href="{% url 'student_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to student dashboard">
                 Go to Dashboard
             </a>
             <a href="{% url 'public_catalog' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary-color bg-transparent border-2 border-primary hover:bg-primary-light rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Browse available courses">
                 Browse Courses
             </a>
             {% elif request.session.user.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to teacher dashboard">
                 Teacher Dashboard
             </a>
             {% elif request.session.user.role == 'admin' %}
             <a href="{% url 'admin_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to admin dashboard">
                 Admin Dashboard
             </a>
             {% else %}
             <a href="{% url 'select_role' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Complete your profile setup">
                 Complete Your Profile
             </a>
             {% endif %}
         {% else %}
         <a href="{% url 'login' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
            aria-label="Sign up to get started">
             Get Started for Free
         </a>
         <a href="{% url 'public_catalog' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary-color bg-transparent border-2 border-primary hover:bg-primary-light rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
            aria-label="Browse available courses">
             Browse Courses
         </a>
@@ -91,7 +91,7 @@
                 Earn professional credits and certifications in neurologic music therapy techniques for working with individuals with autism and neurologic conditions.
             </p>
             <a href="/about/professionals/" 
-               class="inline-flex items-center gap-2 text-primary-color hover:text-[color:var(--primary-hover)] font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
+               class="inline-flex items-center gap-2 text-[color:var(--primary-hover)] hover:text-primary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
                aria-label="Learn more about resources for healthcare professionals">
                 Learn More
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -117,7 +117,7 @@
                 Access practical strategies and evidence-based approaches to support your loved ones with autism using music therapy principles at home.
             </p>
             <a href="/about/families/" 
-               class="inline-flex items-center gap-2 text-secondary-color hover:text-[color:var(--secondary-hover)] font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
+               class="inline-flex items-center gap-2 text-[color:var(--secondary-hover)] hover:text-secondary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
                aria-label="Learn more about resources for families and caregivers">
                 Learn More
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -194,7 +194,7 @@
         </ul>
         <div class="text-center">
             <a href="https://nmtsa.org" 
-               class="inline-flex items-center gap-2 text-lg text-primary-color hover:text-[color:var(--primary-hover)] font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
+               class="inline-flex items-center gap-2 text-lg text-[color:var(--primary-hover)] hover:text-primary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
                aria-label="Read more about neurologic music therapy">
                 Learn More About NMTSA
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -286,7 +286,7 @@
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <a href="/signup/" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-bold text-primary-color bg-white hover:bg-gray-100 rounded-lg shadow-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
+           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-bold text-[color:var(--primary-hover)] bg-white hover:bg-gray-100 rounded-lg shadow-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
            aria-label="Sign up for free account">
             Sign Up for Free
         </a>

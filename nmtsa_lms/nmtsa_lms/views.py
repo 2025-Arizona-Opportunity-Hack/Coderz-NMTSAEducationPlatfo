@@ -29,6 +29,26 @@ def index(request):
         },
     )
 
+def privacy_policy(request):
+    """Privacy Policy page"""
+    return render(request, "legal/privacy.html")
+
+def terms_of_service(request):
+    """Terms of Service page"""
+    return render(request, "legal/terms.html")
+
+def cookie_policy(request):
+    """Cookie Policy page"""
+    return render(request, "legal/cookies.html")
+
+def faq(request):
+    """FAQ page"""
+    return render(request, "faq.html")
+
+def contact(request):
+    """Contact page"""
+    return render(request, "contact.html")
+
 def login(request):
     # Store the next URL in session if provided
     next_url = request.GET.get('next', '')

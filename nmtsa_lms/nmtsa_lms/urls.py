@@ -42,6 +42,15 @@ urlpatterns = [
     path("admin-dash/", include('admin_dash.urls')),
     path("lms/", include('lms.urls')),
     
+    # Legal Pages
+    path('privacy/', views.privacy_policy, name='privacy_policy'),
+    path('terms/', views.terms_of_service, name='terms_of_service'),
+    path('cookies/', views.cookie_policy, name='cookie_policy'),
+    
+    # Support Pages
+    path('faq/', views.faq, name='faq'),
+    path('contact/', views.contact, name='contact'),
+    
     # SEO Files
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),

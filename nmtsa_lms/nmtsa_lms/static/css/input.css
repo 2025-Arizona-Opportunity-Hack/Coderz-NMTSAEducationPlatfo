@@ -324,11 +324,39 @@
   [data-theme="dark"] .btn-primary {
     background-color: #CC9300;  /* Original gold color - dark enough for white text */
     border-color: #CC9300;
+    color: #000000; /* Black text on gold for better contrast */
   }
 
   [data-theme="dark"] .btn-primary:hover {
     background-color: #996D00;  /* Darker on hover */
     border-color: #996D00;
+    color: #FFFFFF; /* White text on darker gold */
+  }
+  
+  /* High contrast theme button - maximum contrast */
+  [data-theme="contrast"] .btn-primary {
+    background-color: #996D00;  /* Dark gold */
+    border-color: #996D00;
+    color: #FFFFFF;
+  }
+
+  [data-theme="contrast"] .btn-primary:hover {
+    background-color: #664800;  /* Even darker */
+    border-color: #664800;
+    color: #FFFFFF;
+  }
+  
+  /* Minimal theme button */
+  [data-theme="minimal"] .btn-primary {
+    background-color: #8B6508;  /* Dark enough for white text */
+    border-color: #8B6508;
+    color: #FFFFFF;
+  }
+
+  [data-theme="minimal"] .btn-primary:hover {
+    background-color: #664800;
+    border-color: #664800;
+    color: #FFFFFF;
   }
 
   .btn-secondary {
@@ -468,8 +496,36 @@
     box-shadow: 0 0 0 3px var(--primary-light);
   }
 
-  .form-input::placeholder {
+  .form-input::placeholder,
+  .form-textarea::placeholder {
     color: var(--text-muted);
+    opacity: 1; /* Ensure full opacity for better contrast */
+  }
+  
+  /* Ensure proper contrast for placeholders in all themes */
+  [data-theme="dark"] .form-input::placeholder,
+  [data-theme="dark"] .form-textarea::placeholder,
+  [data-theme="dark"] input::placeholder,
+  [data-theme="dark"] textarea::placeholder {
+    color: #ADB5BD; /* Lighter placeholder text for dark mode */
+  }
+  
+  [data-theme="contrast"] .form-input::placeholder,
+  [data-theme="contrast"] .form-textarea::placeholder,
+  [data-theme="contrast"] input::placeholder,
+  [data-theme="contrast"] textarea::placeholder {
+    color: #000000; /* Black placeholders for high contrast */
+  }
+  
+  /* Ensure all inputs have proper background and text color */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
   }
 
   .form-error {
