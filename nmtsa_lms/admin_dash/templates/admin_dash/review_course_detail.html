@@ -2,7 +2,21 @@
 
 {% block title %}Review Course - {{ course.title }}{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_admin.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <div class="page-header">
     <a href="{% url 'admin_review_courses' %}"
        style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
@@ -123,4 +137,8 @@
         </button>
     </div>
 </form>
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

@@ -2,7 +2,21 @@
 
 {% block title %}Review Teacher Application - Admin Dashboard{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_admin.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <section style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
     <div style="margin-bottom: var(--spacing-2xl);">
         <a href="{% url 'admin_verify_teachers' %}" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
@@ -143,4 +157,8 @@
         </p>
     </form>
 </section>
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

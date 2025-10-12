@@ -208,6 +208,66 @@ Support:
 - Use the chat assistant for questions
 - Contact admin for technical issues
 - FAQ section available on website
+
+=== WEBSITE URLS AND NAVIGATION ===
+
+PUBLIC URLs (No Login Required):
+- Homepage: /
+- Login: /login
+- Logout: /logout
+- Browse All Courses: /courses/ (public catalog)
+- View Specific Course: /courses/{COURSE_SLUG}/ (use actual course slug)
+- Privacy Policy: /privacy/
+- Terms of Service: /terms/
+- Cookie Policy: /cookies/
+- FAQ: /faq/
+- Contact: /contact/
+
+AUTHENTICATION URLs:
+- Select Role: /auth/select-role/ (choose Student or Teacher)
+- Teacher Onboarding: /auth/onboarding/teacher/
+- Student Onboarding: /auth/onboarding/student/
+- Profile Settings: /auth/profile/settings/
+- Admin Login: /auth/admin-login/
+
+STUDENT URLs (Requires Student Login):
+- Student Dashboard: /student/
+- My Enrolled Courses: /student/courses/
+- Course Catalog: /student/catalog/
+- View Course Details: /student/courses/{COURSE_SLUG}/
+- Enroll in Course: /student/courses/{COURSE_SLUG}/enroll/
+- Checkout for Paid Course: /student/courses/{COURSE_SLUG}/checkout/
+- Learning Interface: /student/courses/{COURSE_SLUG}/learn/
+- View Lesson: /student/courses/{COURSE_SLUG}/modules/{MODULE_SLUG}/lessons/{LESSON_SLUG}/
+- Course Discussions: /student/courses/{COURSE_SLUG}/discussions/
+- View Certificate: /student/courses/{COURSE_SLUG}/certificate/
+- Download Certificate PDF: /student/courses/{COURSE_SLUG}/certificate.pdf
+
+TEACHER URLs (Requires Teacher Login):
+- Teacher Dashboard: /teacher/
+- My Courses: /teacher/courses/
+- Create New Course: /teacher/courses/create/
+- View Course: /teacher/courses/{COURSE_SLUG}/
+- Edit Course: /teacher/courses/{COURSE_SLUG}/edit/
+- Delete Course: /teacher/courses/{COURSE_SLUG}/delete/
+- Publish Course: /teacher/courses/{COURSE_SLUG}/publish/
+- Unpublish Course: /teacher/courses/{COURSE_SLUG}/unpublish/
+- Preview Course: /teacher/courses/{COURSE_SLUG}/preview/
+- Course Analytics: /teacher/courses/{COURSE_SLUG}/analytics/
+- Export Courses: /teacher/courses/export/
+
+ADMIN URLs (Requires Admin Login):
+- Admin Dashboard: /admin-dash/
+- Verify Teachers: /admin-dash/verify-teachers/
+- Review Courses: /admin-dash/courses/review/
+
+IMPORTANT NOTES FOR URL GUIDANCE:
+- URLs with {COURSE_SLUG}, {MODULE_SLUG}, {LESSON_SLUG} are placeholders
+- When recommending a specific course, you MUST provide the actual course slug
+- Use format: "Check out this course at /courses/[ACTUAL-SLUG-HERE]/"
+- Course slugs are 11-character unique identifiers (e.g., "abc123xyz45")
+- If you don't know the course slug, search your memory for the course first
+- Always verify the user's role before suggesting role-specific URLs
 """
     
     try:

@@ -24,6 +24,8 @@ class ChatManager {
         this.refreshInterval = null;
         this.isLoading = false;
         this.isSending = false;
+        this.lastTypingUsers = []; // Cache typing status
+        this.lastActivityTime = Date.now(); // Track last activity
         
         // DOM elements (will be set after initialization)
         this.chatContainer = null;
@@ -36,7 +38,9 @@ class ChatManager {
         // Configuration
         this.config = {
             maxMessageLength: 2000,
-            refreshInterval: 3000, // 3 seconds
+            refreshInterval: 10000, // 10 seconds (reduced polling frequency)
+            activeRefreshInterval: 3000, // 3 seconds when recently active
+            inactivityThreshold: 60000, // 60 seconds - switch to slow polling after this
             typingTimeout: 2000, // 2 seconds
             apiBaseUrl: '/lms/api/chat'
         };
@@ -172,7 +176,8 @@ class ChatManager {
     }
     
     /**
-     * Start auto-refresh interval
+     * Start auto-refresh interval with adaptive polling
+     * Polls faster when recently active, slower when idle
      */
     startRefreshInterval() {
         if (this.refreshInterval) {
@@ -180,9 +185,19 @@ class ChatManager {
         }
         
         this.refreshInterval = setInterval(() => {
-            this.loadMessages(true); // Silent refresh
-            this.checkTypingStatus();
-        }, this.config.refreshInterval);
+            // Determine polling frequency based on recent activity
+            const timeSinceActivity = Date.now() - this.lastActivityTime;
+            const isRecentlyActive = timeSinceActivity < this.config.inactivityThreshold;
+            
+            // Only poll if recently active or at regular intervals
+            if (isRecentlyActive) {
+                this.loadMessages(true); // Silent refresh
+                this.checkTypingStatus();
+            } else {
+                // Slow polling for idle chats - only check every other interval
+                console.log('[Chat] Idle mode - skipping poll');
+            }
+        }, this.config.activeRefreshInterval);
     }
     
     /**
@@ -224,8 +239,21 @@ class ChatManager {
             const data = await response.json();
             
             if (data.success) {
-                this.messages = data.messages;
-                this.renderMessages();
+                // Only re-render if messages changed
+                const newMessages = data.messages;
+                const hasChanges = this.messagesHaveChanged(newMessages);
+                
+                if (hasChanges) {
+                    console.log('[Chat] Messages updated, re-rendering');
+                    this.messages = newMessages;
+                    this.renderMessages();
+                    
+                    // Update activity time when new messages arrive
+                    this.lastActivityTime = Date.now();
+                } else if (silent) {
+                    // Silent refresh with no changes - this is expected
+                    // Don't log to reduce console noise
+                }
             } else {
                 this.showError('Failed to load messages');
             }
@@ -237,6 +265,32 @@ class ChatManager {
         } finally {
             this.isLoading = false;
         }
+    }
+    
+    /**
+     * Check if messages have changed (new messages or content updates)
+     * @param {Array} newMessages - New messages to compare
+     * @returns {boolean} True if messages changed
+     */
+    messagesHaveChanged(newMessages) {
+        // First load or message count changed
+        if (this.messages.length !== newMessages.length) {
+            console.log('[Chat] Messages changed: count differs');
+            return true;
+        }
+        
+        // Compare message IDs and content
+        for (let i = 0; i < newMessages.length; i++) {
+            const oldMsg = this.messages[i];
+            const newMsg = newMessages[i];
+            
+            if (oldMsg.id !== newMsg.id || oldMsg.content !== newMsg.content) {
+                console.log('[Chat] Messages changed: content/ID differs');
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -270,6 +324,13 @@ class ChatManager {
         // Message type styling
         if (message.message_type === 'system') {
             messageDiv.classList.add('system-message');
+        }
+        
+        // Placeholder styling (AI thinking)
+        if (message.isPlaceholder) {
+            messageDiv.classList.add('placeholder-message');
+            messageDiv.style.opacity = '0.6';
+            messageDiv.style.fontStyle = 'italic';
         }
         
         // Message content
@@ -329,9 +390,46 @@ class ChatManager {
             return;
         }
         
+        // Update activity timestamp
+        this.lastActivityTime = Date.now();
+        
+        // IMMEDIATE UI FEEDBACK
+        // 1. Clear input immediately
+        const userMessage = content;
+        this.inputField.value = '';
+        
+        // 2. Add user message to UI optimistically
+        const userMessageObj = {
+            id: Date.now(),
+            sender: 'You',
+            sender_id: 'current_user',
+            content: userMessage,
+            timestamp: new Date().toISOString(),
+            is_own_message: true,
+            message_type: 'text'
+        };
+        this.messages.push(userMessageObj);
+        this.renderMessages();
+        
+        // 3. Add "AI thinking" placeholder
+        const thinkingMessageObj = {
+            id: Date.now() + 1,
+            sender: 'NMTSA Assistant',
+            sender_id: 999,
+            content: '💭 Thinking...',
+            timestamp: new Date().toISOString(),
+            is_own_message: false,
+            message_type: 'text',
+            isPlaceholder: true
+        };
+        this.messages.push(thinkingMessageObj);
+        this.renderMessages();
+        
+        // 4. Disable input during processing
         this.isSending = true;
         this.sendButton.disabled = true;
-        this.sendButton.textContent = 'Sending...';
+        this.inputField.disabled = true;
+        this.sendButton.textContent = 'Processing...';
         
         try {
             const response = await fetch(
@@ -343,27 +441,31 @@ class ChatManager {
                         'X-CSRFToken': this.getCSRFToken()
                     },
                     credentials: 'same-origin',
-                    body: JSON.stringify({ content })
+                    body: JSON.stringify({ content: userMessage })
                 }
             );
             
             const data = await response.json();
             
             if (data.success) {
-                // Clear input
-                this.inputField.value = '';
-                
-                // Reload messages
+                // Remove placeholder and reload actual messages from server
                 await this.loadMessages(true);
             } else {
+                // Remove placeholder on error
+                this.messages = this.messages.filter(m => !m.isPlaceholder);
+                this.renderMessages();
                 this.showError(data.error || 'Failed to send message');
             }
         } catch (error) {
             console.error('[Chat] Error sending message:', error);
+            // Remove placeholder on error
+            this.messages = this.messages.filter(m => !m.isPlaceholder);
+            this.renderMessages();
             this.showError('Network error. Please try again.');
         } finally {
             this.isSending = false;
             this.sendButton.disabled = false;
+            this.inputField.disabled = false;
             this.sendButton.textContent = 'Send';
             this.inputField.focus();
         }
@@ -444,6 +546,15 @@ class ChatManager {
      */
     updateTypingIndicator(typingUsers) {
         if (!this.typingIndicator) return;
+        
+        // Check if typing users changed to avoid unnecessary DOM updates
+        const typingUsersChanged = JSON.stringify(this.lastTypingUsers) !== JSON.stringify(typingUsers);
+        
+        if (!typingUsersChanged) {
+            return; // No changes, skip DOM update
+        }
+        
+        this.lastTypingUsers = [...typingUsers]; // Update cache
         
         if (typingUsers.length > 0) {
             let text = '';

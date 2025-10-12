@@ -3,6 +3,7 @@
 {% block title %}{% if course %}Edit Course{% else %}Create Course{% endif %} - Teacher{% endblock %}
 
 {% block extra_css %}
+{% include 'components/drawer_styles.html' %}
 <style>
     .teacher-form.card {
         padding: var(--spacing-xl);
@@ -122,6 +123,16 @@
 {% endblock %}
 
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_teacher.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <div class="page-header">
     <h1 class="page-title">{% if course %}Edit Course{% else %}Create Course{% endif %}</h1>
     <p class="page-description">Provide course details and save as a draft. You can publish once ready.</p>
@@ -142,7 +153,7 @@
 </div>
 {% endif %}
 
-<form method="post" enctype="multipart/form-data" class="card teacher-form" style="max-width: 820px;">
+<form method="post" enctype="multipart/form-data" class="card teacher-form" style="max-width: 820px; margin: 0 auto;">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
@@ -175,4 +186,8 @@
         <a href="{% if course %}{% url 'teacher_course_detail' course.id %}{% else %}{% url 'teacher_dashboard' %}{% endif %}" class="btn btn-outline">Cancel</a>
     </div>
 </form>
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

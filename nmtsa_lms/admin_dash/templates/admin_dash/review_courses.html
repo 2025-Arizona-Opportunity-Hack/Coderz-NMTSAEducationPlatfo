@@ -2,7 +2,21 @@
 
 {% block title %}Courses Pending Review{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_admin.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <div class="page-header">
     <h1 class="page-title">Courses Pending Review</h1>
     <p class="page-description">Approve courses submitted by teachers before they go live.</p>
@@ -71,4 +85,8 @@
     No courses awaiting review. Check back later!
 </div>
 {% endif %}
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

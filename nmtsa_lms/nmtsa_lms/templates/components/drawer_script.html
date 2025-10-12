@@ -1,0 +1,24 @@
+<!-- Reusable Drawer JavaScript Component -->
+<script>
+    function toggleDrawer() {
+        const sidebar = document.getElementById('dashboardSidebar');
+        const overlay = document.querySelector('.drawer-overlay');
+        const toggleBtn = document.querySelector('.drawer-toggle');
+        
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+        toggleBtn.classList.toggle('hidden');
+    }
+
+    // Close drawer when clicking on a link (mobile only)
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('#dashboardSidebar a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleDrawer();
+                }
+            });
+        });
+    });
+</script>

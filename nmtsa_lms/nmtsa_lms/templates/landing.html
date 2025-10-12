@@ -26,42 +26,42 @@
         {% if request.session.user %}
             {% if request.session.user.role == 'student' %}
             <a href="{% url 'student_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to student dashboard">
                 Go to Dashboard
             </a>
             <a href="{% url 'public_catalog' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Browse available courses">
                 Browse Courses
             </a>
             {% elif request.session.user.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to teacher dashboard">
                 Teacher Dashboard
             </a>
             {% elif request.session.user.role == 'admin' %}
             <a href="{% url 'admin_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Go to admin dashboard">
                 Admin Dashboard
             </a>
             {% else %}
             <a href="{% url 'select_role' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
                aria-label="Complete your profile setup">
                 Complete Your Profile
             </a>
             {% endif %}
         {% else %}
         <a href="{% url 'login' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
            aria-label="Sign up to get started">
             Get Started for Free
         </a>
         <a href="{% url 'public_catalog' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary bg-white hover:bg-gray-50 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
            aria-label="Browse available courses">
             Browse Courses
         </a>
@@ -205,6 +205,174 @@
     </div>
 </section>
 
+<!-- User Stories / Testimonials -->
+<section class="mb-16 sm:mb-20" role="region" aria-labelledby="testimonials-heading">
+    <h2 id="testimonials-heading" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 text-primary">
+        Success Stories
+    </h2>
+    
+    <div class="relative" style="overflow: hidden; width: 100%;">
+        <!-- Scrolling container -->
+        <div class="testimonial-scroll" aria-live="off" style="display: flex; gap: 1.5rem;">
+            <!-- Card 1 -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary-light to-primary flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+                        SJ
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Sarah Johnson</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Speech Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The NMT certification course transformed my practice. I now have evidence-based techniques to help my clients with autism improve their communication skills through music."
+                </p>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-secondary-light to-secondary flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+                        MC
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Maria Chen</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Parent & Caregiver</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "As a mother of a child with autism, these courses gave me practical strategies I can use at home. The autism-friendly design makes learning stress-free."
+                </p>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-accent-light to-accent flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+                        DM
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">David Martinez</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Occupational Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The platform's professional certificates have helped me expand my practice. My patients are seeing remarkable improvements in motor skills and emotional regulation."
+                </p>
+            </article>
+
+            <!-- Card 4 -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+                        LT
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Lisa Thompson</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Music Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "Creating courses here has been incredibly rewarding. I can share my expertise while earning income, and the platform handles all the technical details."
+                </p>
+            </article>
+
+            <!-- Card 5 -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+                        RA
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Robert James</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Special Education Teacher</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The courses are comprehensive yet easy to follow. I've integrated NMT techniques into my classroom, and the results have been amazing for my students."
+                </p>
+            </article>
+
+            <!-- Duplicate set for seamless loop -->
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;" aria-hidden="true">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary-light to-primary flex items-center justify-center text-white font-bold text-lg">
+                        SJ
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Sarah Johnson</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Speech Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The NMT certification course transformed my practice. I now have evidence-based techniques to help my clients with autism improve their communication skills through music."
+                </p>
+            </article>
+
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;" aria-hidden="true">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-secondary-light to-secondary flex items-center justify-center text-white font-bold text-lg">
+                        MC
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Maria Chen</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Parent & Caregiver</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "As a mother of a child with autism, these courses gave me practical strategies I can use at home. The autism-friendly design makes learning stress-free."
+                </p>
+            </article>
+
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;" aria-hidden="true">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-accent-light to-accent flex items-center justify-center text-white font-bold text-lg">
+                        DM
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Dr. David Martinez</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Occupational Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The platform's professional certificates have helped me expand my practice. My patients are seeing remarkable improvements in motor skills and emotional regulation."
+                </p>
+            </article>
+
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;" aria-hidden="true">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-lg">
+                        LT
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Lisa Thompson</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Music Therapist</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "Creating courses here has been incredibly rewarding. I can share my expertise while earning income, and the platform handles all the technical details."
+                </p>
+            </article>
+
+            <article class="testimonial-card flex-shrink-0 bg-card border-2 border-default rounded-xl p-6 shadow-lg" style="width: 300px; height: 320px; display: flex; flex-direction: column;" aria-hidden="true">
+                <div class="flex items-center gap-4" style="height: 64px; flex-shrink: 0; margin-bottom: 1.5rem;">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-lg">
+                        RA
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-primary" style="line-height: 1.2;">Robert Anderson</h3>
+                        <p class="text-sm text-secondary" style="line-height: 1.2;">Special Education Teacher</p>
+                    </div>
+                </div>
+                <p class="text-secondary leading-relaxed" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; padding-top: 0.5rem;">
+                    "The courses are comprehensive yet easy to follow. I've integrated NMT techniques into my classroom, and the results have been amazing for my students."
+                </p>
+            </article>
+        </div>
+    </div>
+</section>
+
 <!-- Platform Features -->
 <section class="mb-16 sm:mb-20" role="region" aria-labelledby="features-heading">
     <h2 id="features-heading" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 text-primary">
@@ -274,28 +442,108 @@
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="bg-gradient-to-br from-primary to-accent rounded-xl sm:rounded-2xl p-8 sm:p-12 lg:p-16 text-center text-white shadow-xl"
-         role="region" 
-         aria-labelledby="cta-heading">
-    <h2 id="cta-heading" class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight tracking-tight">
-        Ready to Get Started?
-    </h2>
-    <p class="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 opacity-95 max-w-2xl mx-auto leading-relaxed">
-        Join thousands of professionals and families learning effective autism support strategies
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <a href="/signup/" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-bold text-[color:var(--primary-hover)] bg-white hover:bg-gray-100 rounded-lg shadow-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
-           aria-label="Sign up for free account">
-            Sign Up for Free
-        </a>
-        <a href="/browse-courses/" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-white/10 hover:bg-white/20 border-2 border-white/50 backdrop-blur rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
-           aria-label="Explore available courses">
-            Explore Courses
-        </a>
-    </div>
-</section>
+<!-- Testimonial Scrolling Styles -->
+<style>
+    @keyframes scroll-left {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    .testimonial-scroll {
+        animation: scroll-left 40s linear infinite;
+        width: max-content !important;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .testimonial-scroll:hover {
+        animation-play-state: paused;
+    }
+
+    .testimonial-card {
+        width: 300px;
+        height: 320px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Text truncation support for all browsers */
+    .testimonial-card p {
+        flex: 1;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+        line-clamp: 6;
+    }
+
+    /* Ensure smooth animation */
+    @media (prefers-reduced-motion: no-preference) {
+        .testimonial-scroll {
+            will-change: transform;
+        }
+    }
+
+    /* Force hardware acceleration */
+    .testimonial-scroll {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+</style>
+
+<script>
+    // Backup JavaScript-based scrolling in case CSS animation doesn't work
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollContainer = document.querySelector('.testimonial-scroll');
+        
+        if (scrollContainer) {
+            let isPaused = false;
+            let scrollPosition = 0;
+            const scrollSpeed = 0.5; // pixels per frame
+            
+            // Check if CSS animation is working
+            const computedStyle = window.getComputedStyle(scrollContainer);
+            const animationName = computedStyle.getPropertyValue('animation-name');
+            const transform = computedStyle.getPropertyValue('transform');
+            
+            console.log('Animation name:', animationName);
+            console.log('Initial transform:', transform);
+            console.log('Container scrollWidth:', scrollContainer.scrollWidth);
+            console.log('Container offsetWidth:', scrollContainer.offsetWidth);
+            
+            // Force use JavaScript for reliable scrolling
+            console.log('Using JavaScript scrolling for reliability');
+            
+            function scroll() {
+                if (!isPaused) {
+                    scrollPosition += scrollSpeed;
+                    const containerWidth = scrollContainer.scrollWidth / 2;
+                    
+                    if (scrollPosition >= containerWidth) {
+                        scrollPosition = 0;
+                    }
+                    
+                    scrollContainer.style.transform = `translateX(-${scrollPosition}px)`;
+                }
+                requestAnimationFrame(scroll);
+            }
+            
+            scrollContainer.addEventListener('mouseenter', () => {
+                isPaused = true;
+            });
+            
+            scrollContainer.addEventListener('mouseleave', () => {
+                isPaused = false;
+            });
+            
+            scroll();
+        }
+    });
+</script>
 
 {% endblock %}
