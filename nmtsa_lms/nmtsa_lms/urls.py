@@ -34,6 +34,7 @@ urlpatterns = [
     
     # Public course browsing (no authentication required)
     path("courses/", student_views.public_catalog, name="public_catalog"),
+    path("browse-courses/", student_views.public_catalog, name="browse_courses"),  # Alias for backward compatibility
     path("courses/<slug:course_slug>/", student_views.public_course_detail, name="public_course_detail"),
     
     # Protected student, teacher, admin routes

@@ -44,13 +44,13 @@
                 <td>{{ course.published_date|date:"M d, Y" }}</td>
                 <td>
                     <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
-                        <a href="{% url 'admin_course_preview' course.id %}"
+                        <a href="{% url 'admin_course_preview' course.slug %}"
                            class="btn btn-outline btn-sm"
                            target="_blank"
                            title="Preview course content in new tab">
                             Preview
                         </a>
-                        <a href="{% url 'admin_review_course_action' course.id %}"
+                        <a href="{% url 'admin_review_course_action' course.slug %}"
                            class="btn btn-primary btn-sm">
                             Review
                         </a>

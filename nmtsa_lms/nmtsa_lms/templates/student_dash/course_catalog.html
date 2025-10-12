@@ -20,80 +20,100 @@
     <aside style="background: var(--bg-card); padding: var(--spacing-lg); border-radius: 8px; border: 1px solid var(--border-color); height: fit-content;">
         <h2 style="font-size: calc(1.25rem * var(--font-scale)); margin-top: 0;">Filters</h2>
 
-        <!-- Price Filter -->
-        <div style="margin-bottom: var(--spacing-xl);">
-            <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Price</h3>
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="price" value="free" style="width: 20px; height: 20px;">
-                    <span>Free Courses</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="price" value="paid" style="width: 20px; height: 20px;">
-                    <span>Paid Courses</span>
-                </label>
-            </div>
-        </div>
+        <form method="get" id="filter-form">
+            <!-- Preserve search query -->
+            {% if filters.q %}
+                <input type="hidden" name="q" value="{{ filters.q }}">
+            {% endif %}
 
-        <!-- Category Filter -->
-        <div style="margin-bottom: var(--spacing-xl);">
-            <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Category</h3>
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="category" value="therapy" style="width: 20px; height: 20px;">
-                    <span>Therapy Techniques</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="category" value="family" style="width: 20px; height: 20px;">
-                    <span>Family Support</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="category" value="professional" style="width: 20px; height: 20px;">
-                    <span>Professional Development</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="category" value="certification" style="width: 20px; height: 20px;">
-                    <span>Certification Programs</span>
-                </label>
+            <!-- Price Filter -->
+            <div style="margin-bottom: var(--spacing-xl);">
+                <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Price</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="price" value="free" style="width: 20px; height: 20px;" 
+                               {% if 'free' in filters.price_types %}checked{% endif %}>
+                        <span>Free Courses</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="price" value="paid" style="width: 20px; height: 20px;"
+                               {% if 'paid' in filters.price_types %}checked{% endif %}>
+                        <span>Paid Courses</span>
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <!-- Duration Filter -->
-        <div style="margin-bottom: var(--spacing-xl);">
-            <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Duration</h3>
-            <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="duration" value="short" style="width: 20px; height: 20px;">
-                    <span>Under 2 hours</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="duration" value="medium" style="width: 20px; height: 20px;">
-                    <span>2-5 hours</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
-                    <input type="checkbox" name="duration" value="long" style="width: 20px; height: 20px;">
-                    <span>5+ hours</span>
-                </label>
+            <!-- Category Filter -->
+            <div style="margin-bottom: var(--spacing-xl);">
+                <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Category</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="category" value="therapy" style="width: 20px; height: 20px;"
+                               {% if 'therapy' in filters.categories %}checked{% endif %}>
+                        <span>Therapy Techniques</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="category" value="family" style="width: 20px; height: 20px;"
+                               {% if 'family' in filters.categories %}checked{% endif %}>
+                        <span>Family Support</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="category" value="professional" style="width: 20px; height: 20px;"
+                               {% if 'professional' in filters.categories %}checked{% endif %}>
+                        <span>Professional Development</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="category" value="certification" style="width: 20px; height: 20px;"
+                               {% if 'certification' in filters.categories %}checked{% endif %}>
+                        <span>Certification Programs</span>
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <button type="button" onclick="window.location.reload()" class="btn btn-outline" style="width: 100%;">
+            <!-- Duration Filter -->
+            <div style="margin-bottom: var(--spacing-xl);">
+                <h3 style="font-size: calc(1rem * var(--font-scale)); margin-bottom: var(--spacing-md);">Duration</h3>
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="duration" value="short" style="width: 20px; height: 20px;"
+                               {% if 'short' in filters.durations %}checked{% endif %}>
+                        <span>Under 2 hours</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="duration" value="medium" style="width: 20px; height: 20px;"
+                               {% if 'medium' in filters.durations %}checked{% endif %}>
+                        <span>2-5 hours</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                        <input type="checkbox" name="duration" value="long" style="width: 20px; height: 20px;"
+                               {% if 'long' in filters.durations %}checked{% endif %}>
+                        <span>5+ hours</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-md);">
+                Apply Filters
+            </button>
+        </form>
+
+        <a href="{% url 'public_catalog' %}" class="btn btn-outline" style="width: 100%; text-decoration: none; display: inline-block; text-align: center;">
             Clear All Filters
-        </button>
+        </a>
     </aside>
 
     <!-- Courses Grid -->
     <main>
         <!-- Search Bar -->
         <div style="margin-bottom: var(--spacing-xl);">
-            <form method="get" action="/browse-courses/">
+            <form method="get" action="{% url 'public_catalog' %}">
                 <div style="position: relative;">
                     <input type="search"
                            name="q"
                            placeholder="Search courses by title or description..."
                            class="form-input"
                            style="padding-left: 48px;"
-                           value="{{ search_query }}">
+                           value="{{ filters.q }}">
                     <svg width="20" height="20" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 16px; top: 14px;">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
@@ -202,88 +222,9 @@
 </div>
 
 <script>
-// Search functionality
-function searchCourses() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-    const courseCards = document.querySelectorAll('.course-card');
-    let visibleCount = 0;
-
-    courseCards.forEach(card => {
-        const title = card.getAttribute('data-title');
-        const description = card.getAttribute('data-description');
-
-        if (title.includes(searchTerm) || description.includes(searchTerm)) {
-            card.style.display = 'flex';
-            visibleCount++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
-
-    updateResultsCount(visibleCount);
-}
-
-// Price filter
-function filterCourses() {
-    const priceFilter = document.getElementById('price-filter').value;
-    const courseCards = document.querySelectorAll('.course-card');
-    let visibleCount = 0;
-
-    courseCards.forEach(card => {
-        const price = parseFloat(card.getAttribute('data-price'));
-        let shouldShow = true;
-
-        if (priceFilter === 'free' && price > 0) {
-            shouldShow = false;
-        } else if (priceFilter === 'paid' && price === 0) {
-            shouldShow = false;
-        }
-
-        if (shouldShow && card.style.display !== 'none') {
-            card.style.display = 'flex';
-            visibleCount++;
-        } else if (!shouldShow) {
-            card.style.display = 'none';
-        }
-    });
-
-    updateResultsCount(visibleCount);
-}
-
-// Sort functionality
-function sortCourses() {
-    const sortBy = document.getElementById('sort-by').value;
-    const grid = document.getElementById('courses-grid');
-    const cards = Array.from(document.querySelectorAll('.course-card'));
-
-    cards.sort((a, b) => {
-        switch(sortBy) {
-            case 'newest':
-                return parseFloat(b.getAttribute('data-date')) - parseFloat(a.getAttribute('data-date'));
-            case 'popular':
-                return parseFloat(b.getAttribute('data-enrollments')) - parseFloat(a.getAttribute('data-enrollments'));
-            case 'price-low':
-                return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
-            case 'price-high':
-                return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
-            default:
-                return 0;
-        }
-    });
-
-    // Clear and re-append sorted cards
-    grid.innerHTML = '';
-    cards.forEach(card => grid.appendChild(card));
-}
-
-// Update results count
-function updateResultsCount(count) {
-    document.getElementById('results-count').textContent = `${count} courses found`;
-}
-
 // Add hover effect to cards
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.course-card');
+    const cards = document.querySelectorAll('.card');
 
     cards.forEach(card => {
         card.addEventListener('mouseenter', () => {
