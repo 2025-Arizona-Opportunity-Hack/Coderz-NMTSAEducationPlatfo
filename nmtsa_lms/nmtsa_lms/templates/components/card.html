@@ -16,9 +16,9 @@
 
 {% if clickable and href %}
 <a href="{{ href }}"
-   class="block bg-[color:var(--bg-card)] border-2 border-[color:var(--border-color)] rounded-xl overflow-hidden hover:shadow-[var(--shadow-lg)] hover:border-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2
-          {% if variant == 'highlight' %}border-[color:var(--primary)] bg-[color:var(--primary-light)]
-          {% elif variant == 'elevated' %}shadow-[var(--shadow-md)]
+   class="block bg-card border-2 border-default rounded-xl overflow-hidden hover:shadow-lg hover:border-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+          {% if variant == 'highlight' %}border-primary bg-primary-light
+          {% elif variant == 'elevated' %}shadow-md
           {% endif %}"
    {% if aria_label %}aria-label="{{ aria_label }}"{% else %}aria-label="{{ title }}"{% endif %}
    role="article">
@@ -33,25 +33,25 @@
     {% endif %}
 
     {% if title %}
-    <div class="px-4 sm:px-6 py-4 border-b border-[color:var(--border-color)]">
-        <h3 class="text-lg sm:text-xl font-bold text-[color:var(--text-primary)]">{{ title }}</h3>
+    <div class="px-4 sm:px-6 py-4 border-b border-default">
+        <h3 class="text-lg sm:text-xl font-bold text-primary">{{ title }}</h3>
     </div>
     {% endif %}
 
-    <div class="px-4 sm:px-6 py-4 text-[color:var(--text-secondary)]">
+    <div class="px-4 sm:px-6 py-4 text-secondary">
         {{ content|safe }}
     </div>
 
     {% if footer %}
-    <div class="px-4 sm:px-6 py-3 bg-[color:var(--bg-secondary)] border-t border-[color:var(--border-color)] text-sm">
+    <div class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
         {{ footer|safe }}
     </div>
     {% endif %}
 </a>
 {% else %}
-<article class="bg-[color:var(--bg-card)] border-2 border-[color:var(--border-color)] rounded-xl overflow-hidden
-               {% if variant == 'highlight' %}border-[color:var(--primary)] bg-[color:var(--primary-light)]
-               {% elif variant == 'elevated' %}shadow-[var(--shadow-md)]
+<article class="bg-card border-2 border-default rounded-xl overflow-hidden
+               {% if variant == 'highlight' %}border-primary bg-primary-light
+               {% elif variant == 'elevated' %}shadow-md
                {% endif %}"
          {% if aria_label %}aria-label="{{ aria_label }}"{% elif title %}aria-labelledby="card-title-{{ title|slugify }}"{% endif %}
          role="article">
@@ -66,19 +66,19 @@
     {% endif %}
 
     {% if title %}
-    <header class="px-4 sm:px-6 py-4 border-b border-[color:var(--border-color)]">
-        <h3 id="card-title-{{ title|slugify }}" class="text-lg sm:text-xl font-bold text-[color:var(--text-primary)]">
+    <header class="px-4 sm:px-6 py-4 border-b border-default">
+        <h3 id="card-title-{{ title|slugify }}" class="text-lg sm:text-xl font-bold text-primary">
             {{ title }}
         </h3>
     </header>
     {% endif %}
 
-    <div class="px-4 sm:px-6 py-4 text-[color:var(--text-secondary)]">
+    <div class="px-4 sm:px-6 py-4 text-secondary">
         {{ content|safe }}
     </div>
 
     {% if footer %}
-    <footer class="px-4 sm:px-6 py-3 bg-[color:var(--bg-secondary)] border-t border-[color:var(--border-color)] text-sm">
+    <footer class="px-4 sm:px-6 py-3 bg-secondary border-t border-default text-sm">
         {{ footer|safe }}
     </footer>
     {% endif %}

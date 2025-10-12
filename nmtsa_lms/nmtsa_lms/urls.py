@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from django.views.generic import TemplateView
+from lms.sitemaps import sitemaps
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.index, name="index"),
+    path("", views.index, name="landing"),
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),
     path("callback", views.callback, name="callback"),
@@ -31,6 +34,10 @@ urlpatterns = [
     path("teacher/", include('teacher_dash.urls')),
     path("admin-dash/", include('admin_dash.urls')),
     path("lms/", include('lms.urls')),
+    
+    # SEO Files
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 ]
 
 # Media files URL patterns (for file uploads)

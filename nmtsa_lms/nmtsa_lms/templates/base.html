@@ -19,23 +19,50 @@
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:title" content="{% block og_title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Professional neurologic music therapy education with autism-friendly design. Earn certifications online.{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.jpg' %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="NMTSA Learning Logo">
     <meta property="og:site_name" content="NMTSA Learning">
     <meta property="og:locale" content="en_US">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@NMTSALearning">
+    <meta name="twitter:creator" content="@NMTSALearning">
     <meta name="twitter:url" content="{{ request.build_absolute_uri }}">
     <meta name="twitter:title" content="{% block twitter_title %}NMTSA Learning - Neurologic Music Therapy Education{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}Professional neurologic music therapy education with autism-friendly design.{% endblock %}">
-    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.jpg' %}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}{% endblock %}">
+    <meta name="twitter:image:alt" content="NMTSA Learning Logo">
     
     <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicons/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicons/android-chrome-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/favicons/android-chrome-512x512.png' %}">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#CC9300">
+    <meta name="msapplication-TileColor" content="#CC9300">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="copyright" content="© 2025 NMTSA - Neurologic Music Therapy Services of Arizona">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    
+    <!-- Humans.txt -->
+    <link rel="author" href="{% static 'humans.txt' %}" type="text/plain">
     
     <!-- Structured Data (Schema.org) -->
+    <!-- Organization Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -43,7 +70,7 @@
       "name": "NMTSA Learning",
       "description": "Neurologic Music Therapy education platform for healthcare professionals and families",
       "url": "{{ request.scheme }}://{{ request.get_host }}",
-      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}",
       "sameAs": [
         "https://www.facebook.com/nmtsa",
         "https://www.linkedin.com/company/nmtsa"
@@ -56,6 +83,14 @@
     }
     </script>
     
+    <!-- Breadcrumb Schema (auto-generated from context processor) -->
+    {% if breadcrumbs and breadcrumbs|length > 1 %}
+        {% include 'components/breadcrumb_schema.html' %}
+    {% endif %}
+    
+    <!-- Page-specific Schema (blocks for course pages, etc.) -->
+    {% block extra_schema %}{% endblock %}
+    
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     
     <!-- Preload critical resources -->
@@ -64,21 +99,21 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="min-h-screen flex flex-col bg-[color:var(--bg-primary)] text-[color:var(--text-primary)]">
+<body class="min-h-screen flex flex-col bg-primary text-primary">
     <!-- Skip Navigation Links for Screen Readers -->
     <a href="#main-content" 
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-3 focus:bg-[color:var(--accent)] focus:text-white focus:rounded-md focus:shadow-lg"
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
        aria-label="Skip to main content">
         Skip to main content
     </a>
     <a href="#footer-navigation" 
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-48 focus:z-50 focus:px-4 focus:py-3 focus:bg-[color:var(--accent)] focus:text-white focus:rounded-md focus:shadow-lg"
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-48 focus:z-50 focus:px-4 focus:py-3 focus:bg-accent focus:text-white focus:rounded-md focus:shadow-lg"
        aria-label="Skip to footer navigation">
         Skip to footer
     </a>
 
     <!-- Navigation Bar -->
-    <header role="banner" class="sticky top-0 z-40 bg-[color:var(--bg-card)] border-b-2 border-[color:var(--border-color)] shadow-md">
+    <header role="banner" class="sticky top-0 z-40 bg-card border-b-2 border-default shadow-md">
         {% block navbar %}
         {% include 'components/navbar.html' %}
         {% endblock %}
@@ -110,73 +145,73 @@
     <!-- Footer -->
     <footer id="footer-navigation" 
             role="contentinfo" 
-            class="bg-[color:var(--bg-card)] border-t-2 border-[color:var(--border-color)] mt-12"
+            class="bg-card border-t-2 border-default mt-12"
             aria-label="Site footer">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <!-- Footer Content Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
                 <!-- About Section -->
                 <section aria-labelledby="footer-about">
-                    <h3 id="footer-about" class="text-lg font-bold mb-4 text-[color:var(--text-primary)]">
+                    <h3 id="footer-about" class="text-lg font-bold mb-4 text-primary">
                         NMTSA Learning
                     </h3>
-                    <p class="text-[color:var(--text-secondary)] text-sm leading-relaxed">
+                    <p class="text-secondary text-sm leading-relaxed">
                         Changing lives through innovative music therapy education and professional development.
                     </p>
                 </section>
 
                 <!-- Quick Links -->
                 <nav aria-labelledby="footer-quick-links">
-                    <h4 id="footer-quick-links" class="text-lg font-bold mb-4 text-[color:var(--text-primary)]">
+                    <h4 id="footer-quick-links" class="text-lg font-bold mb-4 text-primary">
                         Quick Links
                     </h4>
                     <ul class="space-y-2">
-                        <li><a href="/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Home</a></li>
-                        <li><a href="/courses/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Browse Courses</a></li>
-                        <li><a href="/#about" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">About NMTSA</a></li>
-                        <li><a href="/contact/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Contact Us</a></li>
+                        <li><a href="/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Home</a></li>
+                        <li><a href="/courses/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Browse Courses</a></li>
+                        <li><a href="/#about" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">About NMTSA</a></li>
+                        <li><a href="/contact/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Contact Us</a></li>
                     </ul>
                 </nav>
 
                 <!-- Resources -->
                 <nav aria-labelledby="footer-resources">
-                    <h4 id="footer-resources" class="text-lg font-bold mb-4 text-[color:var(--text-primary)]">
+                    <h4 id="footer-resources" class="text-lg font-bold mb-4 text-primary">
                         Resources
                     </h4>
                     <ul class="space-y-2">
-                        <li><a href="/help/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Help Center</a></li>
-                        <li><a href="/accessibility/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Accessibility</a></li>
-                        <li><a href="/faq/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">FAQ</a></li>
-                        <li><a href="/support/" class="text-[color:var(--text-secondary)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Support</a></li>
+                        <li><a href="/help/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Help Center</a></li>
+                        <li><a href="/accessibility/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Accessibility</a></li>
+                        <li><a href="/faq/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">FAQ</a></li>
+                        <li><a href="/support/" class="text-secondary hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Support</a></li>
                     </ul>
                 </nav>
 
                 <!-- Accessibility Info -->
                 <section aria-labelledby="footer-accessibility">
-                    <h4 id="footer-accessibility" class="text-lg font-bold mb-4 text-[color:var(--text-primary)]">
+                    <h4 id="footer-accessibility" class="text-lg font-bold mb-4 text-primary">
                         Accessibility
                     </h4>
-                    <p class="text-[color:var(--text-secondary)] text-sm leading-relaxed mb-3">
+                    <p class="text-secondary text-sm leading-relaxed mb-3">
                         This platform is designed with autism-friendly accessibility in mind, meeting WCAG 2.1 AAA standards.
                     </p>
-                    <p class="text-[color:var(--text-secondary)] text-sm">
+                    <p class="text-secondary text-sm">
                         Use the settings menu to adjust theme and text size.
                     </p>
                 </section>
             </div>
 
             <!-- Bottom Bar -->
-            <div class="mt-8 pt-8 border-t border-[color:var(--border-color)]">
+            <div class="mt-8 pt-8 border-t border-default">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p class="text-[color:var(--text-muted)] text-sm text-center sm:text-left">
+                    <p class="text-muted text-sm text-center sm:text-left">
                         &copy; 2025 NMTSA. All rights reserved.
                     </p>
                     <nav aria-label="Legal links" class="flex flex-wrap justify-center gap-4">
-                        <a href="/privacy/" class="text-[color:var(--text-muted)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Privacy Policy</a>
-                        <span class="text-[color:var(--text-muted)]" aria-hidden="true">|</span>
-                        <a href="/terms/" class="text-[color:var(--text-muted)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Terms of Service</a>
-                        <span class="text-[color:var(--text-muted)]" aria-hidden="true">|</span>
-                        <a href="/cookies/" class="text-[color:var(--text-muted)] hover:text-[color:var(--primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded">Cookie Policy</a>
+                        <a href="/privacy/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Privacy Policy</a>
+                        <span class="text-muted" aria-hidden="true">|</span>
+                        <a href="/terms/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Terms of Service</a>
+                        <span class="text-muted" aria-hidden="true">|</span>
+                        <a href="/cookies/" class="text-muted hover:text-primary-color text-sm focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded">Cookie Policy</a>
                     </nav>
                 </div>
             </div>

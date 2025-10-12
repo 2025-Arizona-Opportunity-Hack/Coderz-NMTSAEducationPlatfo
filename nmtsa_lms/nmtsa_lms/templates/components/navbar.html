@@ -1,13 +1,13 @@
 {% load static %}
 
-<nav class="w-full bg-[color:var(--bg-card)] px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-[color:var(--border-color)]" 
+<nav class="w-full bg-card px-4 sm:px-6 lg:px-8 py-4 border-b-2 border-default" 
      role="navigation" 
      aria-label="Main navigation">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
         <!-- Logo/Brand -->
         <div class="flex items-center">
             <a href="/" 
-               class="text-xl sm:text-2xl font-bold text-[color:var(--text-primary)] hover:text-[color:var(--primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2 rounded px-2 py-1"
+               class="text-xl sm:text-2xl font-bold text-primary hover:text-primary-color focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
                aria-label="NMTSA Learning home">
                 NMTSA Learning
             </a>
@@ -19,7 +19,7 @@
                 <!-- Authenticated User Menu -->
                 {% if request.session.user.role == 'admin' %}
                     <a href="{% url 'admin_dashboard' %}" 
-                       class="px-4 py-2 text-base font-medium text-[color:var(--text-primary)] hover:text-[color:var(--primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] {% if '/admin-dash/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/admin-dash/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        aria-current="{% if '/admin-dash/' in request.path %}page{% else %}false{% endif %}">
                         Admin Dashboard
                     </a>
@@ -27,7 +27,7 @@
 
                 {% if request.session.user.role == 'teacher' %}
                     <a href="{% url 'teacher_dashboard' %}" 
-                       class="px-4 py-2 text-base font-medium text-[color:var(--text-primary)] hover:text-[color:var(--primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] {% if '/teacher/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/teacher/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        aria-current="{% if '/teacher/' in request.path %}page{% else %}false{% endif %}">
                         Teacher Dashboard
                     </a>
@@ -35,24 +35,17 @@
 
                 {% if request.session.user.role == 'student' %}
                     <a href="{% url 'student_courses' %}" 
-                       class="px-4 py-2 text-base font-medium text-[color:var(--text-primary)] hover:text-[color:var(--primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] {% if '/student/courses/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
                         My Courses
                     </a>
 
                     <a href="{% url 'student_catalog' %}" 
-                       class="px-4 py-2 text-base font-medium text-[color:var(--text-primary)] hover:text-[color:var(--primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] {% if '/student/catalog/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/catalog/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        aria-current="{% if '/student/catalog/' in request.path %}page{% else %}false{% endif %}">
                         Browse Courses
                     </a>
                 {% endif %}
-            {% else %}
-                <!-- Guest User Menu -->
-                <a href="/#about" 
-                   class="px-4 py-2 text-base font-medium text-[color:var(--text-primary)] hover:text-[color:var(--primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)]"
-                   aria-label="Learn about NMTSA">
-                    About
-                </a>
             {% endif %}
         </div>
 
@@ -61,14 +54,13 @@
             <!-- Settings Button -->
             <button onclick="openSettings()"
                     type="button"
-                    class="settings-nav-btn flex items-center justify-center gap-2 px-3 py-2 border-2 border-[color:var(--border-color)] rounded-lg bg-[color:var(--bg-secondary)] text-[color:var(--text-primary)] hover:border-[color:var(--primary)] hover:bg-[color:var(--primary-light)] min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)]"
+                    class="settings-nav-btn flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-primary min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
                     aria-label="Open settings menu"
                     aria-haspopup="dialog">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M12 1v6m0 6v6m8.66-16.5-3 5.2M6.34 14.3l-3 5.2M23 12h-6M7 12H1m15.66 8.5-3-5.2M6.34 9.7l-3-5.2"/>
                 </svg>
-                <span class="hidden sm:inline text-sm font-medium">Settings</span>
             </button>
 
             {% if request.user.is_authenticated or request.session.user %}
@@ -77,7 +69,7 @@
                     <button onclick="toggleUserMenu()"
                             id="user-menu-btn"
                             type="button"
-                            class="flex items-center gap-2 px-3 py-2 border-2 border-[color:var(--border-color)] rounded-lg bg-[color:var(--bg-secondary)] text-[color:var(--text-primary)] hover:border-[color:var(--primary)] hover:bg-[color:var(--primary-light)] min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)]"
+                            class="flex items-center gap-2 px-3 py-2 border-2 border-default rounded-lg bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch focus:outline-none focus:ring-2 focus:ring-focus"
                             aria-label="User menu"
                             aria-expanded="false"
                             aria-haspopup="true">
@@ -108,14 +100,14 @@
 
                     <!-- Dropdown Menu -->
                     <div id="user-menu"
-                         class="hidden absolute right-0 top-full mt-2 w-56 bg-[color:var(--bg-card)] border-2 border-[color:var(--border-color)] rounded-lg shadow-[var(--shadow-lg)] z-50"
+                         class="hidden absolute right-0 top-full mt-2 w-56 bg-card border-2 border-default rounded-lg shadow-lg z-50"
                          role="menu"
                          aria-label="User menu">
 
                         <!-- Role Badge -->
-                        <div class="px-4 py-3 border-b border-[color:var(--border-color)]">
-                            <p class="text-xs text-[color:var(--text-muted)] mb-1">Signed in as</p>
-                            <p class="text-sm font-semibold text-[color:var(--text-primary)]">
+                        <div class="px-4 py-3 border-b border-default">
+                            <p class="text-xs text-muted mb-1">Signed in as</p>
+                            <p class="text-sm font-semibold text-primary">
                                 {% if request.session.user.role == 'student' %}
                                 Student
                                 {% elif request.session.user.role == 'teacher' %}
@@ -137,33 +129,33 @@
                         <!-- Menu Items -->
                         <div class="py-2">
                             <a href="{% url 'profile_settings' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] focus:outline-none focus:bg-[color:var(--primary-light)] min-h-touch"
+                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
                                role="menuitem">
                                 Profile Settings
                             </a>
 
                             {% if request.session.user.role == 'student' %}
                             <a href="{% url 'student_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] focus:outline-none focus:bg-[color:var(--primary-light)] min-h-touch"
+                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
                                role="menuitem">
                                 My Dashboard
                             </a>
                             {% elif request.session.user.role == 'teacher' %}
                             <a href="{% url 'teacher_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] focus:outline-none focus:bg-[color:var(--primary-light)] min-h-touch"
+                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
                                role="menuitem">
                                 Teacher Dashboard
                             </a>
                             {% elif request.session.user.role == 'admin' or request.user.is_staff %}
                             <a href="{% url 'admin_dashboard' %}" 
-                               class="block px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] focus:outline-none focus:bg-[color:var(--primary-light)] min-h-touch"
+                               class="block px-4 py-2 text-sm text-primary hover:bg-secondary focus:outline-none focus:bg-primary-light min-h-touch"
                                role="menuitem">
                                 Admin Dashboard
                             </a>
                             {% endif %}
                         </div>
 
-                        <div class="border-t border-[color:var(--border-color)] py-2">
+                        <div class="border-t border-default py-2">
                             {% if request.user.is_authenticated %}
                             <a href="{% url 'admin_logout' %}" 
                                class="block px-4 py-2 text-sm text-[color:var(--color-error)] hover:bg-[color:var(--color-error-bg)] focus:outline-none focus:bg-[color:var(--color-error-bg)] min-h-touch"
@@ -183,7 +175,7 @@
             {% else %}
                 <!-- Guest User Login Button (Desktop) -->
                 <a href="{% url 'login' %}" 
-                   class="hidden lg:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[color:var(--primary)] hover:bg-[color:var(--primary-hover)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2"
+                   class="hidden lg:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
                    aria-label="Log in to your account">
                     Login
                 </a>
@@ -193,7 +185,7 @@
             <button onclick="toggleMobileMenu()"
                     id="mobile-menu-btn"
                     type="button"
-                    class="lg:hidden flex items-center justify-center p-2 border-2 border-[color:var(--border-color)] rounded-lg bg-[color:var(--bg-secondary)] text-[color:var(--text-primary)] hover:border-[color:var(--primary)] hover:bg-[color:var(--primary-light)] min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)]"
+                    class="lg:hidden flex items-center justify-center p-2 border-2 border-default rounded-lg bg-secondary text-primary hover:border-primary hover:bg-primary-light min-h-touch min-w-touch focus:outline-none focus:ring-2 focus:ring-focus"
                     aria-label="Toggle navigation menu"
                     aria-expanded="false"
                     aria-controls="mobile-menu">
@@ -209,7 +201,7 @@
 
     <!-- Mobile Menu (Hidden by default) -->
     <div id="mobile-menu" 
-         class="lg:hidden hidden mt-4 pb-4 border-t border-[color:var(--border-color)]"
+         class="lg:hidden hidden mt-4 pb-4 border-t border-default"
          role="menu"
          aria-label="Mobile navigation">
         <div class="flex flex-col gap-2 mt-4">
@@ -217,7 +209,7 @@
                 <!-- Authenticated User Mobile Menu -->
                 {% if request.session.user.role == 'admin' %}
                     <a href="{% url 'admin_dashboard' %}" 
-                       class="px-4 py-3 text-base font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch {% if '/admin-dash/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/admin-dash/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        role="menuitem">
                         Admin Dashboard
                     </a>
@@ -225,7 +217,7 @@
 
                 {% if request.session.user.role == 'teacher' %}
                     <a href="{% url 'teacher_dashboard' %}" 
-                       class="px-4 py-3 text-base font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch {% if '/teacher/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/teacher/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        role="menuitem">
                         Teacher Dashboard
                     </a>
@@ -233,23 +225,23 @@
 
                 {% if request.session.user.role == 'student' %}
                     <a href="{% url 'student_courses' %}" 
-                       class="px-4 py-3 text-base font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch {% if '/student/courses/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        role="menuitem">
                         My Courses
                     </a>
 
                     <a href="{% url 'student_catalog' %}" 
-                       class="px-4 py-3 text-base font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch {% if '/student/catalog/' in request.path %}bg-[color:var(--primary-light)] text-[color:var(--primary)] font-semibold{% endif %}"
+                       class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch {% if '/student/catalog/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
                        role="menuitem">
                         Browse Courses
                     </a>
                 {% endif %}
 
                 <!-- User Profile Section -->
-                <div class="mt-4 pt-4 border-t border-[color:var(--border-color)]">
+                <div class="mt-4 pt-4 border-t border-default">
                     <div class="px-4 py-2 mb-2">
-                        <p class="text-xs text-[color:var(--text-muted)]">Signed in as</p>
-                        <p class="text-sm font-semibold text-[color:var(--text-primary)]">
+                        <p class="text-xs text-muted">Signed in as</p>
+                        <p class="text-sm font-semibold text-primary">
                             {% with u=request.session.user %}
                             {% if u and 'userinfo' in u %}
                                 {{ u.full_name|default:u.userinfo.name|default:"User" }}
@@ -261,7 +253,7 @@
                     </div>
 
                     <a href="{% url 'profile_settings' %}" 
-                       class="block px-4 py-3 text-base text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch"
+                       class="block px-4 py-3 text-base text-primary hover:bg-secondary rounded-lg min-h-touch"
                        role="menuitem">
                         Profile Settings
                     </a>
@@ -283,12 +275,12 @@
             {% else %}
                 <!-- Guest User Mobile Menu -->
                 <a href="/#about" 
-                   class="px-4 py-3 text-base font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-secondary)] rounded-lg min-h-touch"
+                   class="px-4 py-3 text-base font-medium text-primary hover:bg-secondary rounded-lg min-h-touch"
                    role="menuitem">
                     About
                 </a>
                 <a href="{% url 'login' %}" 
-                   class="mx-4 mt-4 inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-white bg-[color:var(--primary)] hover:bg-[color:var(--primary-hover)] rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2"
+                   class="mx-4 mt-4 inline-flex items-center justify-center px-4 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2"
                    role="menuitem">
                     Login
                 </a>

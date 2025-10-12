@@ -1,0 +1,35 @@
+{% comment %}
+Breadcrumb Schema.org Structured Data
+Include this on all pages to show breadcrumb navigation in search results.
+
+Usage:
+{% include 'components/breadcrumb_schema.html' with breadcrumbs=breadcrumbs %}
+
+Expected breadcrumbs format:
+breadcrumbs = [
+    {'name': 'Home', 'url': '/'},
+    {'name': 'Courses', 'url': '/student/catalog/'},
+    {'name': 'Course Title', 'url': None}  # Current page (no URL)
+]
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {% for crumb in breadcrumbs %}
+    {
+      "@type": "ListItem",
+      "position": {{ forloop.counter }},
+      "name": "{{ crumb.name|escapejs }}",
+      {% if crumb.url %}
+      "item": "{{ request.scheme }}://{{ request.get_host }}{{ crumb.url }}"
+      {% else %}
+      "item": "{{ request.build_absolute_uri }}"
+      {% endif %}
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>

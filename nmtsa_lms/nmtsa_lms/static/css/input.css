@@ -653,36 +653,60 @@
 }
 
 @layer utilities {
-  /* Theme-aware background utilities */
+  /* ===== BACKGROUND COLORS ===== */
+  /* Theme backgrounds (structural) */
   .bg-primary { background-color: var(--bg-primary) !important; }
   .bg-secondary { background-color: var(--bg-secondary) !important; }
   .bg-card { background-color: var(--bg-card) !important; }
   
-  /* Theme-aware text utilities */
+  /* Brand color backgrounds (for buttons, highlights) - Using --primary variable */
+  .bg-primary-color { background-color: var(--primary) !important; }
+  .bg-primary-hover { background-color: var(--primary-hover) !important; }
+  .bg-primary-light { background-color: var(--primary-light) !important; }
+  .bg-secondary-color { background-color: var(--secondary) !important; }
+  .bg-secondary-hover { background-color: var(--secondary-hover) !important; }
+  .bg-secondary-light { background-color: var(--secondary-light) !important; }
+  .bg-accent { background-color: var(--accent) !important; }
+  .bg-accent-hover { background-color: var(--accent-hover) !important; }
+  .bg-accent-light { background-color: var(--accent-light) !important; }
+  
+  /* ===== TEXT COLORS ===== */
+  /* Theme text colors (structural) */
   .text-primary { color: var(--text-primary) !important; }
   .text-secondary { color: var(--text-secondary) !important; }
   .text-muted { color: var(--text-muted) !important; }
   
-  /* Theme-aware border utilities */
-  .border-color { border-color: var(--border-color) !important; }
+  /* Brand text colors */
+  .text-primary-color { color: var(--primary) !important; }
+  .text-secondary-color { color: var(--secondary) !important; }
+  .text-accent { color: var(--accent) !important; }
   
-  /* Brand color utilities */
-  .bg-brand-primary { background-color: var(--primary) !important; }
-  .bg-brand-secondary { background-color: var(--secondary) !important; }
-  .bg-brand-accent { background-color: var(--accent) !important; }
+  /* ===== BORDER COLORS ===== */
+  .border-default { border-color: var(--border-color) !important; }
+  .border-primary { border-color: var(--primary) !important; }
+  .border-secondary { border-color: var(--secondary) !important; }
+  .border-accent { border-color: var(--accent) !important; }
   
-  .text-brand-primary { color: var(--primary) !important; }
-  .text-brand-secondary { color: var(--secondary) !important; }
-  .text-brand-accent { color: var(--accent) !important; }
+  /* ===== FOCUS & RING ===== */
+  .ring-focus { --tw-ring-color: var(--focus-ring) !important; }
+  .focus\:ring-focus:focus { --tw-ring-color: var(--focus-ring) !important; }
   
-  .border-brand-primary { border-color: var(--primary) !important; }
+  /* ===== GRADIENTS ===== */
+  .from-primary-light { --tw-gradient-from: var(--primary-light) !important; --tw-gradient-to: rgb(255 217 102 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+  .from-secondary-light { --tw-gradient-from: var(--secondary-light) !important; --tw-gradient-to: rgb(255 153 71 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+  .from-accent-light { --tw-gradient-from: var(--accent-light) !important; --tw-gradient-to: rgb(123 79 209 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+  .from-primary { --tw-gradient-from: var(--primary) !important; --tw-gradient-to: rgb(204 147 0 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+  .to-primary { --tw-gradient-to: var(--primary) !important; }
+  .to-secondary { --tw-gradient-to: var(--secondary) !important; }
+  .to-accent { --tw-gradient-to: var(--accent) !important; }
+  .to-secondary-light { --tw-gradient-to: var(--secondary-light) !important; }
   
-  /* Hover states */
-  .hover\:bg-brand-primary-hover:hover { background-color: var(--primary-hover) !important; }
-  .hover\:bg-brand-secondary-hover:hover { background-color: var(--secondary-hover) !important; }
-  .hover\:bg-secondary:hover { background-color: var(--bg-secondary) !important; }
-  .hover\:text-brand-primary:hover { color: var(--primary) !important; }
-  .hover\:border-brand-primary:hover { border-color: var(--primary) !important; }
+  /* ===== HOVER STATES ===== */
+  .hover-bg-primary:hover { background-color: var(--primary) !important; }
+  .hover-bg-primary-hover:hover { background-color: var(--primary-hover) !important; }
+  .hover-bg-primary-light:hover { background-color: var(--primary-light) !important; }
+  .hover-bg-secondary:hover { background-color: var(--bg-secondary) !important; }
+  .hover-text-primary:hover { color: var(--primary) !important; }
   
   /* Semantic colors */
   .bg-success { background-color: var(--color-success-bg) !important; }
@@ -734,6 +758,37 @@
   .flex { display: flex; }
   .inline-flex { display: inline-flex; }
   .grid { display: grid; }
+  
+  /* Gradient utilities using CSS variables */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+  }
+  .bg-gradient-dark {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+  }
+  
+  /* Hover state utilities */
+  .hover-bg-primary:hover { background-color: var(--primary) !important; }
+  .hover-bg-primary-hover:hover { background-color: var(--primary-hover) !important; }
+  .hover-bg-secondary:hover { background-color: var(--secondary) !important; }
+  .hover-bg-accent:hover { background-color: var(--accent) !important; }
+  .hover-bg-primary-light:hover { background-color: var(--primary-light) !important; }
+  
+  .hover-text-primary:hover { color: var(--primary) !important; }
+  .hover-text-white:hover { color: white !important; }
+  
+  /* Focus utilities */
+  .focus-ring-primary:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 4px var(--focus-ring) !important;
+  }
+  
+  /* Min width/height for touch targets (WCAG 2.1 AAA) */
+  .min-h-touch { min-height: 44px; }
+  .min-w-touch { min-width: 44px; }
+  
+  /* Responsive utilities */
+  .rounded-inherit { border-radius: inherit; }
 }
 
 /* ============================================

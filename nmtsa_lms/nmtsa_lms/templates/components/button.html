@@ -19,14 +19,14 @@
 {% if href %}
     <a href="{{ href }}"
        {% if id %}id="{{ id }}"{% endif %}
-       class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2
-              {% if variant == 'primary' %}bg-[color:var(--primary)] text-white hover:bg-[color:var(--primary-hover)] shadow-md
-              {% elif variant == 'secondary' %}bg-[color:var(--secondary)] text-white hover:bg-[color:var(--secondary-hover)] shadow-md
-              {% elif variant == 'outline' %}bg-transparent border-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary-light)]
+       class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+              {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md
+              {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md
+              {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light
               {% elif variant == 'success' %}bg-[color:var(--color-success)] text-white hover:opacity-90 shadow-md
               {% elif variant == 'danger' %}bg-[color:var(--color-error)] text-white hover:opacity-90 shadow-md
               {% elif variant == 'warning' %}bg-[color:var(--color-warning)] text-white hover:opacity-90 shadow-md
-              {% else %}bg-[color:var(--primary)] text-white hover:bg-[color:var(--primary-hover)] shadow-md{% endif %}
+              {% else %}bg-primary text-white hover:bg-primary-hover shadow-md{% endif %}
               {% if size == 'sm' %}text-sm px-3 py-1.5
               {% elif size == 'lg' %}text-lg px-6 py-3
               {% else %}text-base px-4 py-2{% endif %}"
@@ -53,14 +53,14 @@
 {% else %}
     <button type="{{ type|default:'button' }}"
             {% if id %}id="{{ id }}"{% endif %}
-            class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-[color:var(--focus-ring)] focus:ring-offset-2
-                   {% if variant == 'primary' %}bg-[color:var(--primary)] text-white hover:bg-[color:var(--primary-hover)] shadow-md disabled:opacity-60 disabled:cursor-not-allowed
-                   {% elif variant == 'secondary' %}bg-[color:var(--secondary)] text-white hover:bg-[color:var(--secondary-hover)] shadow-md disabled:opacity-60 disabled:cursor-not-allowed
-                   {% elif variant == 'outline' %}bg-transparent border-2 border-[color:var(--primary)] text-[color:var(--primary)] hover:bg-[color:var(--primary-light)] disabled:opacity-60 disabled:cursor-not-allowed
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 font-semibold rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2
+                   {% if variant == 'primary' %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'secondary' %}bg-secondary text-white hover:bg-secondary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed
+                   {% elif variant == 'outline' %}bg-transparent border-2 border-primary text-primary-color hover:bg-primary-light disabled:opacity-60 disabled:cursor-not-allowed
                    {% elif variant == 'success' %}bg-[color:var(--color-success)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
                    {% elif variant == 'danger' %}bg-[color:var(--color-error)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
                    {% elif variant == 'warning' %}bg-[color:var(--color-warning)] text-white hover:opacity-90 shadow-md disabled:opacity-60 disabled:cursor-not-allowed
-                   {% else %}bg-[color:var(--primary)] text-white hover:bg-[color:var(--primary-hover)] shadow-md disabled:opacity-60 disabled:cursor-not-allowed{% endif %}
+                   {% else %}bg-primary text-white hover:bg-primary-hover shadow-md disabled:opacity-60 disabled:cursor-not-allowed{% endif %}
                    {% if size == 'sm' %}text-sm px-3 py-1.5
                    {% elif size == 'lg' %}text-lg px-6 py-3
                    {% else %}text-base px-4 py-2{% endif %}"
