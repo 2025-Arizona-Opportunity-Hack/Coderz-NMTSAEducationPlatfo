@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Course - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'admin_review_courses' %}"
+       style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to Review Queue
+    </a>
+    <h1 class="page-title">Review: {{ course.title }}</h1>
+    <p class="page-description">Review course content and provide feedback to the teacher.</p>
+</div>
+
+<!-- Course Overview Card -->
+<div class="card" style="margin-bottom: var(--spacing-xl);">
+    <h2 style="margin-top: 0;">Course Overview</h2>
+
+    <!-- Teacher Info -->
+    <div style="margin-bottom: var(--spacing-lg);">
+        <p style="margin-bottom: var(--spacing-sm);"><strong>Teacher:</strong> {{ course.published_by.get_full_name|default:course.published_by.email }}</p>
+        <p style="margin-bottom: var(--spacing-sm);"><strong>Submitted:</strong> {{ course.published_date|date:"M d, Y" }}</p>
+        <p style="margin-bottom: var(--spacing-sm);"><strong>Price:</strong>
+            {% if course.price == 0 or not course.is_paid %}
+                Free
+            {% else %}
+                ${{ course.price }}
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Content Stats -->
+    <div style="display: flex; gap: var(--spacing-xl); padding: var(--spacing-lg); background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+        <div>
+            <div style="font-size: calc(2rem * var(--font-scale)); font-weight: 700; color: var(--primary);">{{ modules|length }}</div>
+            <div style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">Module{{ modules|length|pluralize }}</div>
+        </div>
+        <div>
+            <div style="font-size: calc(2rem * var(--font-scale)); font-weight: 700; color: var(--primary);">{{ total_lessons|default:0 }}</div>
+            <div style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale));">Lesson{{ total_lessons|pluralize }}</div>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div>
+        <h3>Course Description</h3>
+        <p style="line-height: 1.8; white-space: pre-line;">{{ course.description }}</p>
+    </div>
+
+    <!-- Preview Button -->
+    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color);">
+        <a href="{% url 'admin_course_preview' course.slug %}"
+           class="btn btn-primary"
+           target="_blank"
+           style="display: inline-flex; align-items: center; gap: var(--spacing-sm);">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path d="M2.5 12c1.6-4.1 5.4-7 9.5-7s7.9 2.9 9.5 7c-1.6 4.1-5.4 7-9.5 7s-7.9-2.9-9.5-7z"/>
+            </svg>
+            Preview Full Course Content
+        </a>
+        <p style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">
+            Opens in new tab - view all modules, lessons, and content as students will see it
+        </p>
+    </div>
+</div>
+
+<!-- Review Action Card -->
+<form method="post" class="card">
+    {% csrf_token %}
+    <h2 style="margin-top: 0;">Review Decision</h2>
+
+    <p style="margin-bottom: var(--spacing-lg); color: var(--text-secondary);">
+        Approve the course to publish it immediately, or send it back to the teacher with feedback for revisions.
+    </p>
+
+    <!-- Feedback Textarea -->
+    <div style="margin-bottom: var(--spacing-xl);">
+        <label for="feedback" style="display: block; font-weight: 600; margin-bottom: var(--spacing-sm); color: var(--text-primary);">
+            Feedback for Teacher (Optional)
+        </label>
+        <textarea
+            name="feedback"
+            id="feedback"
+            rows="5"
+            placeholder="Provide optional feedback to the teacher about this course (e.g., 'Great content! Approved.' or 'Please add more examples to Module 2 before resubmitting.')"
+            style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical; background: var(--bg-secondary);"
+        ></textarea>
+        <small style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale));">
+            Teachers will see this feedback in their course dashboard
+        </small>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+        <button
+            name="action"
+            value="approve"
+            class="btn btn-primary"
+            type="submit"
+            style="display: inline-flex; align-items: center; gap: var(--spacing-sm);">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="m9 12 2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            Approve & Publish
+        </button>
+        <button
+            name="action"
+            value="reject"
+            class="btn btn-outline"
+            type="submit"
+            style="display: inline-flex; align-items: center; gap: var(--spacing-sm);">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="m15 9-6 6"/>
+                <path d="m9 9 6 6"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            Send Back to Draft
+        </button>
+    </div>
+</form>
+{% endblock %}

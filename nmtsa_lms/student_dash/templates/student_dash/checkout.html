@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - {{ course.title }} - NMTSA Learning{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: var(--spacing-xl);">
+    <!-- Simple Navigation -->
+    <nav style="width: 250px; min-height: calc(100vh - 200px); background: var(--bg-card); border-right: 1px solid var(--border-color); padding: var(--spacing-lg);">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/courses/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    <span>My Courses</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/student/catalog/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: #7FA8C9; border-radius: 6px; background: #E8F1F8; font-weight: 600;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <span>Browse Catalog</span>
+                </a>
+            </li>
+            <li style="margin-bottom: var(--spacing-sm);">
+                <a href="/auth/profile/settings/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m8.66-10a9 9 0 0 1 0 8m-17.32 0a9 9 0 0 1 0-8"/>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="flex: 1; max-width: 900px;">
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md) 0;">
+            <ol style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale));">
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="/student/" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Home</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="/student/catalog/" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Course Catalog</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <a href="{% url 'student_course_detail' course.id %}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">{{ course.title }}</a>
+                    <svg width="14" height="14" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <span style="color: var(--text-primary); font-weight: 600;" aria-current="page">Checkout</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Back Link -->
+        <a href="{% url 'student_course_detail' course.id %}"
+           style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-xl); font-size: calc(0.875rem * var(--font-scale)); transition: color 0.2s;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Back to Course
+        </a>
+
+        <!-- Checkout Container -->
+        <div style="display: grid; grid-template-columns: 1fr 400px; gap: var(--spacing-2xl);">
+            <!-- Payment Form -->
+            <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                <h1 style="margin-bottom: var(--spacing-md); font-size: calc(1.75rem * var(--font-scale));">Complete Your Enrollment</h1>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+                    You're almost there! Complete your payment to get instant access to the course.
+                </p>
+
+                <!-- Billing Information (Display Only) -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
+                        Billing Information
+                    </h2>
+
+                    <div style="display: grid; gap: var(--spacing-lg);">
+                        <div style="padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <p style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">Name:</p>
+                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ request.session.user.first_name }} {{ request.session.user.last_name }}</p>
+                        </div>
+                        <div style="padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <p style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">Email:</p>
+                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ request.session.user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
+                        Payment Method
+                    </h2>
+
+                    <!-- PayPal Info -->
+                    <div style="background: #FFF9E6; border: 1px solid #FFE082; border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md);">
+                        <svg width="20" height="20" fill="none" stroke="#F59E0B" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4m0-4h.01"/>
+                        </svg>
+                        <div>
+                            <p style="color: #92400E; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0; font-weight: 600; margin-bottom: 4px;">
+                                Secure Payment via PayPal
+                            </p>
+                            <p style="color: #92400E; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0;">
+                                Click the button below to complete your purchase securely through PayPal. You can pay with your PayPal account or credit/debit card.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="paypal-loading" style="text-align: center; padding: var(--spacing-xl); display: block;">
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p style="margin-top: var(--spacing-md); color: var(--text-secondary);">Loading PayPal...</p>
+                    </div>
+
+                    <!-- PayPal Button Container -->
+                    <div id="paypal-button-container" style="display: none;"></div>
+
+                    <!-- Error Message -->
+                    <div id="payment-error" style="display: none; background: #FEE; border: 1px solid #FCC; border-radius: var(--radius-md); padding: var(--spacing-lg); color: #C00; margin-top: var(--spacing-lg);">
+                        <strong>Payment Error:</strong> <span id="error-message"></span>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div id="payment-success" style="display: none; background: #EFE; border: 1px solid #CFC; border-radius: var(--radius-md); padding: var(--spacing-lg); color: #060; margin-top: var(--spacing-lg);">
+                        <strong>Payment Successful!</strong> Redirecting to course...
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-md); padding: var(--spacing-lg); display: flex; gap: var(--spacing-md);">
+                    <svg width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <p style="color: #1E40AF; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0;">
+                        Your payment is processed securely by PayPal. We never store your payment information on our servers.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div>
+                <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-xl); box-shadow: var(--shadow-md); position: sticky; top: var(--spacing-xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale));">Order Summary</h2>
+
+                    <!-- Course Info -->
+                    <div style="margin-bottom: var(--spacing-xl); padding-bottom: var(--spacing-xl); border-bottom: 1px solid var(--border-color);">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);"></div>
+
+                        <h3 style="margin-bottom: var(--spacing-sm); font-size: calc(1rem * var(--font-scale)); line-height: 1.4;">
+                            {{ course.title }}
+                        </h3>
+
+                        <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: var(--spacing-sm);">
+                            By {{ course.published_by.get_full_name }}
+                        </p>
+
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); color: var(--text-secondary); font-size: calc(0.75rem * var(--font-scale));">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                </svg>
+                                {{ course.num_enrollments }} students
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-md); color: var(--text-secondary);">
+                            <span>Course Price:</span>
+                            <span>${{ course.price }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-top: var(--spacing-md); border-top: 1px solid var(--border-color); font-weight: 700; font-size: calc(1.25rem * var(--font-scale));">
+                            <span>Total:</span>
+                            <span style="color: var(--primary);">${{ course.price }}</span>
+                        </div>
+                    </div>
+
+                    <!-- What's Included -->
+                    <div style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--spacing-lg);">
+                        <h4 style="margin-bottom: var(--spacing-md); font-size: calc(0.875rem * var(--font-scale)); font-weight: 600;">
+                            What's Included:
+                        </h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                            <li style="display: flex; align-items: start; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                                <svg width="16" height="16" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                Lifetime access to all course materials
+                            </li>
+                            <li style="display: flex; align-items: start; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                                <svg width="16" height="16" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                Certificate of completion
+                            </li>
+                            <li style="display: flex; align-items: start; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                                <svg width="16" height="16" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                Learn at your own pace
+                            </li>
+                            <li style="display: flex; align-items: start; gap: var(--spacing-sm); font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary);">
+                                <svg width="16" height="16" fill="none" stroke="#66BB6A" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                Access on mobile and desktop
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD"></script>
+
+<script>
+// Get CSRF token
+function getCsrfToken() {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+            return value;
+        }
+    }
+    return '';
+}
+
+const courseId = {{ course.id }};
+const csrfToken = getCsrfToken();
+
+// Show error message
+function showError(message) {
+    const errorDiv = document.getElementById('payment-error');
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.textContent = message;
+    errorDiv.style.display = 'block';
+    
+    // Hide loading
+    document.getElementById('paypal-loading').style.display = 'none';
+}
+
+// Show success message
+function showSuccess() {
+    document.getElementById('payment-success').style.display = 'block';
+    document.getElementById('paypal-button-container').style.display = 'none';
+}
+
+// Initialize PayPal buttons
+paypal.Buttons({
+    style: {
+        layout: 'vertical',
+        color: 'gold',
+        shape: 'rect',
+        label: 'paypal'
+    },
+    
+    createOrder: function(data, actions) {
+        // Hide loading, show button container
+        document.getElementById('paypal-loading').style.display = 'none';
+        
+        // Call backend to create PayPal order
+        return fetch(`/student/courses/${courseId}/payment/create-order/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Failed to create order');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to create order');
+            }
+            return data.order_id;
+        })
+        .catch(function(error) {
+            console.error('Create order error:', error);
+            showError(error.message);
+            throw error;
+        });
+    },
+    
+    onApprove: function(data, actions) {
+        // Show loading
+        const buttonContainer = document.getElementById('paypal-button-container');
+        buttonContainer.innerHTML = '<div style="text-align: center; padding: var(--spacing-xl);"><div style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div><p style="margin-top: var(--spacing-md); color: var(--text-secondary);">Processing payment...</p></div>';
+        
+        // Call backend to capture payment
+        return fetch(`/student/courses/${courseId}/payment/capture-order/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                order_id: data.orderID
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Payment capture failed');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                throw new Error(data.error || 'Payment capture failed');
+            }
+            
+            // Show success message
+            showSuccess();
+            
+            // Redirect to course
+            setTimeout(function() {
+                window.location.href = data.redirect_url;
+            }, 2000);
+        })
+        .catch(function(error) {
+            console.error('Capture error:', error);
+            showError(error.message);
+        });
+    },
+    
+    onError: function(err) {
+        console.error('PayPal error:', err);
+        showError('A payment error occurred. Please try again or contact support.');
+    },
+    
+    onCancel: function(data) {
+        // User cancelled - just hide loading
+        document.getElementById('paypal-loading').style.display = 'none';
+        console.log('Payment cancelled by user');
+    }
+    
+}).render('#paypal-button-container').then(function() {
+    // Show button container after rendering
+    document.getElementById('paypal-button-container').style.display = 'block';
+    document.getElementById('paypal-loading').style.display = 'none';
+}).catch(function(error) {
+    console.error('PayPal button render error:', error);
+    showError('Failed to load PayPal payment option. Please refresh the page or contact support.');
+});
+</script>
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}

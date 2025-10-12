@@ -1,0 +1,83 @@
+{% comment %}
+Course Schema.org Structured Data
+Include this in course detail pages to enable rich snippets in search results.
+
+Usage:
+{% include 'components/course_schema.html' with course=course %}
+
+Required context:
+- course: Course object with all fields
+{% endcomment %}
+
+{% load static %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "{{ course.title }}",
+  "description": "{{ course.description|truncatewords:50|escapejs }}",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "NMTSA Learning",
+    "url": "{{ request.scheme }}://{{ request.get_host }}"
+  },
+  "url": "{{ request.build_absolute_uri }}",
+  "courseCode": "NMTSA-{{ course.id }}",
+  {% if course.created_by %}
+  "instructor": {
+    "@type": "Person",
+    "name": "{{ course.created_by.first_name }} {{ course.created_by.last_name }}",
+    {% if course.created_by.email %}
+    "email": "{{ course.created_by.email }}"
+    {% endif %}
+  },
+  {% endif %}
+  {% if course.is_paid %}
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ course.price }}",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "url": "{{ request.build_absolute_uri }}",
+    "validFrom": "{{ course.created_at|date:'c' }}"
+  },
+  {% else %}
+  "isAccessibleForFree": true,
+  {% endif %}
+  "educationalLevel": "{% if 'beginner' in course.description|lower %}Beginner{% elif 'advanced' in course.description|lower %}Advanced{% else %}Intermediate{% endif %}",
+  "inLanguage": "en-US",
+  "availableLanguage": "en",
+  {% if course.thumbnail %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ course.thumbnail.url }}",
+  {% else %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicons/android-chrome-512x512.png' %}",
+  {% endif %}
+  "datePublished": "{{ course.created_at|date:'c' }}",
+  {% if course.updated_at %}
+  "dateModified": "{{ course.updated_at|date:'c' }}",
+  {% endif %}
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT{{ course.total_duration|default:0 }}M",
+    "instructor": {
+      "@type": "Person",
+      "name": "{{ course.created_by.first_name }} {{ course.created_by.last_name }}"
+    }
+  },
+  "keywords": "{% for tag in course.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}",
+  "teaches": "Neurologic Music Therapy techniques for autism support and healthcare applications",
+  "about": {
+    "@type": "Thing",
+    "name": "Neurologic Music Therapy"
+  },
+  "educationalCredentialAwarded": "Certificate of Completion",
+  "timeRequired": "PT{{ course.total_duration|default:0 }}M",
+  "typicalAgeRange": "18+",
+  "audience": {
+    "@type": "EducationalAudience",
+    "educationalRole": "{% if 'professional' in course.description|lower or 'therapist' in course.description|lower %}professional{% else %}student{% endif %}"
+  }
+}
+</script>

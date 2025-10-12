@@ -1,0 +1,576 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Catalog - NMTSA Learning{% endblock %}
+
+{% block description %}Browse our comprehensive collection of neurologic music therapy courses. Professional education for autism support, healthcare professionals, and families.{% endblock %}
+
+{% block keywords %}neurologic music therapy courses, NMT certification, autism therapy courses, music therapy education, professional development courses, healthcare education online{% endblock %}
+
+{% block og_title %}Course Catalog - NMTSA Learning{% endblock %}
+{% block og_description %}Browse our comprehensive collection of neurologic music therapy courses for professionals and families.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Browse Courses</h1>
+    <p class="page-description">Explore our comprehensive collection of neurologic music therapy courses</p>
+</div>
+
+<div class="catalog-container">
+    <!-- Filters Sidebar (Desktop) / Dropdown (Mobile) -->
+    <aside id="filters-sidebar" class="filters-sidebar">
+        <div class="filters-header">
+            <h2 class="filters-title">Filters</h2>
+            <button id="close-filters-btn" class="close-filters-btn" aria-label="Close filters">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-section">
+            <h3 class="filter-heading">Price</h3>
+            <div class="filter-options">
+                <label class="filter-label">
+                    <input type="checkbox" name="price" value="free" class="filter-checkbox">
+                    <span class="filter-text">Free Courses</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="price" value="paid" class="filter-checkbox">
+                    <span class="filter-text">Paid Courses</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-section">
+            <h3 class="filter-heading">Category</h3>
+            <div class="filter-options">
+                <label class="filter-label">
+                    <input type="checkbox" name="category" value="therapy" class="filter-checkbox">
+                    <span class="filter-text">Therapy Techniques</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="category" value="family" class="filter-checkbox">
+                    <span class="filter-text">Family Support</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="category" value="professional" class="filter-checkbox">
+                    <span class="filter-text">Professional Development</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="category" value="certification" class="filter-checkbox">
+                    <span class="filter-text">Certification Programs</span>
+                </label>
+            </div>
+
+        <!-- Duration Filter -->
+        <div class="filter-section">
+            <h3 class="filter-heading">Duration</h3>
+            <div class="filter-options">
+                <label class="filter-label">
+                    <input type="checkbox" name="duration" value="short" class="filter-checkbox">
+                    <span class="filter-text">Under 2 hours</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="duration" value="medium" class="filter-checkbox">
+                    <span class="filter-text">2-5 hours</span>
+                </label>
+                <label class="filter-label">
+                    <input type="checkbox" name="duration" value="long" class="filter-checkbox">
+                    <span class="filter-text">5+ hours</span>
+                </label>
+            </div>
+
+        <button type="button" onclick="window.location.reload()" class="clear-filters-btn">
+            Clear All Filters
+        </a>
+    </aside>
+
+    <!-- Courses Grid -->
+    <main class="courses-main">
+        <!-- Search Bar and Filter Button -->
+        <div class="search-filter-container">
+            <form method="get" action="/browse-courses/" class="search-form">
+                <div class="search-input-wrapper">
+                    <input type="search"
+                           name="q"
+                           placeholder="Search courses by title or description..."
+                           class="form-input"
+                           style="padding-left: 48px;"
+                           value="{{ filters.q }}">
+                    <svg width="20" height="20" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 16px; top: 14px;">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+            </form>
+            
+            <!-- Mobile Filter Button -->
+            <button id="toggle-filters-btn" class="toggle-filters-btn" aria-label="Toggle filters">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <line x1="4" y1="12" x2="20" y2="12"></line>
+                    <line x1="4" y1="18" x2="14" y2="18"></line>
+                    <circle cx="18" cy="18" r="2"></circle>
+                </svg>
+                <span>Filters</span>
+            </button>
+        </div>
+
+        <!-- Results Count -->
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+            Showing {{ courses|length }} course{{ courses|length|pluralize }}
+        </p>
+
+        <!-- Courses Grid -->
+        {% if courses %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+            {% for course in courses %}
+            <div class="card">
+                {% if course.image %}
+                <img src="{{ course.image }}" alt="{{ course.title }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px; margin-bottom: var(--spacing-md);">
+                {% else %}
+                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #E8F1F8 0%, #D9E8F4 100%); border-radius: 6px; margin-bottom: var(--spacing-md); display: flex; align-items: center; justify-content: center;">
+                    <svg width="64" height="64" fill="none" stroke="#7FA8C9" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                {% endif %}
+
+                <h3 style="margin-top: 0; margin-bottom: var(--spacing-sm);">
+                    <a href="{% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                       style="text-decoration: none; color: var(--text-primary);">
+                        {{ course.title }}
+                    </a>
+                </h3>
+
+                <p style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: var(--spacing-md);">
+                    {{ course.description|truncatewords:20 }}
+                </p>
+
+                <!-- Course Meta -->
+                <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-md); flex-wrap: wrap;">
+                    <span style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); display: flex; align-items: center; gap: 4px;">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                        </svg>
+                        {{ course.modules.count }} modules
+                    </span>
+                    <span style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); display: flex; align-items: center; gap: 4px;">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                        </svg>
+                        {{ course.num_enrollments }} students
+                    </span>
+                </div>
+
+                <!-- Price and Action Button -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--spacing-md); border-top: 1px solid var(--border-color);">
+                    <span style="font-size: calc(1.25rem * var(--font-scale)); font-weight: 600; color: var(--text-primary);">
+                        {% if course.is_paid %}
+                            ${{ course.price }}
+                        {% else %}
+                            <span style="color: #66BB6A;">Free</span>
+                        {% endif %}
+                    </span>
+                    
+                    {% if course.user_enrolled %}
+                        <!-- Enrolled - Continue learning -->
+                        <a href="{% url 'student_learning' course.slug %}" 
+                           class="btn btn-sm"
+                           style="padding: 8px 16px; background: #66BB6A; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            Continue Learning
+                        </a>
+                    {% elif request.is_authenticated_user %}
+                        <!-- Authenticated but not enrolled -->
+                        <a href="{% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                           class="btn btn-primary btn-sm"
+                           style="padding: 8px 16px; background: var(--primary); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            View Course
+                        </a>
+                    {% else %}
+                        <!-- Anonymous user -->
+                        <a href="{% url 'login' %}?next={% if is_public_view %}{% url 'public_course_detail' course.slug %}{% else %}{% url 'student_course_detail' course.slug %}{% endif %}" 
+                           class="btn btn-sm"
+                           style="padding: 8px 16px; background: var(--primary); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: calc(0.875rem * var(--font-scale));">
+                            Sign In to Enroll
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info" style="text-align: center; padding: var(--spacing-2xl);">
+            <svg width="64" height="64" fill="none" stroke="#7FA8C9" stroke-width="2" viewBox="0 0 24 24" style="margin: 0 auto var(--spacing-lg);">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <h3>No courses found</h3>
+            <p>Try adjusting your filters or search query</p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+
+<script>
+// Search functionality
+function searchCourses() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const courseCards = document.querySelectorAll('.course-card');
+    let visibleCount = 0;
+
+    courseCards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        const description = card.getAttribute('data-description');
+
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            card.style.display = 'flex';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    updateResultsCount(visibleCount);
+}
+
+// Price filter
+function filterCourses() {
+    const priceFilter = document.getElementById('price-filter').value;
+    const courseCards = document.querySelectorAll('.course-card');
+    let visibleCount = 0;
+
+    courseCards.forEach(card => {
+        const price = parseFloat(card.getAttribute('data-price'));
+        let shouldShow = true;
+
+        if (priceFilter === 'free' && price > 0) {
+            shouldShow = false;
+        } else if (priceFilter === 'paid' && price === 0) {
+            shouldShow = false;
+        }
+
+        if (shouldShow && card.style.display !== 'none') {
+            card.style.display = 'flex';
+            visibleCount++;
+        } else if (!shouldShow) {
+            card.style.display = 'none';
+        }
+    });
+
+    updateResultsCount(visibleCount);
+}
+
+// Sort functionality
+function sortCourses() {
+    const sortBy = document.getElementById('sort-by').value;
+    const grid = document.getElementById('courses-grid');
+    const cards = Array.from(document.querySelectorAll('.course-card'));
+
+    cards.sort((a, b) => {
+        switch(sortBy) {
+            case 'newest':
+                return parseFloat(b.getAttribute('data-date')) - parseFloat(a.getAttribute('data-date'));
+            case 'popular':
+                return parseFloat(b.getAttribute('data-enrollments')) - parseFloat(a.getAttribute('data-enrollments'));
+            case 'price-low':
+                return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+            case 'price-high':
+                return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+            default:
+                return 0;
+        }
+    });
+
+    // Clear and re-append sorted cards
+    grid.innerHTML = '';
+    cards.forEach(card => grid.appendChild(card));
+}
+
+// Update results count
+function updateResultsCount(count) {
+    document.getElementById('results-count').textContent = `${count} courses found`;
+}
+
+// Add hover effect to cards (only on desktop, autism-friendly on mobile)
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.card');
+
+    if (window.innerWidth > 768) {
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.boxShadow = 'var(--shadow-lg)';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = 'var(--shadow-sm)';
+            });
+        });
+    }
+});
+
+// Mobile filter toggle functionality
+const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+const closeFiltersBtn = document.getElementById('close-filters-btn');
+const filtersSidebar = document.getElementById('filters-sidebar');
+
+if (toggleFiltersBtn && filtersSidebar) {
+    toggleFiltersBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        filtersSidebar.classList.toggle('filters-open');
+    });
+}
+
+if (closeFiltersBtn && filtersSidebar) {
+    closeFiltersBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        filtersSidebar.classList.remove('filters-open');
+    });
+}
+
+// Close filters when clicking outside (on mobile)
+document.addEventListener('click', (e) => {
+    if (filtersSidebar && 
+        filtersSidebar.classList.contains('filters-open') &&
+        !filtersSidebar.contains(e.target) && 
+        !toggleFiltersBtn.contains(e.target)) {
+        filtersSidebar.classList.remove('filters-open');
+    }
+});
+</script>
+
+<style>
+/* Responsive Catalog Layout */
+.catalog-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: var(--spacing-xl);
+}
+
+.filters-sidebar {
+    background: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    height: fit-content;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.filters-title {
+    font-size: calc(1.25rem * var(--font-scale));
+    margin: 0;
+}
+
+.close-filters-btn {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--text-primary);
+    border-radius: 4px;
+}
+
+.close-filters-btn:hover {
+    background: var(--bg-secondary);
+}
+
+/* Filter Sections */
+.filter-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.filter-heading {
+    font-size: calc(1rem * var(--font-scale));
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+}
+
+.filter-label:hover {
+    background: var(--bg-secondary);
+}
+
+.filter-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.filter-text {
+    font-size: calc(0.875rem * var(--font-scale));
+    user-select: none;
+}
+
+.clear-filters-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: calc(0.875rem * var(--font-scale));
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-filters-btn:hover {
+    border-color: var(--primary);
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+.search-filter-container {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.search-form {
+    flex: 1;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.toggle-filters-btn {
+    display: none; /* Hidden on desktop */
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.toggle-filters-btn:hover {
+    border-color: var(--primary);
+    background: var(--bg-secondary);
+}
+
+.toggle-filters-btn svg {
+    flex-shrink: 0;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .catalog-container {
+        display: block;
+    }
+    
+    .filters-sidebar {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        width: 320px;
+        max-width: calc(100vw - 2rem);
+        max-height: 70vh;
+        z-index: 1000;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    
+    .filters-sidebar.filters-open {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .close-filters-btn {
+        display: flex;
+        color: var(--text-primary);
+    }
+    
+    .toggle-filters-btn {
+        display: flex;
+        color: var(--text-primary);
+    }
+    
+    .search-filter-container {
+        flex-wrap: nowrap;
+        position: relative;
+    }
+    
+    .search-form {
+        flex: 1;
+        min-width: 0; /* Allow flex item to shrink */
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .filters-sidebar {
+        width: 85%;
+        max-width: none;
+    }
+    
+    .search-filter-container {
+        gap: 0.5rem;
+    }
+    
+    .toggle-filters-btn {
+        padding: 0.75rem;
+    }
+    
+    .toggle-filters-btn span {
+        display: none; /* Hide text, show only icon on very small screens */
+    }
+}
+
+/* Tablet responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .catalog-container {
+        grid-template-columns: 200px 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .filters-sidebar {
+        padding: var(--spacing-md);
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Privacy Policy - NMTSA Learning{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background py-12">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-primary mb-4">Privacy Policy</h1>
+      <p class="text-muted text-sm">Last Updated: October 12, 2025</p>
+    </div>
+
+    <!-- Content -->
+    <div class="bg-card rounded-lg border-2 border-default p-6 sm:p-8 space-y-8">
+      
+      <!-- Introduction -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">1. Introduction</h2>
+        <p class="text-primary-text mb-4">
+          Welcome to NMTSA Learning ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Learning Management System (LMS) platform.
+        </p>
+        <p class="text-primary-text">
+          By accessing or using NMTSA Learning, you agree to the terms outlined in this Privacy Policy. If you do not agree with these terms, please do not use our platform.
+        </p>
+      </section>
+
+      <!-- Information We Collect -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">2. Information We Collect</h2>
+        
+        <h3 class="text-xl font-semibold text-primary mb-3">2.1 Information You Provide</h3>
+        <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
+          <li><strong>Account Information:</strong> Name, email address, username, and password (via Auth0)</li>
+          <li><strong>Profile Information:</strong> Professional credentials, certifications, educational background, and bio</li>
+          <li><strong>Payment Information:</strong> Billing details processed through PayPal (we do not store credit card information)</li>
+          <li><strong>Course Content:</strong> Uploaded videos, lesson materials, discussion posts, and assignments</li>
+          <li><strong>Communications:</strong> Messages sent through our chat system, support inquiries, and feedback</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">2.2 Information Collected Automatically</h3>
+        <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
+          <li><strong>Usage Data:</strong> Course progress, video watch time, lesson completions, and quiz results</li>
+          <li><strong>Device Information:</strong> IP address, browser type, operating system, and device identifiers</li>
+          <li><strong>Log Data:</strong> Access times, pages viewed, and navigation patterns</li>
+          <li><strong>Cookies:</strong> Session tokens, preferences, and analytics data (see our <a href="{% url 'cookie_policy' %}" class="text-[color:var(--primary-hover)] hover:underline">Cookie Policy</a>)</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">2.3 Third-Party Information</h3>
+        <ul class="list-disc pl-6 text-primary-text space-y-2">
+          <li><strong>Auth0:</strong> OAuth authentication data (email, name, profile picture)</li>
+          <li><strong>PayPal:</strong> Transaction IDs and payment status</li>
+          <li><strong>Supermemory AI:</strong> Chat interactions for personalized course recommendations</li>
+        </ul>
+      </section>
+
+      <!-- How We Use Your Information -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">3. How We Use Your Information</h2>
+        <p class="text-primary-text mb-4">We use your information for the following purposes:</p>
+        <ul class="list-disc pl-6 text-primary-text space-y-2">
+          <li><strong>Platform Operation:</strong> To provide, maintain, and improve our LMS services</li>
+          <li><strong>User Authentication:</strong> To verify your identity and manage your account</li>
+          <li><strong>Course Management:</strong> To track progress, issue certificates, and manage enrollments</li>
+          <li><strong>Payment Processing:</strong> To process course purchases and manage subscriptions</li>
+          <li><strong>Communication:</strong> To send course updates, notifications, and respond to inquiries</li>
+          <li><strong>Personalization:</strong> To recommend courses and customize your learning experience</li>
+          <li><strong>Analytics:</strong> To understand usage patterns and improve platform functionality</li>
+          <li><strong>Safety & Security:</strong> To detect fraud, prevent abuse, and protect user safety</li>
+          <li><strong>Compliance:</strong> To meet legal obligations and enforce our Terms of Service</li>
+          <li><strong>Research:</strong> Anonymized data for educational research (with your consent)</li>
+        </ul>
+      </section>
+
+      <!-- Information Sharing -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">4. How We Share Your Information</h2>
+        <p class="text-primary-text mb-4">We do not sell your personal information. We may share your data with:</p>
+        
+        <h3 class="text-xl font-semibold text-primary mb-3">4.1 Service Providers</h3>
+        <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
+          <li><strong>Auth0:</strong> Authentication and user management</li>
+          <li><strong>PayPal:</strong> Payment processing</li>
+          <li><strong>Supermemory AI:</strong> Chat support and course recommendations</li>
+          <li><strong>Cloud Storage:</strong> Video hosting and file storage (if applicable)</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">4.2 Within the Platform</h3>
+        <ul class="list-disc pl-6 text-primary-text space-y-2 mb-4">
+          <li><strong>Teachers:</strong> Can view enrolled students' progress and completion data</li>
+          <li><strong>Students:</strong> Public profile information visible in discussion forums</li>
+          <li><strong>Administrators:</strong> Access to user data for verification and support purposes</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-primary mb-3">4.3 Legal Requirements</h3>
+        <p class="text-primary-text">
+          We may disclose your information if required by law, court order, or to protect our rights, property, or safety, or that of our users or the public.
+        </p>
+      </section>
+
+      <!-- Data Security -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">5. Data Security</h2>
+        <p class="text-primary-text mb-4">We implement industry-standard security measures to protect your information:</p>
+        <ul class="list-disc pl-6 text-primary-text space-y-2">
+          <li><strong>Encryption:</strong> HTTPS/TLS for data in transit</li>
+          <li><strong>Authentication:</strong> OAuth 2.0 via Auth0 with secure password policies</li>
+          <li><strong>Access Controls:</strong> Role-based permissions (student, teacher, admin)</li>
+          <li><strong>Regular Audits:</strong> Security assessments and vulnerability testing</li>
+          <li><strong>Data Backups:</strong> Regular backups to prevent data loss</li>
+        </ul>
+        <p class="text-primary-text mt-4">
+          However, no method of transmission over the internet is 100% secure. We cannot guarantee absolute security.
+        </p>
+      </section>
+
+      <!-- Your Rights -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">6. Your Rights and Choices</h2>
+        <p class="text-primary-text mb-4">You have the following rights regarding your personal information:</p>
+        <ul class="list-disc pl-6 text-primary-text space-y-2">
+          <li><strong>Access:</strong> Request a copy of your personal data</li>
+          <li><strong>Correction:</strong> Update or correct inaccurate information in your profile</li>
+          <li><strong>Deletion:</strong> Request deletion of your account and associated data</li>
+          <li><strong>Portability:</strong> Export your course progress and completion data</li>
+          <li><strong>Opt-Out:</strong> Unsubscribe from marketing emails (course notifications will still be sent)</li>
+          <li><strong>Cookie Management:</strong> Control cookie preferences in your browser settings</li>
+        </ul>
+        <p class="text-primary-text mt-4">
+          To exercise these rights, contact us at <a href="mailto:privacy@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">privacy@nmtsalearning.org</a>.
+        </p>
+      </section>
+
+      <!-- Children's Privacy -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">7. Children's Privacy</h2>
+        <p class="text-primary-text">
+          NMTSA Learning is intended for users aged 18 and older. We do not knowingly collect information from children under 13. If you believe a child has provided us with personal information, please contact us immediately at <a href="mailto:privacy@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">privacy@nmtsalearning.org</a>, and we will delete the information.
+        </p>
+      </section>
+
+      <!-- International Users -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">8. International Users</h2>
+        <p class="text-primary-text">
+          NMTSA Learning is operated in the United States. If you are accessing our platform from outside the U.S., your information may be transferred to, stored, and processed in the U.S. By using our services, you consent to this transfer.
+        </p>
+      </section>
+
+      <!-- Changes to Privacy Policy -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">9. Changes to This Privacy Policy</h2>
+        <p class="text-primary-text">
+          We may update this Privacy Policy from time to time. We will notify you of significant changes by posting a notice on our platform or sending an email. Your continued use of NMTSA Learning after changes take effect constitutes acceptance of the revised policy.
+        </p>
+      </section>
+
+      <!-- Contact Information -->
+      <section>
+        <h2 class="text-2xl font-bold text-primary mb-4">10. Contact Us</h2>
+        <p class="text-primary-text mb-4">
+          If you have questions or concerns about this Privacy Policy, please contact us:
+        </p>
+        <div class="bg-background border-2 border-default rounded-lg p-4 text-primary-text">
+          <p><strong>NMTSA Learning</strong></p>
+          <p>Email: <a href="mailto:privacy@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">privacy@nmtsalearning.org</a></p>
+          <p>Support: <a href="mailto:support@nmtsalearning.org" class="text-[color:var(--primary-hover)] hover:underline">support@nmtsalearning.org</a></p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Back to Home -->
+    <div class="mt-8 text-center">
+      <a href="{% url 'landing' %}" class="inline-flex items-center text-[color:var(--primary-hover)] hover:underline">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

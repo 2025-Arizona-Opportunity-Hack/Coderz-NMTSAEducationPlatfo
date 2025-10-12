@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Profile Setup - NMTSA Learning{% endblock %}
+
+{% block content %}
+<section style="max-width: 900px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
+    <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
+        <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
+            Complete Your Educator Profile
+        </h1>
+        <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
+            Help us verify your credentials to start creating courses
+        </p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+            <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
+                Professional Information
+            </h2>
+
+            <div style="display: grid; gap: var(--spacing-lg);">
+                <!-- Bio -->
+                <div>
+                    <label for="bio" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Professional Bio <span style="color: var(--error);">*</span>
+                    </label>
+                    <textarea
+                        id="bio"
+                        name="bio"
+                        required
+                        rows="4"
+                        placeholder="Tell us about your professional background and experience in neurologic music therapy or related fields"
+                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
+                    >{{ teacher_profile.bio }}</textarea>
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                        Minimum 50 characters
+                    </p>
+                </div>
+
+                <!-- Specialization -->
+                <div>
+                    <label for="specialization" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Area of Specialization <span style="color: var(--error);">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="specialization"
+                        name="specialization"
+                        value="{{ teacher_profile.specialization }}"
+                        required
+                        placeholder="e.g., Neurologic Music Therapy, Autism Support, Music Education"
+                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
+                    >
+                </div>
+
+                <!-- Years of Experience -->
+                <div>
+                    <label for="years_experience" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Years of Professional Experience <span style="color: var(--error);">*</span>
+                    </label>
+                    <input
+                        type="number"
+                        id="years_experience"
+                        name="years_experience"
+                        value="{{ teacher_profile.years_experience }}"
+                        required
+                        min="0"
+                        max="70"
+                        placeholder="5"
+                        style="width: 200px; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
+                    >
+                </div>
+
+                <!-- Credentials -->
+                <div>
+                    <label for="credentials" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Professional Credentials <span style="color: var(--error);">*</span>
+                    </label>
+                    <textarea
+                        id="credentials"
+                        name="credentials"
+                        required
+                        rows="4"
+                        placeholder="List your degrees, certifications, licenses, and professional credentials (e.g., MA in Music Therapy, NMT-Fellow, Board Certified Music Therapist)"
+                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
+                    >{{ teacher_profile.credentials }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Uploads -->
+        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+            <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
+                Supporting Documents
+            </h2>
+
+            <div style="display: grid; gap: var(--spacing-xl);">
+                <!-- Resume Upload -->
+                <div>
+                    <label for="resume" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Resume / CV <span style="color: var(--error);">*</span>
+                    </label>
+                    <input
+                        type="file"
+                        id="resume"
+                        name="resume"
+                        accept=".pdf,.doc,.docx"
+                        {% if not teacher_profile.resume %}required{% endif %}
+                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);"
+                    >
+                    {% if teacher_profile.resume %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--success); margin-top: var(--spacing-sm);">
+                        ✓ Current file: {{ teacher_profile.resume.name }}
+                    </p>
+                    {% endif %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                        Accepted formats: PDF, DOC, DOCX (Max 10MB)
+                    </p>
+                </div>
+
+                <!-- Certifications Upload -->
+                <div>
+                    <label for="certifications" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        Certifications & Licenses <span style="color: var(--error);">*</span>
+                    </label>
+                    <input
+                        type="file"
+                        id="certifications"
+                        name="certifications"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        {% if not teacher_profile.certifications %}required{% endif %}
+                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);"
+                    >
+                    {% if teacher_profile.certifications %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--success); margin-top: var(--spacing-sm);">
+                        ✓ Current file: {{ teacher_profile.certifications.name }}
+                    </p>
+                    {% endif %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                        Upload scans or photos of your certifications (PDF, JPG, PNG - Max 10MB)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- What Happens Next -->
+        <div style="background: var(--info-light); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 4px solid var(--info); margin-bottom: var(--spacing-xl);">
+            <h3 style="margin-bottom: var(--spacing-md); font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary);">
+                What Happens Next?
+            </h3>
+            <ul style="margin: 0; padding-left: var(--spacing-xl); color: var(--text-secondary); line-height: 1.8; list-style-type: disc;">
+                <li style="margin-bottom: var(--spacing-sm);">Your application will be reviewed by our admin team</li>
+                <li style="margin-bottom: var(--spacing-sm);">We will verify your credentials and professional background</li>
+                <li style="margin-bottom: var(--spacing-sm);">You will receive an email notification within 2-3 business days</li>
+                <li style="margin-bottom: var(--spacing-sm);">Once approved, you can start creating and publishing courses</li>
+            </ul>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 250px;">
+                Submit for Verification
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}

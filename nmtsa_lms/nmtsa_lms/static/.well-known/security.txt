@@ -1,0 +1,38 @@
+Contact: mailto:security@nmtsalearning.com
+Contact: https://nmtsalearning.com/security
+Expires: 2026-10-11T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://nmtsalearning.com/.well-known/security.txt
+
+# Security Policy for NMTSA Learning Platform
+
+# If you discover a security vulnerability, please report it to us at:
+# security@nmtsalearning.com
+
+# We take all security reports seriously and will respond promptly.
+
+# Please include:
+# - Description of the vulnerability
+# - Steps to reproduce
+# - Potential impact
+# - Suggested fix (if any)
+
+# We appreciate responsible disclosure and will:
+# - Acknowledge receipt within 48 hours
+# - Provide regular updates on progress
+# - Credit researchers (unless anonymity is requested)
+# - Work with you to understand and fix the issue
+
+Acknowledgments: https://nmtsalearning.com/security/acknowledgments
+
+# Encryption key for secure communication
+# Encryption: https://nmtsalearning.com/pgp-key.txt
+
+# Scope
+# In scope: nmtsalearning.com and all subdomains
+# Out of scope: Third-party services (Auth0, PayPal, etc.)
+
+Policy: https://nmtsalearning.com/security-policy
+
+# Hiring
+Hiring: https://nmtsalearning.com/careers
