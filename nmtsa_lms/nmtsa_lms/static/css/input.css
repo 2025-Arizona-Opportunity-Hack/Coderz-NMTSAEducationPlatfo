@@ -308,16 +308,27 @@
   }
 
   .btn-primary {
-    background-color: var(--primary);
+    background-color: var(--primary-hover);
     color: #FFFFFF;
-    border-color: var(--primary);
+    border-color: var(--primary-hover);
   }
 
   .btn-primary:hover {
-    background-color: var(--primary-hover);
-    border-color: var(--primary-hover);
+    background-color: var(--primary);
+    border-color: var(--primary);
     box-shadow: var(--shadow-md);
     text-decoration: none;
+  }
+
+  /* Dark theme button override for proper contrast */
+  [data-theme="dark"] .btn-primary {
+    background-color: #CC9300;  /* Original gold color - dark enough for white text */
+    border-color: #CC9300;
+  }
+
+  [data-theme="dark"] .btn-primary:hover {
+    background-color: #996D00;  /* Darker on hover */
+    border-color: #996D00;
   }
 
   .btn-secondary {

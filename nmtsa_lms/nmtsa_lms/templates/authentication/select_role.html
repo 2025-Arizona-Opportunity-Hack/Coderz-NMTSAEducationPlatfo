@@ -21,8 +21,8 @@
             <label class="card" style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
                 <input type="radio" name="role" value="student" required style="display: none;">
                 <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--secondary-light), var(--secondary)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
+                    <div class="role-icon-student" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--secondary), var(--secondary-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"/>
@@ -41,8 +41,8 @@
             <label class="card" style="cursor: pointer; padding: var(--spacing-xl); border: 2px solid var(--border-color); transition: all 0.15s ease;">
                 <input type="radio" name="role" value="teacher" required style="display: none;">
                 <div style="display: flex; align-items: start; gap: var(--spacing-lg);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
+                    <div class="role-icon-teacher" style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                         </svg>
@@ -72,15 +72,43 @@
 </section>
 
 <style>
-    /* Radio button styling */
-    input[type="radio"]:checked + div {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
+    /* Radio button styling - Highlight entire card when selected */
+    label.card:has(input[type="radio"]:checked) {
+        border-color: var(--primary-hover) !important;
+        border-width: 3px !important;
+        background-color: var(--primary-light) !important;
+    }
+
+    /* Ensure text remains readable on selected card background */
+    label.card:has(input[type="radio"]:checked) h3 {
+        color: var(--text-primary);
     }
 
     label.card:hover {
         border-color: var(--primary);
         transform: translateY(-2px);
+    }
+
+    /* Ensure proper focus states for accessibility */
+    label.card:focus-within {
+        outline: 3px solid var(--focus-ring);
+        outline-offset: 2px;
+    }
+
+    /* Ensure icon backgrounds have sufficient contrast in all themes */
+    .role-icon-student,
+    .role-icon-teacher {
+        /* Fallback for themes where gradients might not be dark enough */
+        min-width: 60px;
+    }
+
+    /* High contrast theme: Use solid dark backgrounds for icon boxes */
+    [data-theme="contrast"] .role-icon-student {
+        background: var(--secondary-hover) !important;
+    }
+
+    [data-theme="contrast"] .role-icon-teacher {
+        background: var(--accent-hover) !important;
     }
 </style>
 {% endblock %}
