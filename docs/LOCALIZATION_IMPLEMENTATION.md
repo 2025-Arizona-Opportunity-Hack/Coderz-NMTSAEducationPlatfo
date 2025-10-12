@@ -7,10 +7,6 @@ The NMTSA LMS now has **full multi-language support** using Django's built-in i1
 ### 🎯 Supported Languages
 - 🇺🇸 **English** (en) - Default
 - 🇪🇸 **Spanish** (es)
-- 🇫🇷 **French** (fr)
-- 🇩🇪 **German** (de)
-- 🇵🇹 **Portuguese** (pt)
-- 🇨🇳 **Chinese Simplified** (zh-hans)
 
 ---
 
@@ -25,11 +21,7 @@ LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
     ('en', 'English'),
-    ('es', 'Spanish'),
-    ('fr', 'French'),
-    ('de', 'German'),
-    ('pt', 'Portuguese'),
-    ('zh-hans', 'Chinese (Simplified)'),
+    ('es', 'Spanish (Español)'),
 ]
 
 LOCALE_PATHS = [BASE_DIR / 'locale']

@@ -222,6 +222,65 @@ python manage.py seed_demo_courses  # Creates sample courses
 - **Models**: `authentication/models.py`, `teacher_dash/models.py`, `lms/models.py`
 - **UI components**: `nmtsa_lms/templates/components/` (navbar, sidebar, cards, etc.)
 
+## Localization (i18n) - English + Spanish
+
+### Supported Languages
+- **English (en)** - Default language
+- **Spanish (es)** - Full translation support
+
+### Architecture
+- **System**: Django's built-in i18n framework
+- **Middleware**: `LocaleMiddleware` (after `SessionMiddleware` in settings)
+- **URL Structure**: Language prefix (`/en/`, `/es/`) via `i18n_patterns()`
+- **Language Switcher**: Integrated in Settings dialog (gear icon in navbar)
+
+### File Locations
+```
+nmtsa_lms/
+├── locale/
+│   └── es/LC_MESSAGES/
+│       ├── django.po          # Editable translations (human-readable)
+│       └── django.mo          # Compiled binary (auto-generated)
+├── compile_polib.py           # Compile .po → .mo (uses polib library)
+└── create_manual_translations.py  # Generate new .po files
+```
+
+### Adding Translations
+
+**In Templates:**
+```django
+{% load i18n %}
+<h1>{% trans "Welcome to NMTSA" %}</h1>
+
+{% blocktrans with name=user.name %}
+Hello {{ name }}!
+{% endblocktrans %}
+```
+
+**In Python Code:**
+```python
+from django.utils.translation import gettext as _
+message = _("User successfully enrolled")
+```
+
+**Workflow:**
+1. Mark strings with `{% trans %}` or `_()` 
+2. Add to `locale/es/LC_MESSAGES/django.po`:
+   ```po
+   msgid "Welcome to NMTSA"
+   msgstr "Bienvenido a NMTSA"
+   ```
+3. Compile: `python compile_polib.py`
+4. Restart Django server
+
+**Key Files:**
+- Settings: `nmtsa_lms/settings.py` (LANGUAGES, LOCALE_PATHS)
+- URLs: `nmtsa_lms/urls.py` (i18n_patterns wrapper)
+- Base template: `templates/base.html` (loads i18n, sets lang attribute)
+- Language switcher: `templates/components/settings_dialog.html`
+
+**Documentation:** See `docs/LOCALIZATION_GUIDE_EN_ES.md` for complete guide
+
 ## Chat System with Supermemory AI
 
 ### Architecture

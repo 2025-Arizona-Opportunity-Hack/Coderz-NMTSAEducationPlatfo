@@ -1,5 +1,7 @@
 # 🌍 Django i18n Quick Reference Card
 
+**Languages Supported:** English (en) and Spanish (es)
+
 ## 📌 In Templates
 
 ```django
