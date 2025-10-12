@@ -66,6 +66,13 @@
                                     <circle cx="12" cy="12" r="10"/>
                                     <polygon points="10 8 16 12 10 16 10 8"/>
                                 </svg>
+                                {% elif lesson.lesson_type == 'pdf' %}
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="12" y1="18" x2="12" y2="12"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
+                                </svg>
                                 {% else %}
                                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -110,7 +117,13 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">
-                        {% if current_lesson.lesson_type == 'video' %}Video Lesson{% else %}Article{% endif %}
+                        {% if current_lesson.lesson_type == 'video' %}
+                            Video Lesson
+                        {% elif current_lesson.lesson_type == 'pdf' %}
+                            PDF Document
+                        {% else %}
+                            Article
+                        {% endif %}
                     </div>
                     <h1 style="margin: 0; font-size: calc(1.5rem * var(--font-scale));">
                         {{ current_lesson.title }}
@@ -196,6 +209,58 @@
                 {% else %}
                 <div style="text-align: center; padding: var(--spacing-2xl); color: var(--text-muted);">
                     <p>Content not available for this lesson.</p>
+                </div>
+                {% endif %}
+
+            {% elif current_lesson.lesson_type == 'pdf' %}
+                <!-- PDF Lesson -->
+                {% if current_lesson.pdf %}
+                <div style="max-width: 1200px; margin: 0 auto;">
+                    <!-- PDF Description (if available) -->
+                    {% if current_lesson.pdf.description %}
+                    <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl);">
+                        <h3 style="margin-bottom: var(--spacing-md); font-size: calc(1.25rem * var(--font-scale));">About this Document</h3>
+                        <div style="color: var(--text-primary); line-height: 1.8;">
+                            {{ current_lesson.pdf.description|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- PDF Viewer Embed -->
+                    <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden;">
+                        <iframe 
+                            src="{% url 'serve_pdf' current_lesson.pdf.pdf_file.name %}"
+                            style="width: 100%; height: 800px; border: none; display: block;"
+                            title="{{ current_lesson.title }}"
+                            type="application/pdf">
+                            <p style="padding: var(--spacing-xl); text-align: center;">
+                                Your browser doesn't support PDF viewing. 
+                                <a href="{% url 'serve_pdf' current_lesson.pdf.pdf_file.name %}" 
+                                   download="{{ current_lesson.title }}.pdf"
+                                   style="color: var(--primary); text-decoration: underline;">
+                                    Download the PDF
+                                </a>
+                            </p>
+                        </iframe>
+                    </div>
+
+                    <!-- Download Button -->
+                    <div style="margin-top: var(--spacing-lg); text-align: center;">
+                        <a href="{% url 'serve_pdf' current_lesson.pdf.pdf_file.name %}" 
+                           download="{{ current_lesson.title }}.pdf"
+                           style="display: inline-flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-md) var(--spacing-xl); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: opacity 0.2s;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download PDF
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: var(--spacing-2xl); color: var(--text-muted);">
+                    <p>PDF document not available for this lesson.</p>
                 </div>
                 {% endif %}
             {% endif %}

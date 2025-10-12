@@ -38,6 +38,7 @@ urlpatterns = [
     ),
     path("courses/<slug:course_slug>/preview/", views.course_preview, name="teacher_course_preview"),
     path("videos/<path:video_path>", views.serve_video, name="serve_video"),
+    path("pdfs/<path:pdf_path>", views.serve_pdf, name="serve_pdf"),
     path("courses/<slug:course_slug>/analytics/", views.course_analytics, name="teacher_course_analytics"),
     path("verification/", views.verification_status, name="teacher_verification_status"),
     path("export/", views.export_courses, name="teacher_export_courses"),

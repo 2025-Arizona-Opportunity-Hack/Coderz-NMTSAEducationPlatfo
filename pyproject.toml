@@ -18,4 +18,5 @@ dependencies = [
     "openai>=2.3.0",
     "django-ckeditor>=6.7.3",
     "django-ckeditor-5>=0.2.18",
+    "pypdf2>=3.0.1",
 ]

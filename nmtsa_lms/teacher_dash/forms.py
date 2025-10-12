@@ -6,7 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from taggit.forms import TagField
 
-from .models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
+from .models import Course, Module, Lesson, VideoLesson, BlogLesson, PDFLesson, DiscussionPost
 
 
 class CourseForm(forms.ModelForm):
@@ -84,7 +84,7 @@ class LessonForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields["tags"].initial = ", ".join(self.instance.tags.names())
         self.fields["duration"].required = False
-        self.fields["duration"].help_text = "Required for blog lessons. Video lessons will auto-calculate."
+        self.fields["duration"].help_text = "Required for blog/PDF lessons. Video lessons will auto-calculate."
 
     def save(self, commit: bool = True):
         lesson = super().save(commit=commit)
@@ -105,9 +105,9 @@ class LessonForm(forms.ModelForm):
         cleaned = super().clean()
         lesson_type = cleaned.get("lesson_type")
         duration = cleaned.get("duration")
-        if lesson_type == "blog" and not duration:
-            raise ValidationError({"duration": "Duration is required for blog lessons."})
-        if lesson_type == "blog" and duration is not None and duration <= 0:
+        if lesson_type in ("blog", "pdf") and not duration:
+            raise ValidationError({"duration": f"Duration is required for {lesson_type} lessons."})
+        if lesson_type in ("blog", "pdf") and duration is not None and duration <= 0:
             raise ValidationError({"duration": "Duration must be a positive number."})
         if lesson_type == "video":
             cleaned["duration"] = None
@@ -137,6 +137,34 @@ class BlogLessonForm(forms.ModelForm):
         model = BlogLesson
         fields = ["content", "images"]
         # Widget automatically provided by RichTextField
+
+
+class PDFLessonForm(forms.ModelForm):
+    pdf_file = forms.FileField(required=False)
+
+    class Meta:
+        model = PDFLesson
+        fields = ["pdf_file", "description"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        has_existing = bool(self.instance and getattr(self.instance, "pdf_file", None))
+        self.fields["pdf_file"].required = not has_existing
+        self.fields["pdf_file"].help_text = "Upload a PDF file (max 50MB, .pdf only)"
+
+    def clean_pdf_file(self):
+        pdf_file = self.cleaned_data.get("pdf_file")
+        if pdf_file:
+            # Check file extension
+            if not pdf_file.name.lower().endswith('.pdf'):
+                raise ValidationError("Only PDF files are allowed.")
+
+            # Check file size (50MB max)
+            max_size = 50 * 1024 * 1024  # 50MB in bytes
+            if pdf_file.size > max_size:
+                raise ValidationError(f"PDF file size cannot exceed 50MB. Current size: {pdf_file.size / (1024 * 1024):.2f}MB")
+
+        return pdf_file
 
 
 class DiscussionPostForm(forms.ModelForm):

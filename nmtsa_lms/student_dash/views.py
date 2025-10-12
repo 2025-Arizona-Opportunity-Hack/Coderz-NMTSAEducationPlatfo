@@ -12,7 +12,7 @@ import json
 import logging
 from authentication.decorators import student_required, onboarding_complete_required, optional_login
 from authentication.models import User, Enrollment, Payment
-from teacher_dash.models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
+from teacher_dash.models import Course, Module, Lesson, VideoLesson, BlogLesson, PDFLesson, DiscussionPost
 from teacher_dash.forms import DiscussionPostForm, DiscussionReplyForm
 from lms.models import CompletedLesson, VideoProgress
 from django.core.paginator import Paginator
@@ -703,6 +703,12 @@ def lesson_view(request, course_slug, module_slug, lesson_slug):
         except BlogLesson.DoesNotExist:
             blog_obj = None
         cast(Any, current_lesson).blog = blog_obj
+    elif current_lesson.lesson_type == 'pdf':
+        try:
+            pdf_obj = PDFLesson.objects.get(lesson=current_lesson)
+        except PDFLesson.DoesNotExist:
+            pdf_obj = None
+        cast(Any, current_lesson).pdf = pdf_obj
 
     # Get all modules for sidebar
     modules = course.modules.all().prefetch_related('lessons').order_by('id')
