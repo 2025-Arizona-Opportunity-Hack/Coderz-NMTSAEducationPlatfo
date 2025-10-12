@@ -145,6 +145,37 @@
     <p class="page-description">Manage modules, lessons, and publication status for this course.</p>
 </div>
 
+<!-- Approval Status Banner -->
+{% if not is_teacher_approved %}
+<div class="alert alert-warning" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: #FFF3CD; border: 1px solid #FFEAA7; border-radius: 8px; color: #856404;">
+    <h3 style="margin: 0 0 var(--spacing-sm) 0; display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        Course Management Restricted
+    </h3>
+    <p style="margin: 0;">
+        You're not approved yet. Please wait for verification to manage this course.
+        <a href="{% url 'teacher_verification_status' %}" style="color: #856404; text-decoration: underline;">View verification status</a>
+    </p>
+</div>
+{% elif course.is_submitted_for_review and not course.admin_approved %}
+<div class="alert alert-info" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: #D1ECF1; border: 1px solid #B8DAFF; border-radius: 8px; color: #0C5460;">
+    <h3 style="margin: 0 0 var(--spacing-sm) 0; display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+        Course Under Admin Review
+    </h3>
+    <p style="margin: 0;">
+        This course has been unpublished and resubmitted for admin review due to content changes. Enrollments and discussions remain intact.
+        {% if course.admin_review_feedback %}
+        <br><strong>Admin Feedback:</strong> {{ course.admin_review_feedback }}
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
 <div class="course-detail-layout">
     <section class="course-modules">
         <div class="course-modules_header">
@@ -176,6 +207,7 @@
     </section>
 
     <aside class="course-sidebar">
+        {% if is_teacher_approved %}
         <div class="sidebar-card">
             <h2 style="margin-top: 0;">Add Module</h2>
             <form method="post" action="{% url 'teacher_module_create' course.id %}">
@@ -192,6 +224,7 @@
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-md);">Save Module</button>
             </form>
         </div>
+        {% endif %}
 
         <div class="sidebar-card">
             <h2 style="margin-top: 0;">Publication</h2>
@@ -223,21 +256,41 @@
                 {% endif %}
             </p>
             <div class="sidebar-card_actions">
-                {% if course.is_published %}
-                <form method="post" action="{% url 'teacher_course_unpublish' course.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline" style="width: 100%;">Unpublish</button>
-                </form>
+                {% if is_teacher_approved %}
+                    {% if course.is_published %}
+                    <form method="post" action="{% url 'teacher_course_unpublish' course.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline" style="width: 100%;">Unpublish</button>
+                    </form>
+                    {% else %}
+                        {% if course.admin_approved %}
+                        <form method="post" action="{% url 'teacher_course_publish' course.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Publish Course</button>
+                        </form>
+                        {% elif course.is_submitted_for_review %}
+                        <button type="button" class="btn btn-outline" style="width: 100%; opacity: 0.6; cursor: not-allowed;" disabled>
+                            Awaiting Admin Review
+                        </button>
+                        {% else %}
+                        <form method="post" action="{% url 'teacher_course_publish' course.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit for Review</button>
+                        </form>
+                        {% endif %}
+                    {% endif %}
                 {% else %}
-                <form method="post" action="{% url 'teacher_course_publish' course.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        {% if course.is_submitted_for_review %}Resubmit for Review{% else %}Submit for Publishing{% endif %}
-                    </button>
-                </form>
+                <button type="button" class="btn btn-outline" style="width: 100%; opacity: 0.6; cursor: not-allowed;" disabled>
+                    Approval Required
+                </button>
                 {% endif %}
+                
                 <a href="{% url 'teacher_course_preview' course.id %}" class="btn btn-outline" style="text-align: center;">Preview Course</a>
+                
+                {% if is_teacher_approved %}
                 <a href="{% url 'teacher_course_edit' course.id %}" class="btn btn-outline" style="text-align: center;">Edit Details</a>
+                {% endif %}
+                
                 <a href="{% url 'teacher_course_analytics' course.id %}" class="btn btn-outline" style="text-align: center;">View Analytics</a>
                 <a href="{% url 'teacher_course_discussions' course.id %}" class="btn btn-outline" style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -253,12 +306,14 @@
             <a href="{% url 'teacher_export_courses' %}" class="btn btn-outline" style="width: 100%; text-align: center;">Export My Courses</a>
         </div>
 
+        {% if is_teacher_approved %}
         <form method="post" action="{% url 'teacher_course_delete' course.id %}" class="sidebar-card danger-card" onsubmit="return confirm('Delete this course?');">
             {% csrf_token %}
             <h2 style="margin-top: 0;">Danger Zone</h2>
             <p>Deleting a course removes all associated modules and lessons.</p>
             <button type="submit" class="btn btn-outline" style="width: 100%;">Delete Course</button>
         </form>
+        {% endif %}
     </aside>
 </div>
 {% endblock %}

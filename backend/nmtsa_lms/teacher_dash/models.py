@@ -13,6 +13,7 @@ class Course(models.Model):
     is_paid = models.BooleanField(default=False)
     is_submitted_for_review = models.BooleanField(default=False)
     admin_review_feedback = models.TextField(blank=True, null=True, help_text="Optional feedback from admin during course review")
+    admin_approved = models.BooleanField(default=False, help_text="Indicates if the course has been approved by an admin")
     published_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     modules = models.ManyToManyField('Module', blank=True)
     tags = TaggableManager(blank=True)

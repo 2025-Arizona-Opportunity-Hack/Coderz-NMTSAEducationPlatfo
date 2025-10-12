@@ -42,6 +42,41 @@ def _get_logged_in_teacher(request: HttpRequest) -> Any:
     user_id = session_user.get("user_id")
     return get_object_or_404(User, id=user_id)
 
+
+def _check_teacher_approval(request: HttpRequest) -> bool:
+    """
+    Check if the logged-in teacher is approved to create/edit courses.
+    If not approved, adds an error message and redirects to verification status.
+    Returns True if approved, False if not approved (and redirect handled).
+    """
+    teacher = _get_logged_in_teacher(request)
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    
+    if not teacher_profile or teacher_profile.verification_status != "approved":
+        messages.error(
+            request,
+            "Your teacher profile isn't approved yet. Please wait for verification to create or edit courses."
+        )
+        return False
+    
+    return True
+
+
+def _handle_course_content_change(course: Course) -> str:
+    """
+    Handle the workflow when content changes are made to a published course.
+    Unpublishes the course and resubmits for admin review while preserving enrollments.
+    Returns a success message for the user.
+    """
+    if course.is_published:
+        course.is_published = False
+        course.is_submitted_for_review = True
+        course.admin_approved = False
+        course.save()
+        return "Changes saved. The course is now unpublished and resubmitted for admin review. Enrollments and discussions remain intact."
+    return "Changes saved successfully."
+
+
 def uuid_gen():
     return str(uuid.uuid4())
 
@@ -56,6 +91,12 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     drafts = courses.filter(is_published=False)
 
     teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+
+    # Group courses by review status
+    awaiting_review = drafts.filter(is_submitted_for_review=True, admin_approved=False)
+    approved_not_published = drafts.filter(admin_approved=True, is_submitted_for_review=True)
+    not_submitted = drafts.filter(is_submitted_for_review=False)
 
     context = {
         "published_courses": published,
@@ -64,6 +105,10 @@ def dashboard(request: HttpRequest) -> HttpResponse:
         "draft_count": drafts.count(),
         "published_count": published.count(),
         "verification_status": getattr(teacher_profile, "verification_status", "pending"),
+        "is_teacher_approved": is_teacher_approved,
+        "awaiting_review_count": awaiting_review.count(),
+        "approved_not_published_count": approved_not_published.count(),
+        "not_submitted_count": not_submitted.count(),
     }
     return render(request, "teacher_dash/dashboard.html", context)
 
@@ -77,6 +122,9 @@ def courses(request: HttpRequest) -> HttpResponse:
 @teacher_required
 @onboarding_complete_required
 def course_create(request: HttpRequest) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
 
     if request.method == "POST":
@@ -88,7 +136,10 @@ def course_create(request: HttpRequest) -> HttpResponse:
     else:
         form = CourseForm()
 
-    return render(request, "teacher_dash/course_form.html", {"form": form})
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+    
+    return render(request, "teacher_dash/course_form.html", {"form": form, "is_teacher_approved": is_teacher_approved})
 
 
 @teacher_required
@@ -100,6 +151,9 @@ def course_detail(request: HttpRequest, course_id: int) -> HttpResponse:
         pk=course_id,
         published_by=teacher,
     )
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+    
     module_form = ModuleForm()
     return render(
         request,
@@ -107,6 +161,7 @@ def course_detail(request: HttpRequest, course_id: int) -> HttpResponse:
         {
             "course": course,
             "module_form": module_form,
+            "is_teacher_approved": is_teacher_approved,
         },
     )
 
@@ -114,6 +169,9 @@ def course_detail(request: HttpRequest, course_id: int) -> HttpResponse:
 @teacher_required
 @onboarding_complete_required
 def course_edit(request: HttpRequest, course_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
 
@@ -121,17 +179,24 @@ def course_edit(request: HttpRequest, course_id: int) -> HttpResponse:
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
             form.save()
-            messages.success(request, "Course updated.")
+            success_message = _handle_course_content_change(course)
+            messages.success(request, success_message)
             return redirect("teacher_course_detail", course_id=course.pk)
     else:
         form = CourseForm(instance=course)
 
-    return render(request, "teacher_dash/course_form.html", {"form": form, "course": course})
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+    
+    return render(request, "teacher_dash/course_form.html", {"form": form, "course": course, "is_teacher_approved": is_teacher_approved})
 
 
 @teacher_required
 @onboarding_complete_required
 def course_delete(request: HttpRequest, course_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     if request.method == "POST":
@@ -144,6 +209,9 @@ def course_delete(request: HttpRequest, course_id: int) -> HttpResponse:
 @teacher_required
 @onboarding_complete_required
 def module_create(request: HttpRequest, course_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
 
@@ -152,7 +220,8 @@ def module_create(request: HttpRequest, course_id: int) -> HttpResponse:
         if form.is_valid():
             module = form.save()
             course.modules.add(module)
-            messages.success(request, "Module added.")
+            success_message = _handle_course_content_change(course)
+            messages.success(request, success_message)
         else:
             messages.error(request, "Please fix the errors below.")
             return render(
@@ -167,6 +236,9 @@ def module_create(request: HttpRequest, course_id: int) -> HttpResponse:
 @teacher_required
 @onboarding_complete_required
 def module_edit(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules, pk=module_id)
@@ -175,15 +247,19 @@ def module_edit(request: HttpRequest, course_id: int, module_id: int) -> HttpRes
         form = ModuleForm(request.POST, instance=module)
         if form.is_valid():
             form.save()
-            messages.success(request, "Module updated.")
+            success_message = _handle_course_content_change(course)
+            messages.success(request, success_message)
             return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
     else:
         form = ModuleForm(instance=module)
 
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+
     return render(
         request,
         "teacher_dash/module_form.html",
-        {"form": form, "course": course, "module": module},
+        {"form": form, "course": course, "module": module, "is_teacher_approved": is_teacher_approved},
     )
 
 
@@ -193,6 +269,9 @@ def module_detail(request: HttpRequest, course_id: int, module_id: int) -> HttpR
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules.prefetch_related("lessons"), pk=module_id)
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+    
     lesson_form = LessonForm()
     video_form = VideoLessonForm()
     blog_form = BlogLessonForm()
@@ -205,6 +284,7 @@ def module_detail(request: HttpRequest, course_id: int, module_id: int) -> HttpR
             "lesson_form": lesson_form,
             "video_form": video_form,
             "blog_form": blog_form,
+            "is_teacher_approved": is_teacher_approved,
         },
     )
 
@@ -212,13 +292,17 @@ def module_detail(request: HttpRequest, course_id: int, module_id: int) -> HttpR
 @teacher_required
 @onboarding_complete_required
 def module_delete(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules, pk=module_id)
     if request.method == "POST":
         course.modules.remove(module)
         module.delete()
-        messages.success(request, "Module deleted.")
+        success_message = _handle_course_content_change(course)
+        messages.success(request, success_message)
     return redirect("teacher_course_detail", course_id=course.pk)
 
 
@@ -276,6 +360,9 @@ def _extract_video_duration_minutes(file_field: Any) -> Tuple[int | None, str | 
 @teacher_required
 @onboarding_complete_required
 def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules, pk=module_id)
@@ -338,7 +425,8 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
                     blog = blog_form.save(commit=False)
                     blog.lesson = lesson
                     blog.save()
-            messages.success(request, "Lesson created.")
+            success_message = _handle_course_content_change(course)
+            messages.success(request, success_message)
             return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
 
         messages.error(request, "Please correct the errors below.")
@@ -355,6 +443,9 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
             status=400,
         )
 
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+
     return render(
         request,
         "teacher_dash/lesson_form.html",
@@ -364,6 +455,7 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
             "lesson_form": lesson_form,
             "video_form": video_form,
             "blog_form": blog_form,
+            "is_teacher_approved": is_teacher_approved,
         },
     )
 
@@ -371,6 +463,9 @@ def lesson_create(request: HttpRequest, course_id: int, module_id: int) -> HttpR
 @teacher_required
 @onboarding_complete_required
 def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules, pk=module_id)
@@ -416,10 +511,14 @@ def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id:
                     blog = blog_form.save(commit=False)
                     blog.lesson = lesson
                     blog.save()
-            messages.success(request, "Lesson updated.")
+            success_message = _handle_course_content_change(course)
+            messages.success(request, success_message)
             return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
 
         messages.error(request, "Please correct the errors below.")
+
+    teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+    is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
 
     return render(
         request,
@@ -431,6 +530,7 @@ def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id:
             "video_form": video_form,
             "blog_form": blog_form,
             "lesson": lesson,
+            "is_teacher_approved": is_teacher_approved,
         },
     )
 
@@ -438,6 +538,9 @@ def lesson_edit(request: HttpRequest, course_id: int, module_id: int, lesson_id:
 @teacher_required
 @onboarding_complete_required
 def lesson_delete(request: HttpRequest, course_id: int, module_id: int, lesson_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     module = get_object_or_404(course.modules, pk=module_id)
@@ -446,7 +549,8 @@ def lesson_delete(request: HttpRequest, course_id: int, module_id: int, lesson_i
     if request.method == "POST":
         module.lessons.remove(lesson)
         lesson.delete()
-        messages.success(request, "Lesson deleted.")
+        success_message = _handle_course_content_change(course)
+        messages.success(request, success_message)
     return redirect("teacher_module_detail", course_id=course.pk, module_id=module.pk)
 
 
@@ -549,23 +653,33 @@ def verification_status(request: HttpRequest) -> HttpResponse:
 @teacher_required
 @onboarding_complete_required
 def course_publish(request: HttpRequest, course_id: int) -> HttpResponse:
+    if not _check_teacher_approval(request):
+        return redirect("teacher_verification_status")
+        
     teacher = _get_logged_in_teacher(request)
     course = get_object_or_404(Course, pk=course_id, published_by=teacher)
     profile = TeacherProfile.objects.filter(user=teacher).first()
 
     if request.method == "POST":
         if profile and profile.verification_status == "approved":
-            course.is_published = True
-            course.is_submitted_for_review = False
-            course.save(update_fields=["is_published", "is_submitted_for_review"])
-            messages.success(request, "Course published and now visible to students.")
+            if course.admin_approved:
+                # Admin has approved, teacher can now publish
+                course.is_published = True
+                course.is_submitted_for_review = False
+                course.save(update_fields=["is_published", "is_submitted_for_review"])
+                messages.success(request, "Course published and now visible to students.")
+            else:
+                # Admin hasn't approved yet, submit for review
+                if not course.is_submitted_for_review:
+                    course.is_submitted_for_review = True
+                    course.admin_review_feedback = ""  # Clear old feedback when resubmitting
+                    course.save(update_fields=["is_submitted_for_review", "admin_review_feedback"])
+                    _notify_admins_course_submitted(course)
+                    messages.info(request, "Course submitted for admin review. You can publish after approval.")
+                else:
+                    messages.info(request, "Awaiting admin review. You'll be able to publish after approval.")
         else:
-            course.is_published = False
-            course.is_submitted_for_review = True
-            course.admin_review_feedback = ""  # Clear old feedback when resubmitting
-            course.save(update_fields=["is_published", "is_submitted_for_review", "admin_review_feedback"])
-            _notify_admins_course_submitted(course)
-            messages.info(request, "Course submitted for admin review. You will be notified once approved.")
+            messages.error(request, "Your teacher profile must be approved to publish courses.")
     return redirect("teacher_course_detail", course_id=course.pk)
 
 
@@ -606,7 +720,7 @@ def export_courses(request: HttpRequest) -> HttpResponse:
     return response
 
 
-def serve_video(request: HttpRequest, video_path: str) -> HttpResponse:
+def serve_video(request: HttpRequest, video_path: str) -> FileResponse | HttpResponse:
     """Serve video files with HTTP Range request support for streaming"""
     import mimetypes
 
@@ -782,7 +896,7 @@ def discussion_reply(request: HttpRequest, course_id: int, post_id: int) -> Http
         messages.success(request, "Your reply has been posted!")
     else:
         for error in form.errors.values():
-            messages.error(request, error)
+            messages.error(request, str(error))
 
     return redirect('teacher_discussion_detail', course_id=course_id, post_id=post_id)
 

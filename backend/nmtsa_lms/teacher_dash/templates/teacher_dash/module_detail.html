@@ -150,6 +150,34 @@
     <p class="page-description">Manage lessons within this module.</p>
 </div>
 
+<!-- Approval Status Banner -->
+{% if not is_teacher_approved %}
+<div class="alert alert-warning" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: #FFF3CD; border: 1px solid #FFEAA7; border-radius: 8px; color: #856404;">
+    <h3 style="margin: 0 0 var(--spacing-sm) 0; display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        Lesson Management Restricted
+    </h3>
+    <p style="margin: 0;">
+        You're not approved yet. Please wait for verification to manage lessons.
+        <a href="{% url 'teacher_verification_status' %}" style="color: #856404; text-decoration: underline;">View verification status</a>
+    </p>
+</div>
+{% elif course.is_submitted_for_review and not course.admin_approved %}
+<div class="alert alert-info" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: #D1ECF1; border: 1px solid #B8DAFF; border-radius: 8px; color: #0C5460;">
+    <h3 style="margin: 0 0 var(--spacing-sm) 0; display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+        Course Under Admin Review
+    </h3>
+    <p style="margin: 0;">
+        This course has been unpublished due to content changes and is awaiting admin review. Enrollments and discussions remain intact.
+    </p>
+</div>
+{% endif %}
+
 <div class="module-layout">
     <section>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
@@ -166,11 +194,13 @@
                 <small style="color: var(--text-muted); font-size: 0.85rem;">Created {{ lesson.created_at|date:"M d, Y" }}</small>
             </div>
             <div class="lesson-card_actions">
+                {% if is_teacher_approved %}
                 <a href="{% url 'teacher_lesson_edit' course.id module.id lesson.id %}" class="btn btn-outline btn-sm">Edit</a>
                 <form method="post" action="{% url 'teacher_lesson_delete' course.id module.id lesson.id %}" onsubmit="return confirm('Delete this lesson?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline btn-sm">Delete</button>
                 </form>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -180,6 +210,7 @@
     {% endif %}
 </section>
 
+{% if is_teacher_approved %}
 <section>
     <div style="display: flex; justify-content: space-between; align-items: baseline;">
         <h2 style="margin: 0;">Add Lesson</h2>
@@ -237,6 +268,7 @@
         </div>
     </form>
 </section>
+{% endif %}
 </div>
 {% endblock %}
 

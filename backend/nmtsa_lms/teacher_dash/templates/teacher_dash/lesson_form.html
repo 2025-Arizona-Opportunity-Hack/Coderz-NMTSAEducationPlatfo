@@ -126,6 +126,21 @@
     <h1 class="page-title">{% if lesson %}Edit Lesson{% else %}Create Lesson{% endif %}</h1>
 </div>
 
+{% if not is_teacher_approved %}
+<div class="alert alert-warning" style="margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: #FFF3CD; border: 1px solid #FFEAA7; border-radius: 8px; color: #856404;">
+    <h3 style="margin: 0 0 var(--spacing-sm) 0; display: flex; align-items: center; gap: var(--spacing-sm);">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        Access Restricted
+    </h3>
+    <p style="margin: 0;">
+        Your teacher profile isn't approved yet. Please wait for verification to create or edit lessons.
+        <a href="{% url 'teacher_verification_status' %}" style="color: #856404; text-decoration: underline;">View verification status</a>
+    </p>
+</div>
+{% endif %}
+
 <form method="post" enctype="multipart/form-data" class="card lesson-form">
     {% csrf_token %}
     {{ lesson_form.non_field_errors }}
