@@ -6,14 +6,19 @@ from django.db.models import Q, F, Count
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from typing import Any, cast
 import json
+import logging
 from authentication.decorators import student_required, onboarding_complete_required
-from authentication.models import User, Enrollment
+from authentication.models import User, Enrollment, Payment
 from teacher_dash.models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
 from teacher_dash.forms import DiscussionPostForm, DiscussionReplyForm
 from lms.models import CompletedLesson, VideoProgress
 from django.core.paginator import Paginator
+from nmtsa_lms.paypal_service import create_order as paypal_create_order, capture_order as paypal_capture_order
+
+logger = logging.getLogger(__name__)
 
 
 @student_required
@@ -215,8 +220,12 @@ def checkout_course(request, course_id):
         messages.warning(request, "You're already enrolled in this course!")
         return redirect('student_course_detail', course_id=course_id)
 
+    # Import settings to get PayPal client ID
+    from django.conf import settings
+    
     context = {
         'course': course,
+        'PAYPAL_CLIENT_ID': settings.PAYPAL_CLIENT_ID,
     }
     return render(request, 'student_dash/checkout.html', context)
 
@@ -256,6 +265,200 @@ def process_checkout(request, course_id):
 
     messages.success(request, f"Payment successful! You're now enrolled in {course.title}. Welcome aboard!")
     return redirect('student_learning', course_id=course_id)
+
+
+@student_required
+@onboarding_complete_required
+@require_http_methods(["POST"])
+def create_paypal_order(request, course_id):
+    """
+    API endpoint to create a PayPal order
+    Called by frontend when user clicks PayPal button
+    """
+    try:
+        session_user = request.session.get('user')
+        user_id = session_user.get('user_id')
+        user = User.objects.get(id=user_id)
+        
+        course = get_object_or_404(Course, id=course_id, is_published=True)
+        
+        # Verify course is paid
+        if not course.is_paid:
+            return JsonResponse({
+                'success': False,
+                'error': 'This course is free and does not require payment'
+            }, status=400)
+        
+        # Check if already enrolled
+        existing_enrollment = Enrollment.objects.filter(user=user, course=course).first()
+        if existing_enrollment:
+            return JsonResponse({
+                'success': False,
+                'error': 'You are already enrolled in this course'
+            }, status=400)
+        
+        # Check for existing pending payment
+        existing_payment = Payment.objects.filter(
+            user=user,
+            course=course,
+            status='pending'
+        ).first()
+        
+        if existing_payment:
+            # Return existing order ID if payment still pending
+            return JsonResponse({
+                'success': True,
+                'order_id': existing_payment.paypal_order_id
+            })
+        
+        # Create PayPal order
+        result = paypal_create_order(course, user)
+        
+        if not result.get('success'):
+            logger.error(f"PayPal order creation failed: {result.get('error')}")
+            return JsonResponse({
+                'success': False,
+                'error': 'Failed to create payment order. Please try again.'
+            }, status=500)
+        
+        # Store payment record
+        payment = Payment.objects.create(
+            user=user,
+            course=course,
+            paypal_order_id=result['order_id'],
+            amount=course.price,
+            currency='USD',
+            status='pending'
+        )
+        
+        logger.info(f"Payment record created: {payment.id} for order {result['order_id']}")
+        
+        return JsonResponse({
+            'success': True,
+            'order_id': result['order_id']
+        })
+        
+    except Course.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Course not found'
+        }, status=404)
+    except Exception as e:
+        logger.error(f"Error creating PayPal order: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': 'An unexpected error occurred. Please try again.'
+        }, status=500)
+
+
+@student_required
+@onboarding_complete_required
+@require_http_methods(["POST"])
+def capture_paypal_order(request, course_id):
+    """
+    API endpoint to capture a PayPal order after user approval
+    Called by frontend after user completes payment in PayPal popup
+    """
+    try:
+        # Parse request body
+        data = json.loads(request.body)
+        order_id = data.get('order_id')
+        
+        if not order_id:
+            return JsonResponse({
+                'success': False,
+                'error': 'Order ID is required'
+            }, status=400)
+        
+        session_user = request.session.get('user')
+        user_id = session_user.get('user_id')
+        user = User.objects.get(id=user_id)
+        
+        course = get_object_or_404(Course, id=course_id, is_published=True)
+        
+        # Get payment record
+        payment = Payment.objects.filter(
+            paypal_order_id=order_id,
+            user=user,
+            course=course
+        ).first()
+        
+        if not payment:
+            return JsonResponse({
+                'success': False,
+                'error': 'Payment record not found'
+            }, status=404)
+        
+        # Check if already captured
+        if payment.status == 'completed':
+            # Check if enrollment exists
+            enrollment = Enrollment.objects.filter(user=user, course=course).first()
+            if enrollment:
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Payment already processed',
+                    'redirect_url': f'/student/courses/{course_id}/learn/'
+                })
+        
+        # Capture the PayPal order
+        capture_result = paypal_capture_order(order_id)
+        
+        if not capture_result.get('success'):
+            logger.error(f"PayPal capture failed for order {order_id}: {capture_result.get('error')}")
+            payment.status = 'failed'
+            payment.save()
+            return JsonResponse({
+                'success': False,
+                'error': 'Payment capture failed. Please contact support.'
+            }, status=500)
+        
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # Update payment record
+            payment.status = 'completed'
+            payment.completed_at = timezone.now()
+            payment.paypal_payment_id = capture_result.get('payment_id', '')
+            payment.payer_email = capture_result.get('payer_email', '')
+            payment.payer_name = capture_result.get('payer_name', '')
+            payment.save()
+            
+            # Create enrollment (check again to prevent race condition)
+            enrollment, created = Enrollment.objects.get_or_create(
+                user=user,
+                course=course,
+                defaults={
+                    'progress_percentage': 0,
+                    'is_active': True
+                }
+            )
+            
+            if created:
+                # Update course enrollment count
+                Course.objects.filter(pk=course.pk).update(num_enrollments=F('num_enrollments') + 1)
+                logger.info(f"Enrollment created for user {user.id} in course {course.id} via PayPal payment {payment.id}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Payment successful! Welcome to the course.',
+            'redirect_url': f'/student/courses/{course_id}/learn/'
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid request data'
+        }, status=400)
+    except Course.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Course not found'
+        }, status=404)
+    except Exception as e:
+        logger.error(f"Error capturing PayPal order: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': 'An unexpected error occurred. Please try again.'
+        }, status=500)
 
 
 @student_required

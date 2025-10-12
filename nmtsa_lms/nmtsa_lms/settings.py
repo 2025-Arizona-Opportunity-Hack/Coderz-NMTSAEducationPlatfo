@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv, find_dotenv
 
+load_dotenv()  # Load environment variables from .env file
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "nmtsa_lms", "templates")
@@ -29,6 +31,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = os.environ.get("PAYPAL_CLIENT_SECRET")
+PAYPAL_MODE = os.environ.get("PAYPAL_MODE", "sandbox")  # 'sandbox' or 'live'
+
+# Validate PayPal settings
+if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
+    import warnings
+    warnings.warn("PayPal credentials not configured. Payment features will not work.")
+
+SUPERMEMORY_API_KEY = os.getenv('SUPERMEMORY_API_KEY', '')
+SUPERMEMORY_BASE_URL = os.getenv('SUPERMEMORY_BASE_URL', 'https://api.supermemory.ai')
+SUPERMEMORY_PROJECT_ID = os.getenv('SUPERMEMORY_PROJECT_ID', '')
 
 # Application definition
 

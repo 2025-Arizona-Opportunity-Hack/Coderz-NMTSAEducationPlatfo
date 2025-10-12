@@ -93,116 +93,75 @@
                     You're almost there! Complete your payment to get instant access to the course.
                 </p>
 
-                <form method="POST" action="{% url 'student_process_checkout' course.id %}" id="checkout-form">
-                    {% csrf_token %}
+                <!-- Billing Information (Display Only) -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
+                        Billing Information
+                    </h2>
 
-                    <!-- Billing Information -->
-                    <div style="margin-bottom: var(--spacing-2xl);">
-                        <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
-                            Billing Information
-                        </h2>
+                    <div style="display: grid; gap: var(--spacing-lg);">
+                        <div style="padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <p style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">Name:</p>
+                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ request.session.user.first_name }} {{ request.session.user.last_name }}</p>
+                        </div>
+                        <div style="padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <p style="margin: 0; color: var(--text-secondary); font-size: calc(0.875rem * var(--font-scale)); margin-bottom: 4px;">Email:</p>
+                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ request.session.user.email }}</p>
+                        </div>
+                    </div>
+                </div>
 
-                        <div style="display: grid; gap: var(--spacing-lg);">
-                            <!-- Full Name -->
-                            <div>
-                                <label for="full_name" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                                    Full Name <span style="color: #EF4444;">*</span>
-                                </label>
-                                <input type="text"
-                                       id="full_name"
-                                       name="full_name"
-                                       required
-                                       value="{{ request.session.user.first_name }} {{ request.session.user.last_name }}"
-                                       style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
-                            </div>
+                <!-- Payment Method -->
+                <div style="margin-bottom: var(--spacing-2xl);">
+                    <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
+                        Payment Method
+                    </h2>
 
-                            <!-- Email -->
-                            <div>
-                                <label for="email" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                                    Email Address <span style="color: #EF4444;">*</span>
-                                </label>
-                                <input type="email"
-                                       id="email"
-                                       name="email"
-                                       required
-                                       value="{{ request.session.user.email }}"
-                                       style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
-                            </div>
+                    <!-- PayPal Info -->
+                    <div style="background: #FFF9E6; border: 1px solid #FFE082; border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md);">
+                        <svg width="20" height="20" fill="none" stroke="#F59E0B" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4m0-4h.01"/>
+                        </svg>
+                        <div>
+                            <p style="color: #92400E; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0; font-weight: 600; margin-bottom: 4px;">
+                                Secure Payment via PayPal
+                            </p>
+                            <p style="color: #92400E; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0;">
+                                Click the button below to complete your purchase securely through PayPal. You can pay with your PayPal account or credit/debit card.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Payment Details -->
-                    <div style="margin-bottom: var(--spacing-2xl);">
-                        <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.25rem * var(--font-scale)); padding-bottom: var(--spacing-md); border-bottom: 2px solid var(--border-color);">
-                            Payment Details
-                        </h2>
-
-                        <div style="display: grid; gap: var(--spacing-lg);">
-                            <!-- Card Number -->
-                            <div>
-                                <label for="card_number" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                                    Card Number <span style="color: #EF4444;">*</span>
-                                </label>
-                                <input type="text"
-                                       id="card_number"
-                                       name="card_number"
-                                       placeholder="1234 5678 9012 3456"
-                                       maxlength="19"
-                                       required
-                                       style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
-                            </div>
-
-                            <!-- Expiry and CVV -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg);">
-                                <div>
-                                    <label for="expiry" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                                        Expiry Date <span style="color: #EF4444;">*</span>
-                                    </label>
-                                    <input type="text"
-                                           id="expiry"
-                                           name="expiry"
-                                           placeholder="MM/YY"
-                                           maxlength="5"
-                                           required
-                                           style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
-                                </div>
-
-                                <div>
-                                    <label for="cvv" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                                        CVV <span style="color: #EF4444;">*</span>
-                                    </label>
-                                    <input type="text"
-                                           id="cvv"
-                                           name="cvv"
-                                           placeholder="123"
-                                           maxlength="4"
-                                           required
-                                           style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: calc(1rem * var(--font-scale)); background: var(--bg-primary); color: var(--text-primary);">
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Loading Indicator -->
+                    <div id="paypal-loading" style="text-align: center; padding: var(--spacing-xl); display: block;">
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p style="margin-top: var(--spacing-md); color: var(--text-secondary);">Loading PayPal...</p>
                     </div>
 
-                    <!-- Security Notice -->
-                    <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-xl); display: flex; gap: var(--spacing-md);">
-                        <svg width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                        <p style="color: #1E40AF; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0;">
-                            Your payment information is secure. We use industry-standard encryption to protect your data.
-                        </p>
+                    <!-- PayPal Button Container -->
+                    <div id="paypal-button-container" style="display: none;"></div>
+
+                    <!-- Error Message -->
+                    <div id="payment-error" style="display: none; background: #FEE; border: 1px solid #FCC; border-radius: var(--radius-md); padding: var(--spacing-lg); color: #C00; margin-top: var(--spacing-lg);">
+                        <strong>Payment Error:</strong> <span id="error-message"></span>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit"
-                            id="submit-btn"
-                            style="width: 100%; padding: var(--spacing-lg); background: var(--primary); color: white; border: none; border-radius: var(--radius-md); font-size: calc(1.125rem * var(--font-scale)); font-weight: 600; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm);">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                        Complete Payment - ${{ course.price }}
-                    </button>
-                </form>
+                    <!-- Success Message -->
+                    <div id="payment-success" style="display: none; background: #EFE; border: 1px solid #CFC; border-radius: var(--radius-md); padding: var(--spacing-lg); color: #060; margin-top: var(--spacing-lg);">
+                        <strong>Payment Successful!</strong> Redirecting to course...
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-md); padding: var(--spacing-lg); display: flex; gap: var(--spacing-md);">
+                    <svg width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <p style="color: #1E40AF; font-size: calc(0.875rem * var(--font-scale)); line-height: 1.6; margin: 0;">
+                        Your payment is processed securely by PayPal. We never store your payment information on our servers.
+                    </p>
+                </div>
             </div>
 
             <!-- Order Summary -->
@@ -283,34 +242,145 @@
     </div>
 </div>
 
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD"></script>
+
 <script>
-// Format card number input
-document.getElementById('card_number').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\s/g, '');
-    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-    e.target.value = formattedValue;
-});
-
-// Format expiry date input
-document.getElementById('expiry').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length >= 2) {
-        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+// Get CSRF token
+function getCsrfToken() {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+            return value;
+        }
     }
-    e.target.value = value;
-});
+    return '';
+}
 
-// Only allow numbers in CVV
-document.getElementById('cvv').addEventListener('input', function(e) {
-    e.target.value = e.target.value.replace(/\D/g, '');
-});
+const courseId = {{ course.id }};
+const csrfToken = getCsrfToken();
 
-// Form submission handling
-document.getElementById('checkout-form').addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.style.opacity = '0.6';
-    submitBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" opacity="0.25"/><path d="M4 12a8 8 0 0 1 8-8"/></svg> Processing...';
+// Show error message
+function showError(message) {
+    const errorDiv = document.getElementById('payment-error');
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.textContent = message;
+    errorDiv.style.display = 'block';
+    
+    // Hide loading
+    document.getElementById('paypal-loading').style.display = 'none';
+}
+
+// Show success message
+function showSuccess() {
+    document.getElementById('payment-success').style.display = 'block';
+    document.getElementById('paypal-button-container').style.display = 'none';
+}
+
+// Initialize PayPal buttons
+paypal.Buttons({
+    style: {
+        layout: 'vertical',
+        color: 'gold',
+        shape: 'rect',
+        label: 'paypal'
+    },
+    
+    createOrder: function(data, actions) {
+        // Hide loading, show button container
+        document.getElementById('paypal-loading').style.display = 'none';
+        
+        // Call backend to create PayPal order
+        return fetch(`/student/courses/${courseId}/payment/create-order/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Failed to create order');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to create order');
+            }
+            return data.order_id;
+        })
+        .catch(function(error) {
+            console.error('Create order error:', error);
+            showError(error.message);
+            throw error;
+        });
+    },
+    
+    onApprove: function(data, actions) {
+        // Show loading
+        const buttonContainer = document.getElementById('paypal-button-container');
+        buttonContainer.innerHTML = '<div style="text-align: center; padding: var(--spacing-xl);"><div style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div><p style="margin-top: var(--spacing-md); color: var(--text-secondary);">Processing payment...</p></div>';
+        
+        // Call backend to capture payment
+        return fetch(`/student/courses/${courseId}/payment/capture-order/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                order_id: data.orderID
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Payment capture failed');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                throw new Error(data.error || 'Payment capture failed');
+            }
+            
+            // Show success message
+            showSuccess();
+            
+            // Redirect to course
+            setTimeout(function() {
+                window.location.href = data.redirect_url;
+            }, 2000);
+        })
+        .catch(function(error) {
+            console.error('Capture error:', error);
+            showError(error.message);
+        });
+    },
+    
+    onError: function(err) {
+        console.error('PayPal error:', err);
+        showError('A payment error occurred. Please try again or contact support.');
+    },
+    
+    onCancel: function(data) {
+        // User cancelled - just hide loading
+        document.getElementById('paypal-loading').style.display = 'none';
+        console.log('Payment cancelled by user');
+    }
+    
+}).render('#paypal-button-container').then(function() {
+    // Show button container after rendering
+    document.getElementById('paypal-button-container').style.display = 'block';
+    document.getElementById('paypal-loading').style.display = 'none';
+}).catch(function(error) {
+    console.error('PayPal button render error:', error);
+    showError('Failed to load PayPal payment option. Please refresh the page or contact support.');
 });
 </script>
 
