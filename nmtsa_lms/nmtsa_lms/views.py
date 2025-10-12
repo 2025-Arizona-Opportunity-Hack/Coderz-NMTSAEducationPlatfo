@@ -1,9 +1,11 @@
 import json
+import os
 from authlib.integrations.django_client import OAuth
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from urllib.parse import quote_plus, urlencode
+from django.templatetags.static import static
 
 
 oauth = OAuth()
@@ -20,12 +22,26 @@ oauth.register(
 
 
 def index(request):
+    # Build hero image list from the repo-root heroimages directory (served via STATICFILES_DIRS)
+    hero_images_dir = os.path.join(settings.BASE_DIR, 'heroimages')
+    hero_images = []
+    try:
+        if os.path.isdir(hero_images_dir):
+            for name in sorted(os.listdir(hero_images_dir)):
+                lower = name.lower()
+                if lower.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg")):
+                    hero_images.append(static(f"heroimages/{name}"))
+    except Exception:
+        # Fail silently; background collage is optional
+        hero_images = []
+
     return render(
         request,
         "landing.html",
         context={
             "session": request.session.get("user"),
             "pretty": json.dumps(request.session.get("user"), indent=4),
+            "hero_images": hero_images,
         },
     )
 
