@@ -49,7 +49,7 @@ class TeacherCourseListSerializer(TaggitSerializer, serializers.ModelSerializer)
             'module_count',
         ]
 
-    def get_module_count(self, obj):
+    def get_module_count(self, obj) -> int:
         return obj.modules.count()
 
 
@@ -89,8 +89,8 @@ class CourseUpdateSerializer(TaggitSerializer, serializers.ModelSerializer):
 
 # ===== Module Serializers =====
 
-class LessonBasicSerializer(serializers.ModelSerializer):
-    """Basic lesson info for module details"""
+class TeacherLessonBasicSerializer(serializers.ModelSerializer):
+    """Basic lesson info for module details (Teacher Dashboard)"""
     class Meta:
         model = Lesson
         fields = ['id', 'title', 'lesson_type', 'duration', 'created_at']
@@ -104,20 +104,20 @@ class ModuleListSerializer(serializers.ModelSerializer):
         model = Module
         fields = ['id', 'title', 'description', 'lesson_count']
 
-    def get_lesson_count(self, obj):
+    def get_lesson_count(self, obj) -> int:
         return obj.lessons.count()
 
 
 class ModuleDetailSerializer(serializers.ModelSerializer):
     """Module with full lesson list"""
-    lessons = LessonBasicSerializer(many=True, read_only=True)
+    lessons = TeacherLessonBasicSerializer(many=True, read_only=True)
     lesson_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Module
         fields = ['id', 'title', 'description', 'lessons', 'lesson_count']
 
-    def get_lesson_count(self, obj):
+    def get_lesson_count(self, obj) -> int:
         return obj.lessons.count()
 
 
@@ -155,7 +155,7 @@ class VideoLessonSerializer(serializers.ModelSerializer):
         model = VideoLesson
         fields = ['id', 'video_file', 'video_url', 'transcript']
 
-    def get_video_url(self, obj):
+    def get_video_url(self, obj) -> str | None:
         if obj.video_file:
             request = self.context.get('request')
             if request:
@@ -172,7 +172,7 @@ class BlogLessonSerializer(serializers.ModelSerializer):
         model = BlogLesson
         fields = ['id', 'content', 'images', 'image_url']
 
-    def get_image_url(self, obj):
+    def get_image_url(self, obj) -> str | None:
         if obj.images:
             request = self.context.get('request')
             if request:
@@ -299,10 +299,10 @@ class TeacherCourseDetailSerializer(TaggitSerializer, serializers.ModelSerialize
             'total_lessons',
         ]
 
-    def get_module_count(self, obj):
+    def get_module_count(self, obj) -> int:
         return obj.modules.count()
 
-    def get_total_lessons(self, obj):
+    def get_total_lessons(self, obj) -> int:
         total = 0
         for module in obj.modules.all():
             total += module.lessons.count()
@@ -351,7 +351,7 @@ class DiscussionReplySerializer(serializers.ModelSerializer):
         model = DiscussionPost
         fields = ['id', 'user', 'content', 'created_at', 'updated_at', 'is_edited', 'edited_at']
 
-    def get_user(self, obj):
+    def get_user(self, obj) -> dict:
         return {
             'id': obj.user.id,
             'username': obj.user.username,
@@ -361,8 +361,8 @@ class DiscussionReplySerializer(serializers.ModelSerializer):
         }
 
 
-class DiscussionPostSerializer(serializers.ModelSerializer):
-    """Discussion post for teacher view"""
+class TeacherDiscussionPostSerializer(serializers.ModelSerializer):
+    """Discussion post for teacher view (Teacher Dashboard)"""
     user = serializers.SerializerMethodField()
     replies = DiscussionReplySerializer(many=True, read_only=True)
     reply_count = serializers.SerializerMethodField()
@@ -382,7 +382,7 @@ class DiscussionPostSerializer(serializers.ModelSerializer):
             'reply_count',
         ]
 
-    def get_user(self, obj):
+    def get_user(self, obj) -> dict:
         return {
             'id': obj.user.id,
             'username': obj.user.username,
@@ -391,7 +391,7 @@ class DiscussionPostSerializer(serializers.ModelSerializer):
             'role': obj.user.role,
         }
 
-    def get_reply_count(self, obj):
+    def get_reply_count(self, obj) -> int:
         return obj.get_reply_count()
 
 

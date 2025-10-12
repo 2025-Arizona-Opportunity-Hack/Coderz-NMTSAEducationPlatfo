@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from authentication.models import TeacherProfile
 from authentication.permissions import IsTeacher, IsTeacherVerified, IsOnboardingComplete
@@ -39,7 +40,7 @@ from .serializers import (
     LessonCreateSerializer,
     LessonUpdateSerializer,
     CourseAnalyticsSerializer,
-    DiscussionPostSerializer,
+    TeacherDiscussionPostSerializer,
     DiscussionPostCreateSerializer,
 )
 
@@ -64,6 +65,11 @@ class TeacherDashboardView(APIView):
     """
     permission_classes = [IsTeacher, IsOnboardingComplete]
 
+    @extend_schema(
+        operation_id='teacher_dashboard',
+        responses={200: TeacherDashboardStatsSerializer},
+        description="Get teacher dashboard statistics including course counts and verification status"
+    )
     def get(self, request):
         teacher = request.user
         courses = Course.objects.filter(published_by=teacher).prefetch_related('modules', 'modules__lessons')
@@ -131,6 +137,10 @@ class TeacherCoursesView(ListAPIView):
     serializer_class = TeacherCourseListSerializer
 
     def get_queryset(self):
+        # Handle schema generation
+        if getattr(self, 'swagger_fake_view', False):
+            return Course.objects.none()
+        
         return Course.objects.filter(
             published_by=self.request.user
         ).prefetch_related('modules', 'modules__lessons').order_by('-published_date')
@@ -884,9 +894,13 @@ class CourseDiscussionsView(ListAPIView):
     List course discussions for moderation
     """
     permission_classes = [IsTeacher, IsOnboardingComplete, IsCourseOwner]
-    serializer_class = DiscussionPostSerializer
+    serializer_class = TeacherDiscussionPostSerializer
 
     def get_queryset(self):
+        # Handle schema generation
+        if getattr(self, 'swagger_fake_view', False):
+            return DiscussionPost.objects.none()
+        
         course_id = self.kwargs.get('course_id')
         course = get_object_or_404(Course, id=course_id, published_by=self.request.user)
 
@@ -926,7 +940,7 @@ class DiscussionCreateView(APIView):
             return Response(
                 {
                     'message': 'Discussion post created successfully!',
-                    'post': DiscussionPostSerializer(post).data
+                    'post': TeacherDiscussionPostSerializer(post).data
                 },
                 status=status.HTTP_201_CREATED
             )
@@ -940,7 +954,7 @@ class DiscussionDetailView(RetrieveAPIView):
     View discussion with replies
     """
     permission_classes = [IsTeacher, IsOnboardingComplete, IsCourseOwner]
-    serializer_class = DiscussionPostSerializer
+    serializer_class = TeacherDiscussionPostSerializer
     lookup_url_kwarg = 'post_id'
 
     def get_queryset(self):
@@ -971,7 +985,7 @@ class DiscussionReplyView(APIView):
             return Response(
                 {
                     'message': 'Reply posted successfully!',
-                    'reply': DiscussionPostSerializer(reply).data
+                    'reply': TeacherDiscussionPostSerializer(reply).data
                 },
                 status=status.HTTP_201_CREATED
             )
@@ -1006,7 +1020,7 @@ class DiscussionEditView(APIView):
             return Response(
                 {
                     'message': 'Post updated successfully!',
-                    'post': DiscussionPostSerializer(edited_post).data
+                    'post': TeacherDiscussionPostSerializer(edited_post).data
                 },
                 status=status.HTTP_200_OK
             )
@@ -1052,7 +1066,7 @@ class DiscussionPinToggleView(APIView):
         return Response(
             {
                 'message': message,
-                'post': DiscussionPostSerializer(post).data
+                'post': TeacherDiscussionPostSerializer(post).data
             },
             status=status.HTTP_200_OK
         )
