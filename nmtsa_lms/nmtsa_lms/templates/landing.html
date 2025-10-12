@@ -13,9 +13,15 @@
 {% block content %}
 
 <!-- Hero Section -->
-<section class="text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-gradient-primary rounded-xl sm:rounded-2xl mb-12 shadow-lg" 
+<section class="relative text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 mb-12 overflow-hidden" 
          role="region" 
          aria-label="Welcome hero">
+    {% if hero_images %}
+    <!-- Minimal 4-image overlay at the corners of a centered half-size rectangle -->
+    <div class="hero-image-quad" aria-hidden="true"></div>
+    {% endif %}
+
+    <div class="relative z-10">
     <h1 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold mb-4 sm:mb-6 text-primary leading-tight tracking-tight">
         Welcome to NMTSA Learning
     </h1>
@@ -26,46 +32,47 @@
         {% if request.session.user %}
             {% if request.session.user.role == 'student' %}
             <a href="{% url 'student_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="btn btn-primary btn-lg min-w-[200px]"
                aria-label="Go to student dashboard">
                 Go to Dashboard
             </a>
-            <a href="{% url 'public_catalog' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+                <a href="{% url 'public_catalog' %}" 
+                    class="btn btn-outline btn-lg min-w-[200px] border-primary"
                aria-label="Browse available courses">
                 Browse Courses
             </a>
             {% elif request.session.user.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="btn btn-primary btn-lg min-w-[200px]"
                aria-label="Go to teacher dashboard">
                 Teacher Dashboard
             </a>
             {% elif request.session.user.role == 'admin' %}
             <a href="{% url 'admin_dashboard' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="btn btn-primary btn-lg min-w-[200px]"
                aria-label="Go to admin dashboard">
                 Admin Dashboard
             </a>
             {% else %}
             <a href="{% url 'select_role' %}" 
-               class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+               class="btn btn-primary btn-lg min-w-[200px]"
                aria-label="Complete your profile setup">
                 Complete Your Profile
             </a>
             {% endif %}
         {% else %}
         <a href="{% url 'login' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow-md min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+           class="btn btn-primary btn-lg min-w-[200px]"
            aria-label="Sign up to get started">
             Get Started for Free
         </a>
-        <a href="{% url 'public_catalog' %}" 
-           class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-primary hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-primary rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-focus focus:ring-offset-2"
+          <a href="{% url 'public_catalog' %}" 
+              class="btn btn-outline btn-lg min-w-[200px] border-primary"
            aria-label="Browse available courses">
             Browse Courses
         </a>
         {% endif %}
+    </div>
     </div>
 </section>
 
@@ -444,6 +451,29 @@
 
 <!-- Testimonial Scrolling Styles -->
 <style>
+    /* Minimal hero 4-image layout */
+    .hero-image-quad {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .hero-image-quad .img-tile {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        background: var(--bg-card);
+        opacity: 0.28; /* keep images subtle under hero text */
+    }
+    .hero-image-quad .img-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
     @keyframes scroll-left {
         from {
             transform: translateX(0);
@@ -496,9 +526,83 @@
     }
 </style>
 
+{{ hero_images|json_script:"hero-images-data" }}
 <script>
+
     // Backup JavaScript-based scrolling in case CSS animation doesn't work
     document.addEventListener('DOMContentLoaded', function() {
+        // Render exactly 2 images at opposite corners (random pair), larger sizes
+        function renderPairHeroImages(){
+            const container = document.querySelector('.hero-image-quad');
+            const dataEl = document.getElementById('hero-images-data');
+            if (!container || !dataEl) return;
+
+            let imgs = [];
+            try { imgs = JSON.parse(dataEl.textContent) || []; } catch(e) { imgs = []; }
+            if (!imgs.length) return;
+
+            // Shuffle and pick up to 2 images randomly
+            const shuffled = imgs.slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            const picks = shuffled.slice(0, 2);
+
+            // Compute a reasonable tile size relative to hero
+            const hero = container.closest('section');
+            const rect = hero ? hero.getBoundingClientRect() : { width: 800, height: 300 };
+            const base = Math.min(rect.width, rect.height);
+            // Larger sizes: ~34% of smaller side; clamp to 180..420
+            const nominal = Math.floor(base * 0.34);
+            const sizeBase = Math.max(180, Math.min(420, nominal));
+
+            // Choose a diagonal pair at random: TL+BR or TR+BL
+            const diagonals = [
+                [ { x: 50 - 25, y: 50 - 25 }, { x: 50 + 25, y: 50 + 25 } ],
+                [ { x: 50 + 25, y: 50 - 25 }, { x: 50 - 25, y: 50 + 25 } ]
+            ];
+            const pair = diagonals[Math.random() < 0.5 ? 0 : 1];
+
+            // Clear any previous
+            container.innerHTML = '';
+
+            picks.forEach((src, i) => {
+                const tile = document.createElement('div');
+                tile.className = 'img-tile';
+                // Position centers at the corner points
+                const p = pair[i] || pair[pair.length - 1];
+                tile.style.left = p.x + '%';
+                tile.style.top = p.y + '%';
+                // Slight size variation per tile for organic feel (±12%)
+                const jitter = 0.12 * ((i % 2 === 0) ? 1 : -1);
+                const w = Math.round(sizeBase * (1 + jitter));
+                tile.style.width = w + 'px';
+                tile.style.height = w + 'px';
+
+                const img = document.createElement('img');
+                img.alt = '';
+                img.setAttribute('aria-hidden', 'true');
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.src = src;
+                tile.appendChild(img);
+                container.appendChild(tile);
+            });
+
+            // Relayout on resize to keep geometry consistent
+            if (!container.dataset.resizeBound) {
+                let resizeId;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeId);
+                    resizeId = setTimeout(renderPairHeroImages, 150);
+                }, { passive: true });
+                container.dataset.resizeBound = '1';
+            }
+        }
+
+        renderPairHeroImages();
+
         const scrollContainer = document.querySelector('.testimonial-scroll');
         
         if (scrollContainer) {

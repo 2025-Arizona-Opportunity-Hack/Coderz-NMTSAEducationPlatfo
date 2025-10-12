@@ -149,6 +149,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'nmtsa_lms', 'static'),
+    # Serve repo-root hero images under the "heroimages" namespace to avoid name collisions
+    ('heroimages', os.path.join(BASE_DIR, 'heroimages')),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
