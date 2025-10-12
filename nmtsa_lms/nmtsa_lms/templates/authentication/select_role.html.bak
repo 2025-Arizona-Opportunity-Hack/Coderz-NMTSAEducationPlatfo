@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
 {% block title %}Select Your Role - NMTSA Learning{% endblock %}
 
@@ -7,8 +6,8 @@
 <section style="max-width: 800px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
     <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
         <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
-        {% trans "Welcome to NMTSA Learning" %}
-    </h1>
+            Welcome to NMTSA Learning
+        </h1>
         <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
             To personalize your experience, please tell us about yourself
         </p>
@@ -30,9 +29,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
-        {% trans "I am a Student / Family Member" %}
-    </h3>
+                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">I am a Student / Family Member</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
                             I want to learn about neurologic music therapy techniques for autism support and care
                         </p>
@@ -51,11 +48,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">
-        {% trans "I am an Educator / Therapist" %}
-    </h3>
+                        <h3 style="margin-bottom: var(--spacing-sm); font-weight: 700;">I am an Educator / Therapist</h3>
                         <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">
-                            {% trans "I want to create and share educational content about neurologic music therapy" %}
+                            I want to create and share educational content about neurologic music therapy
                         </p>
                     </div>
                 </div>
@@ -63,7 +58,9 @@
         </div>
 
         <div style="text-align: center;">
-            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">{% trans "Continue" %}</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">
+                Continue
+            </button>
         </div>
     </form>
 

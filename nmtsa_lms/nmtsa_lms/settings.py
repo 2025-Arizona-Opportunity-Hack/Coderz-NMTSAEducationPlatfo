@@ -141,11 +141,7 @@ USE_TZ = True
 # Supported languages for the LMS
 LANGUAGES = [
     ('en', 'English'),
-    ('es', 'Spanish'),
-    ('fr', 'French'),
-    ('de', 'German'),
-    ('pt', 'Portuguese'),
-    ('zh-hans', 'Chinese (Simplified)'),
+    ('es', 'Spanish (Español)'),
 ]
 
 # Where translations are stored

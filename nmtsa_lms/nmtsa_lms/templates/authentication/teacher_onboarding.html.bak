@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load i18n %}
 
 {% block title %}Teacher Profile Setup - NMTSA Learning{% endblock %}
 
@@ -7,10 +6,10 @@
 <section style="max-width: 900px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
     <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
         <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
-        {% trans "Complete Your Educator Profile" %}
-    </h1>
+            Complete Your Educator Profile
+        </h1>
         <p style="font-size: calc(1.125rem * var(--font-scale)); color: var(--text-secondary); line-height: 1.7;">
-            {% trans "Help us verify your credentials to start creating courses" %}
+            Help us verify your credentials to start creating courses
         </p>
     </div>
 
@@ -19,21 +18,21 @@
 
         <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
             <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
-        {% trans "Professional Information" %}
-    </h2>
+                Professional Information
+            </h2>
 
             <div style="display: grid; gap: var(--spacing-lg);">
                 <!-- Bio -->
                 <div>
                     <label for="bio" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Professional Bio" %} <span style="color: var(--error);">*</span>
+                        Professional Bio <span style="color: var(--error);">*</span>
                     </label>
                     <textarea
                         id="bio"
                         name="bio"
                         required
                         rows="4"
-                        placeholder='{% trans "Tell us about your professional background and experience in neurologic music therapy or related fields" %}'
+                        placeholder="Tell us about your professional background and experience in neurologic music therapy or related fields"
                         style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
                     >{{ teacher_profile.bio }}</textarea>
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
@@ -44,7 +43,7 @@
                 <!-- Specialization -->
                 <div>
                     <label for="specialization" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Area of Specialization" %} <span style="color: var(--error);">*</span>
+                        Area of Specialization <span style="color: var(--error);">*</span>
                     </label>
                     <input
                         type="text"
@@ -52,7 +51,7 @@
                         name="specialization"
                         value="{{ teacher_profile.specialization }}"
                         required
-                        placeholder='{% trans "e.g., Neurologic Music Therapy, Autism Support, Music Education" %}'
+                        placeholder="e.g., Neurologic Music Therapy, Autism Support, Music Education"
                         style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
                     >
                 </div>
@@ -60,7 +59,7 @@
                 <!-- Years of Experience -->
                 <div>
                     <label for="years_experience" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Years of Professional Experience" %} <span style="color: var(--error);">*</span>
+                        Years of Professional Experience <span style="color: var(--error);">*</span>
                     </label>
                     <input
                         type="number"
@@ -78,14 +77,14 @@
                 <!-- Credentials -->
                 <div>
                     <label for="credentials" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Professional Credentials" %} <span style="color: var(--error);">*</span>
+                        Professional Credentials <span style="color: var(--error);">*</span>
                     </label>
                     <textarea
                         id="credentials"
                         name="credentials"
                         required
                         rows="4"
-                        placeholder='{% trans "List your degrees, certifications, licenses, and professional credentials (e.g., MA in Music Therapy, NMT-Fellow, Board Certified Music Therapist)" %}'
+                        placeholder="List your degrees, certifications, licenses, and professional credentials (e.g., MA in Music Therapy, NMT-Fellow, Board Certified Music Therapist)"
                         style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
                     >{{ teacher_profile.credentials }}</textarea>
                 </div>
@@ -95,14 +94,14 @@
         <!-- Document Uploads -->
         <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
             <h2 style="margin-bottom: var(--spacing-xl); font-size: calc(1.5rem * var(--font-scale));">
-        {% trans "Supporting Documents" %}
-    </h2>
+                Supporting Documents
+            </h2>
 
             <div style="display: grid; gap: var(--spacing-xl);">
                 <!-- Resume Upload -->
                 <div>
                     <label for="resume" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Resume / CV" %} <span style="color: var(--error);">*</span>
+                        Resume / CV <span style="color: var(--error);">*</span>
                     </label>
                     <input
                         type="file"
@@ -118,14 +117,14 @@
                     </p>
                     {% endif %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        {% trans "Accepted formats: PDF, DOC, DOCX (Max 10MB)" %}
+                        Accepted formats: PDF, DOC, DOCX (Max 10MB)
                     </p>
                 </div>
 
                 <!-- Certifications Upload -->
                 <div>
                     <label for="certifications" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        {% trans "Certifications & Licenses" %} <span style="color: var(--error);">*</span>
+                        Certifications & Licenses <span style="color: var(--error);">*</span>
                     </label>
                     <input
                         type="file"
@@ -141,7 +140,7 @@
                     </p>
                     {% endif %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        {% trans "Upload scans or photos of your certifications (PDF, JPG, PNG - Max 10MB)" %}
+                        Upload scans or photos of your certifications (PDF, JPG, PNG - Max 10MB)
                     </p>
                 </div>
             </div>
@@ -150,19 +149,21 @@
         <!-- What Happens Next -->
         <div style="background: var(--info-light); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 4px solid var(--info); margin-bottom: var(--spacing-xl);">
             <h3 style="margin-bottom: var(--spacing-md); font-size: calc(1.125rem * var(--font-scale)); color: var(--text-primary);">
-        {% trans "What Happens Next?" %}
-    </h3>
+                What Happens Next?
+            </h3>
             <ul style="margin: 0; padding-left: var(--spacing-xl); color: var(--text-secondary); line-height: 1.8; list-style-type: disc;">
-                <li style="margin-bottom: var(--spacing-sm);">{% trans "Your application will be reviewed by our admin team" %}</li>
-                <li style="margin-bottom: var(--spacing-sm);">{% trans "We will verify your credentials and professional background" %}</li>
-                <li style="margin-bottom: var(--spacing-sm);">{% trans "You will receive an email notification within 2-3 business days" %}</li>
-                <li style="margin-bottom: var(--spacing-sm);">{% trans "Once approved, you can start creating and publishing courses" %}</li>
+                <li style="margin-bottom: var(--spacing-sm);">Your application will be reviewed by our admin team</li>
+                <li style="margin-bottom: var(--spacing-sm);">We will verify your credentials and professional background</li>
+                <li style="margin-bottom: var(--spacing-sm);">You will receive an email notification within 2-3 business days</li>
+                <li style="margin-bottom: var(--spacing-sm);">Once approved, you can start creating and publishing courses</li>
             </ul>
         </div>
 
         <!-- Submit Button -->
         <div style="text-align: center;">
-            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 250px;">{% trans "Submit for Verification" %}</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 250px;">
+                Submit for Verification
+            </button>
         </div>
     </form>
 </section>

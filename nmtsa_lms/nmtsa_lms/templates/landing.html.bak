@@ -112,14 +112,14 @@
                 </svg>
             </div>
             <h3 class="text-xl sm:text-2xl font-bold mb-4 text-primary">
-        {% trans "Families & Caregivers" %}
-    </h3>
+                Families & Caregivers
+            </h3>
             <p class="text-secondary mb-6 leading-relaxed">
                 Access practical strategies and evidence-based approaches to support your loved ones with autism using music therapy principles at home.
             </p>
             <a href="/about/families/" 
                class="inline-flex items-center gap-2 text-[color:var(--secondary-hover)] hover:text-secondary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
-               aria-label='{% trans "Learn more about resources for families and caregivers" %}'>
+               aria-label="Learn more about resources for families and caregivers">
                 Learn More
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -137,14 +137,14 @@
                 </svg>
             </div>
             <h3 class="text-xl sm:text-2xl font-bold mb-4 text-primary">
-        {% trans "Educators & Therapists" %}
-    </h3>
+                Educators & Therapists
+            </h3>
             <p class="text-secondary mb-6 leading-relaxed">
                 Create and share educational content about neurologic music therapy. Build your professional presence and generate revenue from your expertise.
             </p>
             <a href="/about/educators/" 
                class="inline-flex items-center gap-2 text-accent hover:text-[color:var(--accent-hover)] font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded"
-               aria-label='{% trans "Learn more about teaching opportunities" %}'>
+               aria-label="Learn more about teaching opportunities">
                 Learn More
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -158,46 +158,46 @@
 <section id="about" 
          class="bg-card rounded-xl sm:rounded-2xl border-2 border-default p-6 sm:p-10 lg:p-16 mb-16 sm:mb-20 shadow-md"
          role="region" 
-         aria-labelledby='{% trans "about-heading" %}'>
+         aria-labelledby="about-heading">
     <div class="max-w-4xl mx-auto">
         <h2 id="about-heading" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center mb-6 sm:mb-8 text-primary">
-        {% trans "About Neurologic Music Therapy" %}
-    </h2>
+            About Neurologic Music Therapy
+        </h2>
         <p class="text-base sm:text-lg text-secondary leading-relaxed mb-8">
             <strong class="text-primary font-bold">Neurologic Music Therapy (NMT)</strong> is a research-based treatment system that uses music and rhythm to improve brain function.
-            {% trans "For individuals with autism, NMT can help develop:" %}
+            For individuals with autism, NMT can help develop:
         </p>
         <ul class="space-y-4 max-w-2xl mx-auto mb-10" role="list">
             <li class="flex items-start gap-3 text-base sm:text-lg text-secondary leading-relaxed">
                 <svg class="w-6 h-6 flex-shrink-0 mt-1 text-[color:var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span>{% trans "Motor skills and body awareness through rhythm-based movement" %}</span>
+                <span>Motor skills and body awareness through rhythm-based movement</span>
             </li>
             <li class="flex items-start gap-3 text-base sm:text-lg text-secondary leading-relaxed">
                 <svg class="w-6 h-6 flex-shrink-0 mt-1 text-[color:var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span>{% trans "Speech, language, and communication abilities" %}</span>
+                <span>Speech, language, and communication abilities</span>
             </li>
             <li class="flex items-start gap-3 text-base sm:text-lg text-secondary leading-relaxed">
                 <svg class="w-6 h-6 flex-shrink-0 mt-1 text-[color:var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span>{% trans "Social interaction and emotional regulation" %}</span>
+                <span>Social interaction and emotional regulation</span>
             </li>
             <li class="flex items-start gap-3 text-base sm:text-lg text-secondary leading-relaxed">
                 <svg class="w-6 h-6 flex-shrink-0 mt-1 text-[color:var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span>{% trans "Independence and meaningful connections with others" %}</span>
+                <span>Independence and meaningful connections with others</span>
             </li>
         </ul>
         <div class="text-center">
             <a href="https://nmtsa.org" 
                class="inline-flex items-center gap-2 text-lg text-[color:var(--primary-hover)] hover:text-primary font-semibold focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded px-2 py-1"
-               aria-label='{% trans "Read more about neurologic music therapy" %}'>
-                {% trans "Learn More About NMTSA" %}
+               aria-label="Read more about neurologic music therapy">
+                Learn More About NMTSA
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -207,9 +207,9 @@
 </section>
 
 <!-- Platform Features -->
-<section class="mb-16 sm:mb-20" role="region" aria-labelledby="{% trans "features-heading" %}">
+<section class="mb-16 sm:mb-20" role="region" aria-labelledby="features-heading">
     <h2 id="features-heading" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 text-primary">
-        {% trans "Why Choose NMTSA Learning?" %}
+        Why Choose NMTSA Learning?
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -221,10 +221,10 @@
                 </svg>
             </div>
             <h3 class="text-lg sm:text-xl font-bold mb-3 text-primary">
-        {% trans "Expert-Led Courses" %}
-    </h3>
+                Expert-Led Courses
+            </h3>
             <p class="text-sm sm:text-base text-secondary leading-relaxed">
-                {% trans "Learn from certified NMT professionals with real-world experience" %}
+                Learn from certified NMT professionals with real-world experience
             </p>
         </article>
 
@@ -236,10 +236,10 @@
                 </svg>
             </div>
             <h3 class="text-lg sm:text-xl font-bold mb-3 text-primary">
-        {% trans "Professional Certificates" %}
-    </h3>
+                Professional Certificates
+            </h3>
             <p class="text-sm sm:text-base text-secondary leading-relaxed">
-                {% trans "Earn recognized certifications and continuing education credits" %}
+                Earn recognized certifications and continuing education credits
             </p>
         </article>
 
@@ -251,10 +251,10 @@
                 </svg>
             </div>
             <h3 class="text-lg sm:text-xl font-bold mb-3 text-primary">
-        {% trans "Autism-Friendly Design" %}
-    </h3>
+                Autism-Friendly Design
+            </h3>
             <p class="text-sm sm:text-base text-secondary leading-relaxed">
-                {% trans "Platform designed with sensory accessibility in mind" %}
+                Platform designed with sensory accessibility in mind
             </p>
         </article>
 
@@ -266,10 +266,10 @@
                 </svg>
             </div>
             <h3 class="text-lg sm:text-xl font-bold mb-3 text-primary">
-        {% trans "Learn at Your Pace" %}
-    </h3>
+                Learn at Your Pace
+            </h3>
             <p class="text-sm sm:text-base text-secondary leading-relaxed">
-                {% trans "Self-paced courses accessible 24/7 from any device" %}
+                Self-paced courses accessible 24/7 from any device
             </p>
         </article>
     </div>
@@ -278,20 +278,24 @@
 <!-- Call to Action -->
 <section class="bg-gradient-to-br from-primary to-accent rounded-xl sm:rounded-2xl p-8 sm:p-12 lg:p-16 text-center text-white shadow-xl"
          role="region" 
-         aria-labelledby="{% trans "cta-heading" %}">
+         aria-labelledby="cta-heading">
     <h2 id="cta-heading" class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight tracking-tight">
-        {% trans "Ready to Get Started?" %}
+        Ready to Get Started?
     </h2>
     <p class="text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 opacity-95 max-w-2xl mx-auto leading-relaxed">
-        {% trans "Join thousands of professionals and families learning effective autism support strategies" %}
+        Join thousands of professionals and families learning effective autism support strategies
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <a href="/signup/" 
            class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-bold text-[color:var(--primary-hover)] bg-white hover:bg-gray-100 rounded-lg shadow-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
-           aria-label='{% trans "Sign up for free account" %}'>{% trans "Sign Up for Free" %}</a>
+           aria-label="Sign up for free account">
+            Sign Up for Free
+        </a>
         <a href="/browse-courses/" 
            class="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-white bg-white/10 hover:bg-white/20 border-2 border-white/50 backdrop-blur rounded-lg min-w-[200px] min-h-touch focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-[color:var(--primary)]"
-           aria-label='{% trans "Explore available courses" %}'>{% trans "Explore Courses" %}</a>
+           aria-label="Explore available courses">
+            Explore Courses
+        </a>
     </div>
 </section>
 
