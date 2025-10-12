@@ -1,6 +1,11 @@
 from django.db import models
 from django.conf import settings
 from taggit.managers import TaggableManager
+import uuid
+
+def gen_slug():
+    return str(uuid.uuid4())[:11]
+
 
 
 class Course(models.Model):
@@ -17,6 +22,7 @@ class Course(models.Model):
     published_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     modules = models.ManyToManyField('Module', blank=True)
     tags = TaggableManager(blank=True)
+    slug = models.SlugField(max_length=11, unique=True, default=gen_slug, null=True, blank=True)
 
     class Meta:
         db_table = 'courses'
@@ -30,6 +36,7 @@ class Module(models.Model):
     description = models.TextField()
     lessons = models.ManyToManyField('Lesson', blank=True)
     tags = TaggableManager(blank=True)
+    slug = models.SlugField(max_length=11, unique=True, default=gen_slug, null=True, blank=True)
 
     class Meta:
         db_table = 'modules'
@@ -48,6 +55,7 @@ class Lesson(models.Model):
     duration = models.IntegerField(help_text="Expected duration in minutes", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     tags = TaggableManager(blank=True)
+    slug = models.SlugField(max_length=11, unique=True, default=gen_slug, null=True, blank=True)
 
     class Meta:
         db_table = 'lessons'
@@ -147,6 +155,7 @@ class VideoLesson(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='video')
     video_file = models.FileField(upload_to='videos/')
     transcript = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'video_lessons'

@@ -21,6 +21,21 @@ from nmtsa_lms.paypal_service import create_order as paypal_create_order, captur
 logger = logging.getLogger(__name__)
 
 
+def _get_course_by_slug_or_404(slug: str, **kwargs) -> Course:
+    """Get course by slug."""
+    return get_object_or_404(Course, slug=slug, **kwargs)
+
+
+def _get_module_by_slug_or_404(course: Course, slug: str) -> Module:
+    """Get module by slug."""
+    return get_object_or_404(course.modules, slug=slug)
+
+
+def _get_lesson_by_slug_or_404(module: Module, slug: str) -> Lesson:
+    """Get lesson by slug."""
+    return get_object_or_404(module.lessons, slug=slug)
+
+
 @student_required
 @onboarding_complete_required
 def dashboard(request):
@@ -82,7 +97,9 @@ def courses(request):
 @student_required
 @onboarding_complete_required
 def catalog(request):
-    """Course catalog for browsing"""
+    """Course catalog for browsing with Supermemory-powered natural language search"""
+    from lms.supermemory_client import get_supermemory_client
+
     # Base queryset
     qs = Course.objects.filter(is_published=True).select_related('published_by').prefetch_related('tags')
 
@@ -93,9 +110,79 @@ def catalog(request):
     tag = request.GET.get('tag', '').strip()
     sort = request.GET.get('sort', 'newest')
 
+    # Use Supermemory for natural language search if query exists
     if q:
-        qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+        supermemory_client = get_supermemory_client()
 
+        if supermemory_client:
+            try:
+                # Perform multi-tier search (courses, modules, lessons)
+                search_results = supermemory_client.multi_tier_search(
+                    query=q,
+                    limit_per_tier=50
+                )
+
+                if search_results:
+                    # Extract course slugs from search results
+                    course_slugs = [result["slug"] for result in search_results]
+
+                    # Filter queryset by matching slugs
+                    qs = qs.filter(slug__in=course_slugs)
+
+                    # Create a slug -> score mapping for sorting
+                    slug_to_result = {result["slug"]: result for result in search_results}
+
+                    # Apply additional filters
+                    if price_min:
+                        try:
+                            qs = qs.filter(price__gte=float(price_min))
+                        except ValueError:
+                            pass
+
+                    if price_max:
+                        try:
+                            qs = qs.filter(price__lte=float(price_max))
+                        except ValueError:
+                            pass
+
+                    if tag:
+                        qs = qs.filter(tags__name__iexact=tag)
+
+                    # Convert to list and sort by relevance score
+                    courses_list = list(qs)
+                    courses_list.sort(
+                        key=lambda c: slug_to_result.get(c.slug, {}).get("score", 0),
+                        reverse=True
+                    )
+
+                    context = {
+                        'courses': courses_list,
+                        'filters': {
+                            'q': q,
+                            'price_min': price_min or '',
+                            'price_max': price_max or '',
+                            'tag': tag,
+                            'sort': 'relevance',  # Override sort to relevance
+                        },
+                        'search_results': search_results,  # Include for debugging/display
+                    }
+                    return render(request, 'student_dash/course_catalog.html', context)
+
+                else:
+                    # No results from Supermemory, fallback to empty queryset
+                    qs = Course.objects.none()
+
+            except Exception as e:
+                logger.error(f"Supermemory search error: {e}")
+                # Fallback to traditional search on error
+                qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+
+        else:
+            # Supermemory not available, fallback to traditional search
+            logger.warning("Supermemory client not available, using traditional search")
+            qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
+
+    # Apply other filters (no search query)
     if price_min:
         try:
             qs = qs.filter(price__gte=float(price_min))
@@ -111,15 +198,16 @@ def catalog(request):
     if tag:
         qs = qs.filter(tags__name__iexact=tag)
 
-    # Sorting
-    if sort == 'popular':
-        qs = qs.order_by('-num_enrollments', '-published_date')
-    elif sort == 'price_asc':
-        qs = qs.order_by('price')
-    elif sort == 'price_desc':
-        qs = qs.order_by('-price')
-    else:  # newest
-        qs = qs.order_by('-published_date')
+    # Apply sorting (only when not using Supermemory search)
+    if not q or not get_supermemory_client():
+        if sort == 'popular':
+            qs = qs.order_by('-num_enrollments', '-published_date')
+        elif sort == 'price_asc':
+            qs = qs.order_by('price')
+        elif sort == 'price_desc':
+            qs = qs.order_by('-price')
+        else:  # newest
+            qs = qs.order_by('-published_date')
 
     context = {
         'courses': qs,
@@ -136,9 +224,9 @@ def catalog(request):
 
 @student_required
 @onboarding_complete_required
-def course_detail(request, course_id):
+def course_detail(request, course_slug):
     """Course detail page with enrollment option"""
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
     # Check if user is already enrolled
     session_user = request.session.get('user')
@@ -164,26 +252,26 @@ def course_detail(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def enroll_in_course(request, course_id):
+def enroll_in_course(request, course_slug):
     """Enroll student in a course"""
     if request.method != 'POST':
         return redirect('student_catalog')
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
     # Redirect to checkout for paid courses
     if course.is_paid:
-        return redirect('student_checkout', course_id=course_id)
+        return redirect('student_checkout', course_slug=course.slug)
 
     # Check if already enrolled
     existing_enrollment = Enrollment.objects.filter(user=user, course=course).first()
 
     if existing_enrollment:
         messages.warning(request, "You're already enrolled in this course!")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Create enrollment for free courses
     with transaction.atomic():
@@ -197,14 +285,14 @@ def enroll_in_course(request, course_id):
         Course.objects.filter(pk=course.pk).update(num_enrollments=F('num_enrollments') + 1)
 
     messages.success(request, f"Successfully enrolled in {course.title}!")
-    return redirect('student_course_detail', course_id=course_id)
+    return redirect('student_course_detail', course_slug=course.slug)
 
 
 @student_required
 @onboarding_complete_required
-def checkout_course(request, course_id):
+def checkout_course(request, course_slug):
     """Display checkout page for paid course"""
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
@@ -212,13 +300,13 @@ def checkout_course(request, course_id):
     # Check if not a paid course
     if not course.is_paid:
         messages.info(request, "This course is free! No payment required.")
-        return redirect('student_enroll', course_id=course_id)
+        return redirect('student_enroll', course_slug=course.slug)
 
     # Check if already enrolled
     existing_enrollment = Enrollment.objects.filter(user=user, course=course).first()
     if existing_enrollment:
         messages.warning(request, "You're already enrolled in this course!")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Import settings to get PayPal client ID
     from django.conf import settings
@@ -232,12 +320,12 @@ def checkout_course(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def process_checkout(request, course_id):
+def process_checkout(request, course_slug):
     """Process payment and create enrollment"""
     if request.method != 'POST':
-        return redirect('student_checkout', course_id=course_id)
+        return redirect('student_checkout', course_slug=course_slug)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
@@ -246,7 +334,7 @@ def process_checkout(request, course_id):
     existing_enrollment = Enrollment.objects.filter(user=user, course=course).first()
     if existing_enrollment:
         messages.warning(request, "You're already enrolled in this course!")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Simulate payment processing
     # In production, this would integrate with Stripe/PayPal
@@ -264,13 +352,13 @@ def process_checkout(request, course_id):
         Course.objects.filter(pk=course.pk).update(num_enrollments=F('num_enrollments') + 1)
 
     messages.success(request, f"Payment successful! You're now enrolled in {course.title}. Welcome aboard!")
-    return redirect('student_learning', course_id=course_id)
+    return redirect('student_learning', course_slug=course.slug)
 
 
 @student_required
 @onboarding_complete_required
 @require_http_methods(["POST"])
-def create_paypal_order(request, course_id):
+def create_paypal_order(request, course_slug):
     """
     API endpoint to create a PayPal order
     Called by frontend when user clicks PayPal button
@@ -279,8 +367,8 @@ def create_paypal_order(request, course_id):
         session_user = request.session.get('user')
         user_id = session_user.get('user_id')
         user = User.objects.get(id=user_id)
-        
-        course = get_object_or_404(Course, id=course_id, is_published=True)
+
+        course = _get_course_by_slug_or_404(course_slug, is_published=True)
         
         # Verify course is paid
         if not course.is_paid:
@@ -354,7 +442,7 @@ def create_paypal_order(request, course_id):
 @student_required
 @onboarding_complete_required
 @require_http_methods(["POST"])
-def capture_paypal_order(request, course_id):
+def capture_paypal_order(request, course_slug):
     """
     API endpoint to capture a PayPal order after user approval
     Called by frontend after user completes payment in PayPal popup
@@ -363,18 +451,18 @@ def capture_paypal_order(request, course_id):
         # Parse request body
         data = json.loads(request.body)
         order_id = data.get('order_id')
-        
+
         if not order_id:
             return JsonResponse({
                 'success': False,
                 'error': 'Order ID is required'
             }, status=400)
-        
+
         session_user = request.session.get('user')
         user_id = session_user.get('user_id')
         user = User.objects.get(id=user_id)
-        
-        course = get_object_or_404(Course, id=course_id, is_published=True)
+
+        course = _get_course_by_slug_or_404(course_slug, is_published=True)
         
         # Get payment record
         payment = Payment.objects.filter(
@@ -397,7 +485,7 @@ def capture_paypal_order(request, course_id):
                 return JsonResponse({
                     'success': True,
                     'message': 'Payment already processed',
-                    'redirect_url': f'/student/courses/{course_id}/learn/'
+                    'redirect_url': f'/student/courses/{course.slug}/learn/'
                 })
         
         # Capture the PayPal order
@@ -440,7 +528,7 @@ def capture_paypal_order(request, course_id):
         return JsonResponse({
             'success': True,
             'message': 'Payment successful! Welcome to the course.',
-            'redirect_url': f'/student/courses/{course_id}/learn/'
+            'redirect_url': f'/student/courses/{course.slug}/learn/'
         })
         
     except json.JSONDecodeError:
@@ -463,13 +551,13 @@ def capture_paypal_order(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def learning(request, course_id):
+def learning(request, course_slug):
     """Main learning interface for a course"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id)
+    course = _get_course_by_slug_or_404(course_slug)
     enrollment = get_object_or_404(Enrollment, user=user, course=course)
 
     # Get all modules with lessons
@@ -486,24 +574,24 @@ def learning(request, course_id):
 
     if not first_lesson or not first_module:
         messages.warning(request, "This course doesn't have any lessons yet.")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Redirect to the first lesson
-    return redirect('student_lesson', course_id=course_id, module_id=first_module.id, lesson_id=first_lesson.id)
+    return redirect('student_lesson', course_slug=course.slug, module_slug=first_module.slug, lesson_slug=first_lesson.slug)
 
 
 @student_required
 @onboarding_complete_required
-def lesson_view(request, course_id, module_id, lesson_id):
+def lesson_view(request, course_slug, module_slug, lesson_slug):
     """View a specific lesson"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id)
+    course = _get_course_by_slug_or_404(course_slug)
     enrollment = get_object_or_404(Enrollment, user=user, course=course)
-    module = get_object_or_404(Module, id=module_id)
-    current_lesson = get_object_or_404(Lesson, id=lesson_id)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    current_lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
     # Load video progress for video lessons
     video_progress = None
@@ -548,7 +636,7 @@ def lesson_view(request, course_id, module_id, lesson_id):
                 lesson.watch_percentage = video_progress_map.get(lesson.id, 0)
             all_lessons.append(lesson)
 
-    current_index = next((i for i, l in enumerate(all_lessons) if l.id == lesson_id), None)
+    current_index = next((i for i, l in enumerate(all_lessons) if l.id == current_lesson.id), None)
     previous_lesson = all_lessons[current_index - 1] if current_index and current_index > 0 else None
     next_lesson = all_lessons[current_index + 1] if current_index is not None and current_index < len(all_lessons) - 1 else None
 
@@ -568,20 +656,19 @@ def lesson_view(request, course_id, module_id, lesson_id):
 
 @student_required
 @onboarding_complete_required
-def mark_lesson_complete(request, course_id, module_id, lesson_id):
+def mark_lesson_complete(request, course_slug, module_slug, lesson_slug):
     """Mark a lesson as complete and update progress"""
     if request.method != 'POST':
-        return redirect('student_lesson', course_id=course_id, module_id=module_id, lesson_id=lesson_id)
+        return redirect('student_lesson', course_slug=course_slug, module_slug=module_slug, lesson_slug=lesson_slug)
 
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id)
+    course = _get_course_by_slug_or_404(course_slug)
     enrollment = get_object_or_404(Enrollment, user=user, course=course)
-
-    # Ensure the lesson exists
-    lesson = get_object_or_404(Lesson, id=lesson_id)
+    module = _get_module_by_slug_or_404(course, module_slug)
+    lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
     with transaction.atomic():
         # Create CompletedLesson if not exists (idempotent)
@@ -601,18 +688,18 @@ def mark_lesson_complete(request, course_id, module_id, lesson_id):
         )
 
     messages.success(request, "Lesson marked as complete!")
-    return redirect('student_lesson', course_id=course_id, module_id=module_id, lesson_id=lesson_id)
+    return redirect('student_lesson', course_slug=course.slug, module_slug=module.slug, lesson_slug=lesson.slug)
 
 
 @student_required
 @onboarding_complete_required
-def certificate(request, course_id):
+def certificate(request, course_slug):
     """Display certificate for completed course"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id)
+    course = _get_course_by_slug_or_404(course_slug)
     enrollment = get_object_or_404(Enrollment, user=user, course=course, completed_at__isnull=False)
 
     context = {
@@ -624,13 +711,13 @@ def certificate(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def certificate_pdf(request, course_id):
+def certificate_pdf(request, course_slug):
     """Optional PDF generation for certificate; falls back gracefully if dependency missing."""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id)
+    course = _get_course_by_slug_or_404(course_slug)
     enrollment = get_object_or_404(Enrollment, user=user, course=course, completed_at__isnull=False)
 
     # Render HTML from the same template
@@ -643,7 +730,7 @@ def certificate_pdf(request, course_id):
         from weasyprint import HTML  # type: ignore
     except Exception:
         messages.info(request, "PDF generation is not available. Use your browser's Print to PDF.")
-        return redirect('student_certificate', course_id=course_id)
+        return redirect('student_certificate', course_slug=course.slug)
 
     pdf_bytes = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
@@ -738,18 +825,18 @@ def _get_user_role_in_course(user, course):
 
 @student_required
 @onboarding_complete_required
-def course_discussions(request, course_id):
+def course_discussions(request, course_slug):
     """List all discussion posts for a course"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
     # Check access
     if not _can_access_discussions(user, course):
         messages.error(request, "You must be enrolled in this course to view discussions.")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Get user's enrollment
     enrollment = get_object_or_404(Enrollment, user=user, course=course, is_active=True)
@@ -793,18 +880,18 @@ def course_discussions(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def discussion_create(request, course_id):
+def discussion_create(request, course_slug):
     """Create a new discussion post"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
     # Check access
     if not _can_access_discussions(user, course):
         messages.error(request, "You must be enrolled in this course to post discussions.")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     # Rate limiting check - max 10 posts per hour per user per course
     from django.utils import timezone
@@ -818,7 +905,7 @@ def discussion_create(request, course_id):
 
     if recent_posts_count >= 10:
         messages.error(request, "You've reached the posting limit. Please wait before posting again.")
-        return redirect('student_course_discussions', course_id=course_id)
+        return redirect('student_course_discussions', course_slug=course.slug)
 
     if request.method == 'POST':
         form = DiscussionPostForm(request.POST)
@@ -829,7 +916,7 @@ def discussion_create(request, course_id):
             post.parent_post = None  # Top-level post
             post.save()
             messages.success(request, "Your discussion post has been created!")
-            return redirect('student_discussion_detail', course_id=course_id, post_id=post.id)
+            return redirect('student_discussion_detail', course_slug=course.slug, post_id=post.id)
     else:
         form = DiscussionPostForm()
 
@@ -843,18 +930,18 @@ def discussion_create(request, course_id):
 
 @student_required
 @onboarding_complete_required
-def discussion_detail(request, course_id, post_id):
+def discussion_detail(request, course_slug, post_id):
     """View a single discussion post with all replies"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
     # Check access
     if not _can_access_discussions(user, course):
         messages.error(request, "You must be enrolled in this course to view discussions.")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     post = get_object_or_404(
         DiscussionPost.objects.select_related('user', 'course').prefetch_related('replies__user'),
@@ -884,21 +971,21 @@ def discussion_detail(request, course_id, post_id):
 
 @student_required
 @onboarding_complete_required
-def discussion_reply(request, course_id, post_id):
+def discussion_reply(request, course_slug, post_id):
     """Reply to a discussion post"""
     if request.method != 'POST':
-        return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
+        return redirect('student_discussion_detail', course_slug=course_slug, post_id=post_id)
 
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
 
     # Check access
     if not _can_access_discussions(user, course):
         messages.error(request, "You must be enrolled in this course to reply.")
-        return redirect('student_course_detail', course_id=course_id)
+        return redirect('student_course_detail', course_slug=course.slug)
 
     parent_post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
@@ -914,7 +1001,7 @@ def discussion_reply(request, course_id, post_id):
 
     if recent_posts_count >= 10:
         messages.error(request, "You've reached the posting limit. Please wait before replying again.")
-        return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
+        return redirect('student_discussion_detail', course_slug=course.slug, post_id=post_id)
 
     form = DiscussionReplyForm(request.POST)
     if form.is_valid():
@@ -929,26 +1016,26 @@ def discussion_reply(request, course_id, post_id):
             for err in field_errors:
                 messages.error(request, str(err))
 
-    return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
+    return redirect('student_discussion_detail', course_slug=course.slug, post_id=post_id)
 
 
 @student_required
 @onboarding_complete_required
-def discussion_edit(request, course_id, post_id):
+def discussion_edit(request, course_slug, post_id):
     """Edit a discussion post or reply"""
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
     post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
     # Check if user can edit
     if not post.can_edit(user):
         messages.error(request, "You don't have permission to edit this post, or the editing time limit has expired.")
         if post.parent_post:
-            return redirect('student_discussion_detail', course_id=course_id, post_id=post.parent_post.id)
-        return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
+            return redirect('student_discussion_detail', course_slug=course.slug, post_id=post.parent_post.id)
+        return redirect('student_discussion_detail', course_slug=course.slug, post_id=post_id)
 
     if request.method == 'POST':
         form = DiscussionPostForm(request.POST, instance=post)
@@ -959,8 +1046,8 @@ def discussion_edit(request, course_id, post_id):
             edited_post.save()
             messages.success(request, "Your post has been updated!")
             if post.parent_post:
-                return redirect('student_discussion_detail', course_id=course_id, post_id=post.parent_post.id)
-            return redirect('student_discussion_detail', course_id=course_id, post_id=post_id)
+                return redirect('student_discussion_detail', course_slug=course.slug, post_id=post.parent_post.id)
+            return redirect('student_discussion_detail', course_slug=course.slug, post_id=post_id)
     else:
         form = DiscussionPostForm(instance=post)
 
@@ -975,22 +1062,22 @@ def discussion_edit(request, course_id, post_id):
 
 @student_required
 @onboarding_complete_required
-def discussion_delete(request, course_id, post_id):
+def discussion_delete(request, course_slug, post_id):
     """Delete a discussion post or reply"""
     if request.method != 'POST':
-        return redirect('student_course_discussions', course_id=course_id)
+        return redirect('student_course_discussions', course_slug=course_slug)
 
     session_user = request.session.get('user')
     user_id = session_user.get('user_id')
     user = User.objects.get(id=user_id)
 
-    course = get_object_or_404(Course, id=course_id, is_published=True)
+    course = _get_course_by_slug_or_404(course_slug, is_published=True)
     post = get_object_or_404(DiscussionPost, id=post_id, course=course)
 
     # Check if user can delete
     if not post.can_delete(user, course):
         messages.error(request, "You don't have permission to delete this post.")
-        return redirect('student_course_discussions', course_id=course_id)
+        return redirect('student_course_discussions', course_slug=course.slug)
 
     # Remember if it was a reply
     was_reply = post.parent_post is not None
@@ -1002,5 +1089,5 @@ def discussion_delete(request, course_id, post_id):
 
     # Redirect appropriately
     if was_reply and parent_id:
-        return redirect('student_discussion_detail', course_id=course_id, post_id=parent_id)
-    return redirect('student_course_discussions', course_id=course_id)
+        return redirect('student_discussion_detail', course_slug=course.slug, post_id=parent_id)
+    return redirect('student_course_discussions', course_slug=course.slug)

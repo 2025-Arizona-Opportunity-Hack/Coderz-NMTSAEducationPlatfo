@@ -89,9 +89,9 @@ def review_courses(request):
 
 
 @admin_required
-def review_course_action(request, course_id):
+def review_course_action(request, course_slug):
     """Approve or reject a course submission with optional feedback"""
-    course = get_object_or_404(Course, id=course_id)
+    course = get_object_or_404(Course, slug=course_slug)
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -124,10 +124,10 @@ def review_course_action(request, course_id):
 
 
 @admin_required
-def admin_course_preview(request, course_id):
+def admin_course_preview(request, course_slug):
     """Preview course content (reuses teacher preview template)"""
     # Admins can preview any course, not just submitted ones
-    course = get_object_or_404(Course, pk=course_id)
+    course = get_object_or_404(Course, slug=course_slug)
 
     # Same context structure as teacher preview
     modules = course.modules.prefetch_related("lessons", "lessons__video", "lessons__blog")

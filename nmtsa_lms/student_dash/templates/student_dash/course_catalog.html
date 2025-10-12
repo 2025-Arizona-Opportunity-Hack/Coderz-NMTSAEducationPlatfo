@@ -79,18 +79,23 @@
     <main>
         <!-- Search Bar -->
         <div style="margin-bottom: var(--spacing-xl);">
-            <form method="get" action="/browse-courses/">
-                <div style="position: relative;">
-                    <input type="search"
-                           name="q"
-                           placeholder="Search courses by title or description..."
-                           class="form-input"
-                           style="padding-left: 48px;"
-                           value="{{ search_query }}">
-                    <svg width="20" height="20" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 16px; top: 14px;">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
+            <form method="get" action="{% url 'student_catalog' %}">
+                <div style="display: flex; gap: var(--spacing-md);">
+                    <div style="position: relative; flex: 1;">
+                        <input type="search"
+                               name="q"
+                               placeholder="Search courses, modules, and lessons using natural language..."
+                               class="form-input"
+                               style="padding-left: 48px;"
+                               value="{{ filters.q }}">
+                        <svg width="20" height="20" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 16px; top: 14px;">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="white-space: nowrap; padding: 0 var(--spacing-xl);">
+                        Search
+                    </button>
                 </div>
             </form>
         </div>
