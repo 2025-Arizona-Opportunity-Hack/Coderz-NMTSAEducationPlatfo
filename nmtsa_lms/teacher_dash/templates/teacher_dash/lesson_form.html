@@ -182,7 +182,7 @@
         {{ blog_form.non_field_errors }}
         {% for field in blog_form %}
         <div class="form-field{% if field.errors %} has-error{% endif %}">
-            <label for="{{ field.id_for_label %}">{{ field.label }}</label>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
         </div>
@@ -194,7 +194,7 @@
         {{ pdf_form.non_field_errors }}
         {% for field in pdf_form %}
         <div class="form-field{% if field.errors %} has-error{% endif %}">
-            <label for="{{ field.id_for_label %}">{{ field.label }}</label>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
             {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}

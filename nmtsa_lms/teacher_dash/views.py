@@ -459,6 +459,9 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
             messages.success(request, success_message)
             return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
 
+        teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+        is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
+
         messages.error(request, "Please correct the errors below.")
         return render(
             request,
@@ -470,6 +473,7 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
                 "video_form": video_form,
                 "blog_form": blog_form,
                 "pdf_form": pdf_form,
+                "is_teacher_approved": is_teacher_approved,
             },
             status=400,
         )
@@ -857,6 +861,9 @@ def serve_pdf(request: HttpRequest, pdf_path: str) -> FileResponse | HttpRespons
     response = FileResponse(open(real_file_path, 'rb'), content_type=content_type)
     response['Content-Length'] = str(file_size)
     response['Content-Disposition'] = 'inline'
+    # Add headers to help with iframe/object embedding on localhost
+    response['X-Frame-Options'] = 'SAMEORIGIN'
+    response['Content-Security-Policy'] = "frame-ancestors 'self'"
 
     return response
 

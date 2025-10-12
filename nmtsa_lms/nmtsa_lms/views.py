@@ -120,7 +120,7 @@ def callback(request):
             return redirect(reverse("select_role"))
 
     # Fallback to index
-    return redirect(request.build_absolute_uri(reverse("index")))
+    return redirect(request.build_absolute_uri(reverse("landing")))
 
 
 def logout(request):

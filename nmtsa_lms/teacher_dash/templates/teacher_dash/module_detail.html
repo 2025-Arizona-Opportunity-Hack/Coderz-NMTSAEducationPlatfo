@@ -263,6 +263,19 @@
             {% endfor %}
         </fieldset>
 
+        <fieldset data-lesson-fieldset="pdf">
+            <legend>PDF Content</legend>
+            {{ pdf_form.non_field_errors }}
+            {% for field in pdf_form %}
+            <div class="form-field{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+                {% for error in field.errors %}<small class="error-text">{{ error }}</small>{% endfor %}
+            </div>
+            {% endfor %}
+        </fieldset>
+
         <div class="module-form_actions">
             <button type="submit" class="btn btn-primary">Create Lesson</button>
         </div>
@@ -280,16 +293,18 @@
         const durationInput = durationFieldWrapper ? durationFieldWrapper.querySelector('input, select, textarea') : null;
         const videoFieldset = document.querySelector('.module-form [data-lesson-fieldset="video"]');
         const blogFieldset = document.querySelector('.module-form [data-lesson-fieldset="blog"]');
+        const pdfFieldset = document.querySelector('.module-form [data-lesson-fieldset="pdf"]');
 
         // Collect all interactive elements inside each fieldset so we can
         // toggle required/disabled when switching types to avoid hidden
         // required controls blocking form submission.
         const videoInputs = videoFieldset ? Array.from(videoFieldset.querySelectorAll('input, select, textarea')) : [];
         const blogInputs = blogFieldset ? Array.from(blogFieldset.querySelectorAll('input, select, textarea')) : [];
+        const pdfInputs = pdfFieldset ? Array.from(pdfFieldset.querySelectorAll('input, select, textarea')) : [];
 
         const initialRequired = new Map();
         const initialDisabled = new Map();
-        videoInputs.concat(blogInputs).forEach(el => {
+        videoInputs.concat(blogInputs).concat(pdfInputs).forEach(el => {
             initialRequired.set(el, !!el.required);
             initialDisabled.set(el, !!el.disabled);
         });
@@ -320,8 +335,18 @@
                 });
             }
 
+            if (pdfFieldset) {
+                const showPdf = value === 'pdf';
+                pdfFieldset.style.display = showPdf ? 'flex' : 'none';
+                pdfFieldset.setAttribute('aria-hidden', showPdf ? 'false' : 'true');
+                pdfInputs.forEach(el => {
+                    el.disabled = !showPdf ? true : (initialDisabled.get(el) || false);
+                    el.required = showPdf ? (initialRequired.get(el) || false) : false;
+                });
+            }
+
             if (durationFieldWrapper) {
-                const showDuration = value === 'blog';
+                const showDuration = value === 'blog' || value === 'pdf';
                 durationFieldWrapper.style.display = showDuration ? 'flex' : 'none';
                 if (durationInput) {
                     durationInput.disabled = !showDuration;
