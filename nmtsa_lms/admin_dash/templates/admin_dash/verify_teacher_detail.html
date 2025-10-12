@@ -130,24 +130,28 @@
 
         <!-- Admin Notes -->
         <div style="margin-bottom: var(--spacing-xl);">
-            <label for="notes" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                Admin Notes (Optional)
+            <label for="{{ form.notes.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                {{ form.notes.label }}
             </label>
-            <textarea
-                id="notes"
-                name="notes"
-                rows="4"
-                placeholder="Add any notes about this verification decision..."
-                style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-            ></textarea>
+            {{ form.notes }}
+            {% for error in form.notes.errors %}
+            <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+            {% endfor %}
         </div>
 
         <!-- Action Buttons -->
+        <div style="margin-bottom: var(--spacing-xl);">
+            {{ form.action }}
+            {% for error in form.action.errors %}
+            <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+            {% endfor %}
+        </div>
+
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="submit" name="action" value="approve" class="btn btn-success btn-lg" style="min-width: 200px;">
-                ✓ Approve Teacher
+            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">
+                Submit Decision
             </button>
-            <button type="submit" name="action" value="reject" class="btn btn-danger btn-lg" style="min-width: 200px;">
+            <a href="{% url 'admin_verify_teachers' %}" class="btn btn-outline btn-lg" style="min-width: 200px; text-decoration: none;">
                 ✗ Reject Application
             </button>
         </div>

@@ -46,7 +46,7 @@
 
         {% if request.session.user.role == 'student' %}
         <a href="{% url 'student_courses' %}"
-          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}bg-primary-light text-primary-color font-semibold{% endif %}"
+          class="px-4 py-2 text-base font-medium text-primary hover:text-primary-color hover:bg-secondary rounded-lg min-h-touch focus:outline-none focus:ring-2 focus:ring-focus {% if '/student/courses/' in request.path %}text-primary-color font-semibold{% endif %}"
           aria-current="{% if '/student/courses/' in request.path %}page{% else %}false{% endif %}">
           My Courses
         </a>

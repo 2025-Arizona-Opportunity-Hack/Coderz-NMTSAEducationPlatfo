@@ -2,6 +2,13 @@
 
 {% block title %}{% if lesson %}Edit Lesson{% else %}Create Lesson{% endif %} - {{ module.title }}{% endblock %}
 
+{% block form_media %}
+    {{ lesson_form.media }}
+    {{ video_form.media }}
+    {{ blog_form.media }}
+    {{ pdf_form.media }}
+{% endblock %}
+
 {% block extra_css %}
 <style>
     .lesson-form.card {

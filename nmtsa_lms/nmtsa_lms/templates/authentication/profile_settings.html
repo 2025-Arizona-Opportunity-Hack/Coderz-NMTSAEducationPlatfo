@@ -108,48 +108,22 @@
             {% endif %}
 
             <div style="display: grid; gap: var(--spacing-lg);">
-                <!-- Bio -->
+                {% for field in teacher_form %}
                 <div>
-                    <label for="bio" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Professional Bio
+                    <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ field.label }}
                     </label>
-                    <textarea
-                        id="bio"
-                        name="bio"
-                        rows="4"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ teacher_profile.bio }}</textarea>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                        {{ field.help_text }}
+                    </p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
-
-                <!-- Specialization -->
-                <div>
-                    <label for="specialization" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Specialization
-                    </label>
-                    <input
-                        type="text"
-                        id="specialization"
-                        name="specialization"
-                        value="{{ teacher_profile.specialization }}"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
-                </div>
-
-                <!-- Years of Experience -->
-                <div>
-                    <label for="years_experience" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Years of Experience
-                    </label>
-                    <input
-                        type="number"
-                        id="years_experience"
-                        name="years_experience"
-                        value="{{ teacher_profile.years_experience }}"
-                        min="0"
-                        max="70"
-                        style="width: 200px; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
-                </div>
+                {% endfor %}
             </div>
         </div>
         {% endif %}
@@ -180,44 +154,22 @@
                     </select>
                 </div>
 
-                <!-- Learning Goals -->
+                {% for field in student_form %}
                 <div>
-                    <label for="learning_goals" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Learning Goals
+                    <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ field.label }}
                     </label>
-                    <textarea
-                        id="learning_goals"
-                        name="learning_goals"
-                        rows="3"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.learning_goals }}</textarea>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
+                        {{ field.help_text }}
+                    </p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
-
-                <!-- Interests -->
-                <div>
-                    <label for="interests" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Areas of Interest
-                    </label>
-                    <textarea
-                        id="interests"
-                        name="interests"
-                        rows="3"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.interests }}</textarea>
-                </div>
-
-                <!-- Accessibility Needs -->
-                <div>
-                    <label for="accessibility_needs" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Accessibility Requirements
-                    </label>
-                    <textarea
-                        id="accessibility_needs"
-                        name="accessibility_needs"
-                        rows="3"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.accessibility_needs }}</textarea>
-                </div>
+                {% endfor %}
             </div>
         </div>
         {% endif %}

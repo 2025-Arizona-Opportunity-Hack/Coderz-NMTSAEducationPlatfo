@@ -4,6 +4,7 @@ from typing import Any
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django_ckeditor_5.widgets import CKEditor5Widget
 from taggit.forms import TagField
 
 from .models import Course, Module, Lesson, VideoLesson, BlogLesson, PDFLesson, DiscussionPost
@@ -16,7 +17,10 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ["title", "description", "price", "is_paid"]
         widgets = {
-            "description": forms.Textarea(attrs={"rows": 4}),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -56,7 +60,10 @@ class ModuleForm(forms.ModelForm):
         model = Module
         fields = ["title", "description"]
         widgets = {
-            "description": forms.Textarea(attrs={"rows": 3}),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -119,9 +126,16 @@ class VideoLessonForm(forms.ModelForm):
 
     class Meta:
         model = VideoLesson
-        fields = ["video_file", "transcript"]
+        fields = ["video_file", "transcript", "description"]
         widgets = {
-            "transcript": forms.Textarea(attrs={"rows": 4}),
+            "transcript": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -136,7 +150,12 @@ class BlogLessonForm(forms.ModelForm):
     class Meta:
         model = BlogLesson
         fields = ["content", "images"]
-        # Widget automatically provided by RichTextField
+        widgets = {
+            "content": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
+        }
 
 
 class PDFLessonForm(forms.ModelForm):
@@ -145,6 +164,12 @@ class PDFLessonForm(forms.ModelForm):
     class Meta:
         model = PDFLesson
         fields = ["pdf_file", "description"]
+        widgets = {
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -175,10 +200,8 @@ class DiscussionPostForm(forms.ModelForm):
         fields = ["content"]
         widgets = {
             "content": forms.Textarea(attrs={
-                "rows": 6,
-                "class": "discussion-textarea",
+                "rows": 5,
                 "placeholder": "Share your thoughts, ask a question, or start a discussion...",
-                "maxlength": "2000",
             }),
         }
         labels = {
@@ -209,9 +232,7 @@ class DiscussionReplyForm(forms.ModelForm):
         widgets = {
             "content": forms.Textarea(attrs={
                 "rows": 4,
-                "class": "discussion-reply-textarea",
                 "placeholder": "Write your reply...",
-                "maxlength": "2000",
             }),
         }
         labels = {

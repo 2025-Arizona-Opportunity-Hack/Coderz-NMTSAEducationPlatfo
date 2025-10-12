@@ -2,6 +2,13 @@
 
 {% block title %}{{ module.title }} - Module{% endblock %}
 
+{% block form_media %}
+    {{ lesson_form.media }}
+    {{ video_form.media }}
+    {{ blog_form.media }}
+    {{ pdf_form.media }}
+{% endblock %}
+
 {% block extra_css %}
 <style>
     .module-layout {

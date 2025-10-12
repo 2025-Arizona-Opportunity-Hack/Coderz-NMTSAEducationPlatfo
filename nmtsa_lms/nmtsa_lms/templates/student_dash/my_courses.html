@@ -26,6 +26,16 @@
                 </a>
             </li>
             <li style="margin-bottom: var(--spacing-sm);">
+            <a href="/student/bookmarks/"
+               class="sidebar-link {% if '/student/bookmarks' in request.path %}sidebar-link-active{% endif %}"
+               style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px; {% if '/student/bookmarks' in request.path %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>My Bookmarks</span>
+            </a>
+        </li>
+            <li style="margin-bottom: var(--spacing-sm);">
                 <a href="/student/catalog/" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
                     <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="8"/>

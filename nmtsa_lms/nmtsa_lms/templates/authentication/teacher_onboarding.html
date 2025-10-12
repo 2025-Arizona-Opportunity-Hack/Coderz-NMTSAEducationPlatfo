@@ -24,69 +24,51 @@
             <div style="display: grid; gap: var(--spacing-lg);">
                 <!-- Bio -->
                 <div>
-                    <label for="bio" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Professional Bio <span style="color: var(--error);">*</span>
+                    <label for="{{ form.bio.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.bio.label }} {% if form.bio.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <textarea
-                        id="bio"
-                        name="bio"
-                        required
-                        rows="4"
-                        placeholder="Tell us about your professional background and experience in neurologic music therapy or related fields"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ teacher_profile.bio }}</textarea>
+                    {{ form.bio }}
+                    {% if form.bio.help_text %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        Minimum 50 characters
+                        {{ form.bio.help_text }}
                     </p>
+                    {% endif %}
+                    {% for error in form.bio.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Specialization -->
                 <div>
-                    <label for="specialization" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Area of Specialization <span style="color: var(--error);">*</span>
+                    <label for="{{ form.specialization.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.specialization.label }} {% if form.specialization.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <input
-                        type="text"
-                        id="specialization"
-                        name="specialization"
-                        value="{{ teacher_profile.specialization }}"
-                        required
-                        placeholder="e.g., Neurologic Music Therapy, Autism Support, Music Education"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
+                    {{ form.specialization }}
+                    {% for error in form.specialization.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Years of Experience -->
                 <div>
-                    <label for="years_experience" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Years of Professional Experience <span style="color: var(--error);">*</span>
+                    <label for="{{ form.years_experience.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.years_experience.label }} {% if form.years_experience.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <input
-                        type="number"
-                        id="years_experience"
-                        name="years_experience"
-                        value="{{ teacher_profile.years_experience }}"
-                        required
-                        min="0"
-                        max="70"
-                        placeholder="5"
-                        style="width: 200px; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale));"
-                    >
+                    {{ form.years_experience }}
+                    {% for error in form.years_experience.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Credentials -->
                 <div>
-                    <label for="credentials" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Professional Credentials <span style="color: var(--error);">*</span>
+                    <label for="{{ form.credentials.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.credentials.label }} {% if form.credentials.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <textarea
-                        id="credentials"
-                        name="credentials"
-                        required
-                        rows="4"
-                        placeholder="List your degrees, certifications, licenses, and professional credentials (e.g., MA in Music Therapy, NMT-Fellow, Board Certified Music Therapist)"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ teacher_profile.credentials }}</textarea>
+                    {{ form.credentials }}
+                    {% for error in form.credentials.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -100,48 +82,44 @@
             <div style="display: grid; gap: var(--spacing-xl);">
                 <!-- Resume Upload -->
                 <div>
-                    <label for="resume" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Resume / CV <span style="color: var(--error);">*</span>
+                    <label for="{{ form.resume.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.resume.label }} {% if form.resume.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <input
-                        type="file"
-                        id="resume"
-                        name="resume"
-                        accept=".pdf,.doc,.docx"
-                        {% if not teacher_profile.resume %}required{% endif %}
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);"
-                    >
+                    {{ form.resume }}
                     {% if teacher_profile.resume %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--success); margin-top: var(--spacing-sm);">
                         ✓ Current file: {{ teacher_profile.resume.name }}
                     </p>
                     {% endif %}
+                    {% if form.resume.help_text %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        Accepted formats: PDF, DOC, DOCX (Max 10MB)
+                        {{ form.resume.help_text }}
                     </p>
+                    {% endif %}
+                    {% for error in form.resume.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Certifications Upload -->
                 <div>
-                    <label for="certifications" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Certifications & Licenses <span style="color: var(--error);">*</span>
+                    <label for="{{ form.certifications.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.certifications.label }} {% if form.certifications.field.required %}<span style="color: var(--error);">*</span>{% endif %}
                     </label>
-                    <input
-                        type="file"
-                        id="certifications"
-                        name="certifications"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        {% if not teacher_profile.certifications %}required{% endif %}
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); background: var(--bg-card);"
-                    >
+                    {{ form.certifications }}
                     {% if teacher_profile.certifications %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--success); margin-top: var(--spacing-sm);">
                         ✓ Current file: {{ teacher_profile.certifications.name }}
                     </p>
                     {% endif %}
+                    {% if form.certifications.help_text %}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
-                        Upload scans or photos of your certifications (PDF, JPG, PNG - Max 10MB)
+                        {{ form.certifications.help_text }}
                     </p>
+                    {% endif %}
+                    {% for error in form.certifications.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

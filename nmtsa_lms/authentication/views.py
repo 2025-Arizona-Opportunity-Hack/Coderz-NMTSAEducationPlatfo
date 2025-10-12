@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.urls import reverse
 from .models import User, TeacherProfile, StudentProfile
 from .decorators import login_required, student_required, teacher_required, admin_required
+from .forms import TeacherOnboardingForm, TeacherProfileForm, StudentOnboardingForm, StudentProfileForm
 from django.views.decorators.http import require_http_methods
 from django.core.files.storage import FileSystemStorage
 import json
@@ -84,44 +85,36 @@ def teacher_onboarding(request):
     teacher_profile, created = TeacherProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        teacher_profile.bio = request.POST.get('bio', '')
-        teacher_profile.credentials = request.POST.get('credentials', '')
-        teacher_profile.specialization = request.POST.get('specialization', '')
+        form = TeacherOnboardingForm(request.POST, request.FILES, instance=teacher_profile)
+        if form.is_valid():
+            # Handle file renaming for security
+            if 'resume' in request.FILES:
+                request.FILES['resume'].name = f"{uuid.uuid4()}_{request.FILES['resume'].name}"
+            if 'certifications' in request.FILES:
+                request.FILES['certifications'].name = f"{uuid.uuid4()}_{request.FILES['certifications'].name}"
+            
+            teacher_profile = form.save()
+            
+            user.onboarding_complete = True
+            user.save()
 
-        years_exp = request.POST.get('years_experience', '')
-        if years_exp:
-            try:
-                teacher_profile.years_experience = int(years_exp)
-            except ValueError:
-                pass
+            request.session['user']['onboarding_complete'] = True
+            request.session['user']['verification_status'] = 'pending'
+            request.session.modified = True
 
-        if 'resume' in request.FILES:
-            teacher_profile.resume = request.FILES['resume']
-            request.FILES['resume'].name = f"{uuid.uuid4()}_{request.FILES['resume'].name}"
-
-        if 'certifications' in request.FILES:
-            teacher_profile.certifications = request.FILES['certifications']
-            request.FILES['certifications'].name = f"{uuid.uuid4()}_{request.FILES['certifications'].name}"
-
-        teacher_profile.save()
-
-        user.onboarding_complete = True
-        user.save()
-
-        request.session['user']['onboarding_complete'] = True
-        request.session['user']['verification_status'] = 'pending'
-        request.session.modified = True
-
-        messages.success(request, 'Profile submitted successfully! Your application is pending admin verification.')
-        
-        # Check if there's a stored next URL to redirect to after onboarding
-        next_url = request.session.pop('next_url', None)
-        if next_url:
-            return redirect(next_url)
-        
-        return redirect('teacher_dashboard')
+            messages.success(request, 'Profile submitted successfully! Your application is pending admin verification.')
+            
+            # Check if there's a stored next URL to redirect to after onboarding
+            next_url = request.session.pop('next_url', None)
+            if next_url:
+                return redirect(next_url)
+            
+            return redirect('teacher_dashboard')
+    else:
+        form = TeacherOnboardingForm(instance=teacher_profile)
 
     context = {
+        'form': form,
         'teacher_profile': teacher_profile,
     }
     return render(request, 'authentication/teacher_onboarding.html', context)
@@ -144,39 +137,29 @@ def student_onboarding(request):
     student_profile, created = StudentProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        student_profile.relationship = request.POST.get('relationship', '')
-        student_profile.care_recipient_name = request.POST.get('care_recipient_name', '')
+        form = StudentOnboardingForm(request.POST, instance=student_profile)
+        if form.is_valid():
+            student_profile = form.save()
+            
+            user.onboarding_complete = True
+            user.save()
 
-        care_age = request.POST.get('care_recipient_age', '')
-        if care_age:
-            try:
-                student_profile.care_recipient_age = int(care_age)
-            except ValueError:
-                pass
+            request.session['user']['onboarding_complete'] = True
+            request.session.modified = True
 
-        student_profile.special_needs = request.POST.get('special_needs', '')
-        student_profile.learning_goals = request.POST.get('learning_goals', '')
-        student_profile.interests = request.POST.get('interests', '')
-        student_profile.accessibility_needs = request.POST.get('accessibility_needs', '')
-
-        student_profile.save()
-
-        user.onboarding_complete = True
-        user.save()
-
-        request.session['user']['onboarding_complete'] = True
-        request.session.modified = True
-
-        messages.success(request, 'Profile completed successfully! Welcome to NMTSA Learning.')
-        
-        # Check if there's a stored next URL to redirect to after onboarding
-        next_url = request.session.pop('next_url', None)
-        if next_url:
-            return redirect(next_url)
-        
-        return redirect('student_dashboard')
+            messages.success(request, 'Profile completed successfully! Welcome to NMTSA Learning.')
+            
+            # Check if there's a stored next URL to redirect to after onboarding
+            next_url = request.session.pop('next_url', None)
+            if next_url:
+                return redirect(next_url)
+            
+            return redirect('student_dashboard')
+    else:
+        form = StudentOnboardingForm(instance=student_profile)
 
     context = {
+        'form': form,
         'student_profile': student_profile,
         'relationship_choices': StudentProfile.RELATIONSHIP_CHOICES,
     }
@@ -197,32 +180,23 @@ def profile_settings(request):
         messages.error(request, 'User not found. Please log in again.')
         return redirect('login')
 
+    teacher_form = None
+    student_form = None
+
     if request.method == 'POST':
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
         user.save()
 
         if user.is_teacher and hasattr(user, 'teacher_profile'):
-            profile = user.teacher_profile
-            profile.bio = request.POST.get('bio', '')
-            profile.specialization = request.POST.get('specialization', '')
-
-            years_exp = request.POST.get('years_experience', '')
-            if years_exp:
-                try:
-                    profile.years_experience = int(years_exp)
-                except ValueError:
-                    pass
-
-            profile.save()
+            teacher_form = TeacherProfileForm(request.POST, instance=user.teacher_profile)
+            if teacher_form.is_valid():
+                teacher_form.save()
 
         elif user.is_student and hasattr(user, 'student_profile'):
-            profile = user.student_profile
-            profile.relationship = request.POST.get('relationship', '')
-            profile.learning_goals = request.POST.get('learning_goals', '')
-            profile.interests = request.POST.get('interests', '')
-            profile.accessibility_needs = request.POST.get('accessibility_needs', '')
-            profile.save()
+            student_form = StudentProfileForm(request.POST, instance=user.student_profile)
+            if student_form.is_valid():
+                student_form.save()
 
         messages.success(request, 'Profile updated successfully!')
         return redirect('profile_settings')
@@ -233,8 +207,10 @@ def profile_settings(request):
 
     if user.is_teacher and hasattr(user, 'teacher_profile'):
         context['teacher_profile'] = user.teacher_profile
+        context['teacher_form'] = TeacherProfileForm(instance=user.teacher_profile)
     elif user.is_student and hasattr(user, 'student_profile'):
         context['student_profile'] = user.student_profile
+        context['student_form'] = StudentProfileForm(instance=user.student_profile)
         context['relationship_choices'] = StudentProfile.RELATIONSHIP_CHOICES
 
     return render(request, 'authentication/profile_settings.html', context)
