@@ -66,8 +66,13 @@ export function CourseDetail() {
   }, [id, reviewsPage]);
 
   const handleEnroll = async () => {
+    // Note: If user is not authenticated, attempting to enroll will trigger
+    // the ProtectedRoute behavior which automatically redirects to Auth0 login
     if (!isAuthenticated) {
-      navigate("/login", { state: { from: `/courses/${id}` } });
+      // This shouldn't normally happen as the enroll button should only be visible
+      // to authenticated users, but as a fallback, redirect to dashboard which
+      // will trigger Auth0 login
+      navigate("/dashboard");
 
       return;
     }

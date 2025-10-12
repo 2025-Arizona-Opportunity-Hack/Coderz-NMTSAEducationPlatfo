@@ -24,7 +24,7 @@ export function Home() {
             </Link>
             <Link
               className="px-8 py-3 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
-              to="/register"
+              to="/dashboard"
             >
               Get Started
             </Link>

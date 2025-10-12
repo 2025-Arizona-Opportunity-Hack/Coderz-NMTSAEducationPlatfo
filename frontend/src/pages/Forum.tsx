@@ -31,10 +31,12 @@ export function Forum() {
 
   useEffect(() => {
     loadPosts();
-  }, [currentPage, sortBy]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, sortBy, searchQuery, selectedTags]);
 
   useEffect(() => {
     loadTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadPosts = async () => {
@@ -94,12 +96,6 @@ export function Forum() {
     });
     setCurrentPage(1);
   };
-
-  useEffect(() => {
-    if (selectedTags.length > 0) {
-      loadPosts();
-    }
-  }, [selectedTags]);
 
   if (loading && posts.length === 0) {
     return (

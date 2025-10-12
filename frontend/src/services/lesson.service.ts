@@ -8,9 +8,18 @@ import type {
 
 import { api } from "../config/api";
 
+// Note: These endpoints are placeholders. The backend currently has template-based views
+// for lesson functionality that need to be exposed as REST APIs.
+// Backend template URLs:
+// - /student/courses/<course_id>/modules/<module_id>/lessons/<lesson_id>/ - lesson view
+// - /student/courses/<course_id>/modules/<module_id>/lessons/<lesson_id>/complete/ - mark complete
+// - /student/api/save-video-progress/ - save video progress
+
 export const lessonService = {
   /**
    * Get lesson content with resources and navigation
+   * TODO: Backend needs to expose this as REST API
+   * Current: Template-based view at /student/courses/<course_id>/modules/<module_id>/lessons/<lesson_id>/
    */
   async getLessonContent(
     courseId: string,
@@ -25,6 +34,8 @@ export const lessonService = {
 
   /**
    * Mark lesson as complete
+   * TODO: Backend needs to expose this as REST API
+   * Current: Template-based POST to /student/courses/<course_id>/modules/<module_id>/lessons/<lesson_id>/complete/
    */
   async markLessonComplete(
     courseId: string,
@@ -39,6 +50,8 @@ export const lessonService = {
 
   /**
    * Update lesson progress (time spent, last position)
+   * TODO: Backend needs to expose this as REST API
+   * Current: Template-based POST to /student/api/save-video-progress/
    */
   async updateLessonProgress(
     courseId: string,
@@ -51,6 +64,24 @@ export const lessonService = {
     );
 
     return response.data.data;
+  },
+
+  /**
+   * Save video progress (backend-specific endpoint)
+   * Uses existing backend endpoint: /student/api/save-video-progress/
+   */
+  async saveVideoProgress(
+    enrollmentId: string,
+    lessonId: string,
+    lastPositionSeconds: number,
+    completedPercentage: number,
+  ): Promise<void> {
+    await api.post("/student/api/save-video-progress/", {
+      enrollment_id: enrollmentId,
+      lesson_id: lessonId,
+      last_position_seconds: lastPositionSeconds,
+      completed_percentage: completedPercentage,
+    });
   },
 
   /**

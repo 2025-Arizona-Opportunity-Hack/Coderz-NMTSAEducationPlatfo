@@ -34,11 +34,12 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
     if (error.response) {
-      // Handle 401 Unauthorized - clear auth and redirect
+      // Handle 401 Unauthorized - clear auth and trigger re-authentication
       if (error.response.status === 401) {
         localStorage.removeItem("auth-token");
         localStorage.removeItem("auth-storage");
-        window.location.href = "/login";
+        // Redirect to home - Auth0 will handle re-authentication when accessing protected routes
+        window.location.href = "/";
       }
 
       // Return formatted error

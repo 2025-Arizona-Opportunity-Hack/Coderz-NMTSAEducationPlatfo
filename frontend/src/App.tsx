@@ -10,13 +10,11 @@ import { Lesson } from "./pages/Lesson";
 import { Dashboard } from "./pages/Dashboard";
 import { Applications } from "./pages/Applications";
 import { Forum } from "./pages/Forum";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
+import { Onboarding } from "./pages/Onboarding";
 import { Terms } from "./pages/Terms";
 import { Privacy } from "./pages/Privacy";
 import { AccessibilityStatement } from "./pages/AccessibilityStatement";
 import { NotFound } from "./pages/NotFound";
-import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   useAuth();
@@ -59,9 +57,14 @@ function App() {
           }
           path="forum"
         />
-        <Route element={<AdminLogin />} path="admin/login" />
-        <Route element={<Login />} path="login" />
-        <Route element={<Register />} path="register" />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+          path="onboarding"
+        />
         <Route element={<Terms />} path="terms" />
         <Route element={<Privacy />} path="privacy" />
         <Route element={<AccessibilityStatement />} path="accessibility" />

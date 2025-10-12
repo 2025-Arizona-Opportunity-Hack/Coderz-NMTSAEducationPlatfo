@@ -3,12 +3,22 @@ import type {
   ForumComment,
   CreatePostDto,
   UpdatePostDto,
-  CreateCommentDto,
-  ApiResponse,
   PaginatedResponse,
 } from "../types/api";
 
 import { api } from "../config/api";
+
+interface ForumApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
 
 export const forumService = {
   /**
@@ -16,31 +26,50 @@ export const forumService = {
    */
   async getPosts(
     page: number = 1,
-    limit: number = 10,
+    limit: number = 12,
     search?: string,
     tags?: string[],
     sortBy: "recent" | "popular" = "recent",
   ): Promise<PaginatedResponse<ForumPost>> {
-    const params = new URLSearchParams({
+    const params: Record<string, string> = {
       page: page.toString(),
       limit: limit.toString(),
       sortBy,
-      ...(search && { search }),
-      ...(tags && tags.length > 0 && { tags: tags.join(",") }),
-    });
+    };
 
-    const response = await api.get<PaginatedResponse<ForumPost>>(
-      `/forum/posts?${params}`,
+    if (search) {
+      params.search = search;
+    }
+
+    // Add tags as array parameters tags[]=tag1&tags[]=tag2
+    const queryParams = new URLSearchParams(params);
+
+    if (tags && tags.length > 0) {
+      tags.forEach((tag) => {
+        queryParams.append("tags[]", tag);
+      });
+    }
+
+    const response = await api.get<ForumApiResponse<ForumPost[]>>(
+      `/forum/posts?${queryParams}`,
     );
 
-    return response.data;
+    return {
+      data: response.data.data,
+      pagination: response.data.pagination || {
+        page: 1,
+        limit: 12,
+        total: 0,
+        totalPages: 0,
+      },
+    };
   },
 
   /**
    * Get a specific forum post by ID
    */
   async getPostById(id: string): Promise<ForumPost> {
-    const response = await api.get<ApiResponse<ForumPost>>(
+    const response = await api.get<ForumApiResponse<ForumPost>>(
       `/forum/posts/${id}`,
     );
 
@@ -51,7 +80,7 @@ export const forumService = {
    * Create a new forum post
    */
   async createPost(data: CreatePostDto): Promise<ForumPost> {
-    const response = await api.post<ApiResponse<ForumPost>>(
+    const response = await api.post<ForumApiResponse<ForumPost>>(
       "/forum/posts",
       data,
     );
@@ -63,7 +92,7 @@ export const forumService = {
    * Update a forum post
    */
   async updatePost(id: string, data: UpdatePostDto): Promise<ForumPost> {
-    const response = await api.patch<ApiResponse<ForumPost>>(
+    const response = await api.put<ForumApiResponse<ForumPost>>(
       `/forum/posts/${id}`,
       data,
     );
@@ -79,21 +108,24 @@ export const forumService = {
   },
 
   /**
-   * Toggle like on a forum post
+   * Like a forum post
    */
-  async toggleLikePost(id: string): Promise<{ liked: boolean; likes: number }> {
-    const response = await api.post<
-      ApiResponse<{ liked: boolean; likes: number }>
-    >(`/forum/posts/${id}/like`);
+  async likePost(id: string): Promise<void> {
+    await api.post(`/forum/posts/${id}/like`);
+  },
 
-    return response.data.data;
+  /**
+   * Unlike a forum post
+   */
+  async unlikePost(id: string): Promise<void> {
+    await api.delete(`/forum/posts/${id}/like`);
   },
 
   /**
    * Get comments for a post
    */
   async getComments(postId: string): Promise<ForumComment[]> {
-    const response = await api.get<ApiResponse<ForumComment[]>>(
+    const response = await api.get<ForumApiResponse<ForumComment[]>>(
       `/forum/posts/${postId}/comments`,
     );
 
@@ -103,52 +135,38 @@ export const forumService = {
   /**
    * Create a comment on a post
    */
-  async createComment(data: CreateCommentDto): Promise<ForumComment> {
-    const response = await api.post<ApiResponse<ForumComment>>(
-      `/forum/comments`,
-      data,
+  async createComment(
+    postId: string,
+    content: string,
+    parentId?: string,
+  ): Promise<ForumComment> {
+    const response = await api.post<ForumApiResponse<ForumComment>>(
+      `/forum/posts/${postId}/comments`,
+      { content, parentId },
     );
 
     return response.data.data;
   },
 
   /**
-   * Update a comment
+   * Like a comment
    */
-  async updateComment(id: string, content: string): Promise<ForumComment> {
-    const response = await api.patch<ApiResponse<ForumComment>>(
-      `/forum/comments/${id}`,
-      { content },
-    );
-
-    return response.data.data;
+  async likeComment(id: string): Promise<void> {
+    await api.post(`/forum/comments/${id}/like`);
   },
 
   /**
-   * Delete a comment
+   * Unlike a comment
    */
-  async deleteComment(id: string): Promise<void> {
-    await api.delete(`/forum/comments/${id}`);
-  },
-
-  /**
-   * Toggle like on a comment
-   */
-  async toggleLikeComment(
-    id: string,
-  ): Promise<{ liked: boolean; likes: number }> {
-    const response = await api.post<
-      ApiResponse<{ liked: boolean; likes: number }>
-    >(`/forum/comments/${id}/like`);
-
-    return response.data.data;
+  async unlikeComment(id: string): Promise<void> {
+    await api.delete(`/forum/comments/${id}/like`);
   },
 
   /**
    * Get available tags
    */
   async getTags(): Promise<string[]> {
-    const response = await api.get<ApiResponse<string[]>>("/forum/tags");
+    const response = await api.get<ForumApiResponse<string[]>>("/forum/tags");
 
     return response.data.data;
   },

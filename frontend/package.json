@@ -11,6 +11,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.6.0",
     "@heroui/accordion": "^2.2.24",
     "@heroui/avatar": "^2.2.22",
     "@heroui/button": "2.2.27",
@@ -44,6 +45,7 @@
     "framer-motion": "11.18.2",
     "highlight.js": "^11.11.1",
     "i18next": "^25.6.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.545.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

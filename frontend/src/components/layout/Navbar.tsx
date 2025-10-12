@@ -1,29 +1,28 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Menu, BookOpen } from "lucide-react";
 import { useState } from "react";
 
 import { useAuthStore } from "../../store/useAuthStore";
-import { authService } from "../../services/auth.service";
+import { ProfileDropdown } from "./ProfileDropdown";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export function Navbar() {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const { isAuthenticated, clearAuth, profile } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isLoggedIn = isAuthenticated;
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "en" ? "es" : "en");
   };
 
-  const handleLogout = async () => {
-    try {
-      await authService.signOut();
-      clearAuth();
-      navigate("/");
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+  const handleLogin = () => {
+    // Redirect to Django backend login endpoint
+    // Backend will handle Auth0 OAuth flow
+    window.location.href = `${API_BASE_URL}/login`;
   };
 
   return (
@@ -51,7 +50,7 @@ export function Navbar() {
               >
                 {t("nav.explore")}
               </Link>
-              {isAuthenticated && (
+              {isLoggedIn && (
                 <>
                   <Link
                     className="text-gray-700 hover:text-blue-600 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1"
@@ -88,35 +87,15 @@ export function Navbar() {
             </button>
 
             <div className="hidden md:flex items-center gap-3">
-              {isAuthenticated ? (
-                <>
-                  {profile && (
-                    <span className="text-sm text-gray-600">
-                      {profile.fullName || profile.email}
-                    </span>
-                  )}
-                  <button
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-                    onClick={handleLogout}
-                  >
-                    {t("nav.logout")}
-                  </button>
-                </>
+              {isLoggedIn ? (
+                <ProfileDropdown />
               ) : (
-                <>
-                  <Link
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-                    to="/login"
-                  >
-                    {t("nav.login")}
-                  </Link>
-                  <Link
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    to="/register"
-                  >
-                    {t("nav.register")}
-                  </Link>
-                </>
+                <button
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                  onClick={handleLogin}
+                >
+                  {t("nav.login")}
+                </button>
               )}
             </div>
 
@@ -145,7 +124,7 @@ export function Navbar() {
             >
               {t("nav.explore")}
             </Link>
-            {isAuthenticated && (
+            {isLoggedIn && (
               <>
                 <Link
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -170,31 +149,18 @@ export function Navbar() {
                 </Link>
               </>
             )}
-            {isAuthenticated ? (
+            {isLoggedIn ? (
+              <div className="px-3 py-2">
+                <ProfileDropdown />
+              </div>
+            ) : (
               <button
                 className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 role="menuitem"
-                onClick={handleLogout}
+                onClick={handleLogin}
               >
-                {t("nav.logout")}
+                {t("nav.login")}
               </button>
-            ) : (
-              <>
-                <Link
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  role="menuitem"
-                  to="/login"
-                >
-                  {t("nav.login")}
-                </Link>
-                <Link
-                  className="block px-3 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
-                  role="menuitem"
-                  to="/register"
-                >
-                  {t("nav.register")}
-                </Link>
-              </>
             )}
           </div>
         </div>

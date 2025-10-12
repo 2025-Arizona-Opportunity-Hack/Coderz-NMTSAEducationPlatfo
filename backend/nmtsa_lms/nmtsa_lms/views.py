@@ -37,7 +37,7 @@ def login(request):
 def callback(request):
     """
     Auth0 OAuth callback handler
-    Creates or updates user in database and redirects based on onboarding status
+    Creates or updates user in database and redirects to frontend
     """
     token = oauth.auth0.authorize_access_token(request)
     request.session["user"] = token
@@ -45,6 +45,8 @@ def callback(request):
     # Extract user info from token
     userinfo = token.get('userinfo', {})
     auth0_id = userinfo.get('sub')
+    email = userinfo.get('email')
+    name = userinfo.get('name')
 
     if auth0_id:
         # Import here to avoid circular dependency
@@ -53,42 +55,35 @@ def callback(request):
         try:
             # Check if user exists in our database
             user = User.objects.get(auth0_id=auth0_id)
-
-            # User exists - check onboarding status
-            if not user.role:
-                # No role selected yet - redirect to role selection
-                return redirect(reverse("select_role"))
-            elif not user.onboarding_complete:
-                # Role selected but onboarding not complete
-                if user.role == 'teacher':
-                    return redirect(reverse("teacher_onboarding"))
-                elif user.role == 'student':
-                    return redirect(reverse("student_onboarding"))
-            else:
-                # Onboarding complete - redirect to dashboard
-                if user.role == 'teacher':
-                    return redirect(reverse("teacher_dashboard"))
-                elif user.role == 'student':
-                    return redirect(reverse("student_dashboard"))
-                elif user.role == 'admin':
-                    return redirect(reverse("admin_dashboard"))
-
+            # Update session with user ID for backend authentication
+            request.session['user_id'] = str(user.id)
+            
         except User.DoesNotExist:
-            # New user - redirect to role selection
-            return redirect(reverse("select_role"))
+            # Create new user
+            user = User.objects.create(
+                auth0_id=auth0_id,
+                email=email,
+                username=email.split('@')[0] if email else auth0_id,
+                first_name=name.split()[0] if name else '',
+                last_name=' '.join(name.split()[1:]) if name and len(name.split()) > 1 else '',
+            )
+            request.session['user_id'] = str(user.id)
 
-    # Fallback to index
-    return redirect(request.build_absolute_uri(reverse("index")))
+    # Redirect to frontend dashboard
+    # Frontend will check session and handle onboarding if needed
+    frontend_url = "http://localhost:5173/dashboard"
+    return redirect(frontend_url)
 
 
 def logout(request):
     request.session.clear()
 
+    # Redirect to Auth0 logout, then back to frontend home page
     return redirect(
         f"https://{settings.AUTH0_DOMAIN}/v2/logout?"
         + urlencode(
             {
-                "returnTo": request.build_absolute_uri(reverse("index")),
+                "returnTo": "http://localhost:5173",  # Frontend URL
                 "client_id": settings.AUTH0_CLIENT_ID,
             },
             quote_via=quote_plus,

@@ -5,7 +5,7 @@ Maps Django models to JSON representations for the REST API
 from rest_framework import serializers
 from authentication.models import User, TeacherProfile, StudentProfile, Enrollment
 from teacher_dash.models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
-from lms.models import CompletedLesson, VideoProgress
+from lms.models import CompletedLesson, VideoProgress, ForumPost, ForumComment, ForumLike
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -265,3 +265,172 @@ class LessonProgressSerializer(serializers.ModelSerializer):
             return video_progress.last_position_seconds
         except VideoProgress.DoesNotExist:
             return 0
+
+
+class ForumAuthorSerializer(serializers.ModelSerializer):
+    """Serializer for forum post/comment author info"""
+    fullName = serializers.SerializerMethodField()
+    avatarUrl = serializers.URLField(source='profile_picture', allow_null=True, required=False)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'fullName', 'avatarUrl', 'role']
+    
+    def get_fullName(self, obj):
+        return obj.get_full_name() or obj.username
+
+
+class ForumCommentSerializer(serializers.ModelSerializer):
+    """Serializer for forum comments"""
+    postId = serializers.CharField(source='post_id', read_only=True)
+    authorId = serializers.CharField(source='author_id', read_only=True)
+    author = ForumAuthorSerializer(read_only=True)
+    parentId = serializers.CharField(source='parent_id', required=False, allow_null=True)
+    replies = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    isLiked = serializers.SerializerMethodField()
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+    updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
+    
+    class Meta:
+        model = ForumComment
+        fields = ['id', 'postId', 'content', 'authorId', 'author', 'parentId', 
+                  'replies', 'likes', 'isLiked', 'createdAt', 'updatedAt']
+        read_only_fields = ['id', 'postId', 'authorId', 'author', 'createdAt', 'updatedAt']
+    
+    def get_replies(self, obj):
+        # Get direct replies only (not nested)
+        replies = obj.replies.all()
+        return ForumCommentSerializer(replies, many=True, context=self.context).data
+    
+    def get_likes(self, obj):
+        return obj.get_likes_count()
+    
+    def get_isLiked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return ForumLike.objects.filter(user=request.user, comment=obj).exists()
+        return False
+
+
+class ForumPostSerializer(serializers.ModelSerializer):
+    """Serializer for forum posts"""
+    authorId = serializers.CharField(source='author_id', read_only=True)
+    author = ForumAuthorSerializer(read_only=True)
+    excerpt = serializers.ReadOnlyField()
+    commentsCount = serializers.IntegerField(source='comments_count', read_only=True)
+    likes = serializers.SerializerMethodField()
+    isLiked = serializers.SerializerMethodField()
+    isPinned = serializers.BooleanField(source='is_pinned', read_only=True)
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+    updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
+    
+    class Meta:
+        model = ForumPost
+        fields = ['id', 'title', 'content', 'excerpt', 'authorId', 'author', 'tags',
+                  'likes', 'commentsCount', 'isLiked', 'isPinned', 'createdAt', 'updatedAt']
+        read_only_fields = ['id', 'authorId', 'author', 'excerpt', 'createdAt', 'updatedAt']
+    
+    def get_likes(self, obj):
+        return obj.get_likes_count()
+    
+    def get_isLiked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return ForumLike.objects.filter(user=request.user, post=obj).exists()
+        return False
+
+
+# ============================================================================
+# PROFILE & ONBOARDING SERIALIZERS
+# ============================================================================
+
+class RoleSelectionSerializer(serializers.Serializer):
+    """Serializer for role selection during onboarding"""
+    role = serializers.ChoiceField(choices=['student', 'teacher'])
+
+
+class TeacherOnboardingSerializer(serializers.Serializer):
+    """Serializer for teacher onboarding data"""
+    bio = serializers.CharField(max_length=5000, allow_blank=True, required=False)
+    credentials = serializers.CharField(max_length=5000, allow_blank=True, required=False)
+    specialization = serializers.CharField(max_length=200, allow_blank=True, required=False)
+    years_experience = serializers.IntegerField(min_value=0, required=False, allow_null=True)
+    resume = serializers.FileField(required=False, allow_null=True)
+    certifications = serializers.FileField(required=False, allow_null=True)
+
+
+class StudentOnboardingSerializer(serializers.Serializer):
+    """Serializer for student onboarding data"""
+    relationship = serializers.ChoiceField(
+        choices=StudentProfile.RELATIONSHIP_CHOICES,
+        allow_blank=True,
+        required=False
+    )
+    care_recipient_name = serializers.CharField(
+        max_length=200,
+        allow_blank=True,
+        required=False
+    )
+    care_recipient_age = serializers.IntegerField(
+        min_value=0,
+        required=False,
+        allow_null=True
+    )
+    special_needs = serializers.CharField(
+        max_length=5000,
+        allow_blank=True,
+        required=False
+    )
+    learning_goals = serializers.CharField(
+        max_length=5000,
+        allow_blank=True,
+        required=False
+    )
+    interests = serializers.CharField(
+        max_length=5000,
+        allow_blank=True,
+        required=False
+    )
+    accessibility_needs = serializers.CharField(
+        max_length=5000,
+        allow_blank=True,
+        required=False
+    )
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for complete user profile with role-specific data"""
+    teacher_profile = TeacherProfileSerializer(read_only=True)
+    student_profile = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'role',
+            'profile_picture',
+            'onboarding_complete',
+            'is_active',
+            'date_joined',
+            'teacher_profile',
+            'student_profile',
+        ]
+        read_only_fields = ['id', 'username', 'email', 'date_joined']
+    
+    def get_student_profile(self, obj):
+        if hasattr(obj, 'student_profile'):
+            return {
+                'relationship': obj.student_profile.relationship,
+                'care_recipient_name': obj.student_profile.care_recipient_name,
+                'care_recipient_age': obj.student_profile.care_recipient_age,
+                'special_needs': obj.student_profile.special_needs,
+                'learning_goals': obj.student_profile.learning_goals,
+                'interests': obj.student_profile.interests,
+                'accessibility_needs': obj.student_profile.accessibility_needs,
+            }
+        return None

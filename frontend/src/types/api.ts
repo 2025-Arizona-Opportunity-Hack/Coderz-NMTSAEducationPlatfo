@@ -1,20 +1,58 @@
 // API Types for NMTSA Learn Backend
+// These types match the Django backend serializers exactly
 
 export interface Profile {
   id: string;
   email: string;
   fullName: string;
-  role: "student" | "instructor" | "admin";
+  profilePicture?: string;
+  role: "student" | "teacher" | "admin"; // Changed from "instructor" to "teacher"
   avatarUrl?: string;
-  bio?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// Extended profile with role-specific data
+export interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: "student" | "teacher" | "admin";
+  profile_picture?: string;
+  onboarding_complete: boolean;
+  is_active: boolean;
+  date_joined: string;
+  teacher_profile?: TeacherProfile;
+  student_profile?: StudentProfile;
+}
+
+export interface TeacherProfile {
+  bio: string;
+  credentials: string;
+  specialization: string;
+  years_experience?: number;
+  verification_status: "pending" | "approved" | "rejected";
+  resume?: string;
+  certifications?: string;
+}
+
+export interface StudentProfile {
+  relationship: string;
+  care_recipient_name: string;
+  care_recipient_age?: number;
+  special_needs: string;
+  learning_goals: string;
+  interests: string;
+  accessibility_needs: string;
 }
 
 export interface AuthResponse {
   user: Profile;
   token: string;
   refreshToken?: string;
+  isNewUser?: boolean; // Only present for OAuth signin
 }
 
 export interface ApiError {
@@ -38,25 +76,31 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export interface Instructor {
+  id: string;
+  fullName: string;
+  avatarUrl?: string;
+  bio?: string;
+  credentials?: string;
+}
+
 export interface Course {
   id: string;
   title: string;
   description: string;
   thumbnailUrl?: string;
   instructorId: string;
-  instructor?: {
-    id: string;
-    fullName: string;
-    avatarUrl?: string;
-  };
+  instructor: Instructor;
   category: string;
   difficulty: "beginner" | "intermediate" | "advanced";
-  duration: number; // in minutes
+  duration: number; // in minutes, calculated from all lessons
   credits: number;
   rating?: number;
-  enrollmentCount?: number;
+  enrollmentCount: number;
   createdAt: string;
   updatedAt: string;
+  price: string; // Decimal field from Django
+  is_paid: boolean;
 }
 
 export interface Enrollment {
@@ -71,25 +115,24 @@ export interface Enrollment {
 
 export interface Lesson {
   id: string;
-  moduleId: string;
   title: string;
-  description: string;
-  type: "video" | "reading" | "quiz" | "assignment";
-  duration: number; // in minutes
+  lesson_type: "video" | "blog"; // Only two types in backend
+  type: "video" | "blog"; // Alias for lesson_type
+  duration?: number; // in minutes
   order: number;
-  isCompleted?: boolean;
-  isLocked?: boolean;
+  isCompleted: boolean;
+  isLocked: boolean;
   contentUrl?: string;
+  created_at: string;
 }
 
 export interface Module {
   id: string;
-  courseId: string;
   title: string;
   description: string;
   order: number;
   lessons: Lesson[];
-  isCompleted?: boolean;
+  isCompleted: boolean;
 }
 
 export interface Review {
@@ -109,26 +152,14 @@ export interface Review {
 
 export interface CourseDetail extends Course {
   longDescription?: string;
-  prerequisites?: string[];
-  learningObjectives?: string[];
-  instructor: {
-    id: string;
-    fullName: string;
-    avatarUrl?: string;
-    bio?: string;
-    credentials?: string;
-    socialLinks?: {
-      linkedin?: string;
-      twitter?: string;
-      website?: string;
-    };
-  };
-  modules?: Module[];
-  reviews?: Review[];
+  prerequisites: string[];
+  learningObjectives: string[];
+  instructor: Instructor; // Already has bio and credentials
+  modules: Module[];
   averageRating?: number;
-  totalReviews?: number;
-  isEnrolled?: boolean;
-  progress?: number; // 0-100, enrollment progress percentage
+  totalReviews: number;
+  isEnrolled: boolean;
+  progress: number; // 0-100, enrollment progress percentage
 }
 
 export interface Resource {
@@ -175,7 +206,7 @@ export interface LessonProgress {
   courseId: string;
   isCompleted: boolean;
   timeSpent: number; // in seconds
-  lastPosition?: number; // video position in seconds
+  lastPosition: number; // video position in seconds
   completedAt?: string;
 }
 
@@ -265,18 +296,20 @@ export interface CreateApplicationDto {
   documents?: File[];
 }
 
+export interface ForumAuthor {
+  id: string;
+  fullName: string;
+  avatarUrl?: string;
+  role: "student" | "teacher" | "admin";
+}
+
 export interface ForumPost {
   id: string;
   title: string;
   content: string;
   excerpt: string;
   authorId: string;
-  author: {
-    id: string;
-    fullName: string;
-    avatarUrl?: string;
-    role: "student" | "instructor" | "admin";
-  };
+  author: ForumAuthor;
   tags: string[];
   likes: number;
   commentsCount: number;
@@ -291,14 +324,9 @@ export interface ForumComment {
   postId: string;
   content: string;
   authorId: string;
-  author: {
-    id: string;
-    fullName: string;
-    avatarUrl?: string;
-    role: "student" | "instructor" | "admin";
-  };
+  author: ForumAuthor;
   parentId?: string;
-  replies?: ForumComment[];
+  replies: ForumComment[];
   likes: number;
   isLiked: boolean;
   createdAt: string;

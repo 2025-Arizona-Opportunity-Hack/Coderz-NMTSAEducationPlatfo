@@ -29,9 +29,27 @@ export const courseService = {
     params: GetCoursesParams = {},
   ): Promise<PaginatedResponse<Course>> {
     try {
-      const response = await api.get<PaginatedResponse<Course>>("/courses", {
-        params,
-      });
+      // Build query params manually to match backend expectations
+      const queryParams = new URLSearchParams();
+
+      if (params.page) queryParams.append("page", params.page.toString());
+      if (params.limit) queryParams.append("limit", params.limit.toString());
+      if (params.search) queryParams.append("search", params.search);
+      if (params.category) queryParams.append("category", params.category);
+      if (params.difficulty)
+        queryParams.append("difficulty", params.difficulty);
+      if (params.minCredits)
+        queryParams.append("minCredits", params.minCredits.toString());
+      if (params.maxCredits)
+        queryParams.append("maxCredits", params.maxCredits.toString());
+      if (params.minRating)
+        queryParams.append("minRating", params.minRating.toString());
+      if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+      if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+      const response = await api.get<PaginatedResponse<Course>>(
+        `/courses?${queryParams}`,
+      );
 
       return response.data;
     } catch (error) {

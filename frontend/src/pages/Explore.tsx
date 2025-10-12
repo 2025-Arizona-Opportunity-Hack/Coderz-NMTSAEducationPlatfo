@@ -70,7 +70,16 @@ export function Explore() {
     };
 
     fetchCourses();
-  }, [filters, sortBy, pagination.page, pagination.limit]);
+  }, [
+    filters,
+    sortBy,
+    pagination.page,
+    pagination.limit,
+    getFilterParams,
+    setCourses,
+    setLoading,
+    setError,
+  ]);
 
   const handleSearch = (query: string) => {
     setFilter("search", query);

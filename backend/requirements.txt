@@ -12,6 +12,9 @@ requests>=2.32.5
 Pillow>=11.0.0
 moviepy>=1.0.3
 
+# Note: OAuth is handled in frontend
+# Backend only receives user data and manages accounts
+
 # Optional / recommended packages (uncomment/install if needed)
 # psycopg2-binary>=2.9.6  # PostgreSQL adapter (use in production if using Postgres)
 # whitenoise>=6.5.0       # Static file serving for simple deployments
