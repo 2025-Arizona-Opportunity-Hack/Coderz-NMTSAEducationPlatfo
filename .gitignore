@@ -23,7 +23,6 @@ wheels/
 node_modules/
 
 .env
-.env.*
 *.env
 .venv
 */.venv

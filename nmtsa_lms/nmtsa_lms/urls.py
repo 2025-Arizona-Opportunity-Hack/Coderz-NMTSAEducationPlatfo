@@ -30,6 +30,7 @@ urlpatterns = [
     path("student/", include('student_dash.urls')),
     path("teacher/", include('teacher_dash.urls')),
     path("admin-dash/", include('admin_dash.urls')),
+    path("lms/", include('lms.urls')),
 ]
 
 # Media files URL patterns (for file uploads)

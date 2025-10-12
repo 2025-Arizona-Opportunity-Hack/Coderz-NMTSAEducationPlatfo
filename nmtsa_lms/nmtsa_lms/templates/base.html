@@ -144,6 +144,10 @@
         document.addEventListener('DOMContentLoaded', initTheme);
     </script>
 
+    <!-- Chat Component (Available for all users) -->
+    {% include 'components/chat.html' %}
+    <script src="{% static 'js/chat.js' %}"></script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,191 +1,298 @@
 # NMTSA LMS - AI Coding Assistant Instructions
 
 ## Project Overview
-This is a Django-based Learning Management System (LMS) for NMTSA with Auth0 integration for authentication. The project uses a simplified Django structure with all main logic in the root `nmtsa_lms` module.
+Django-based LMS for neurologic music therapy education with **dual authentication** (OAuth for students/teachers, Django admin for admins), autism-friendly UI, and comprehensive course management. Built for NMTSA to serve healthcare professionals and families with special needs.
 
-## Architecture Patterns
+## Architecture & File Structure
 
-### Single-Module Django Structure
-- **Project root**: `nmtsa_lms/` contains `manage.py` and the main Django project
-- **Main module**: `nmtsa_lms/nmtsa_lms/` contains all views, URLs, settings, and templates
-- **No separate apps**: All functionality is in the main project module (not standard Django app structure)
-- **Templates location**: `nmtsa_lms/nmtsa_lms/templates/` (configured via `TEMPLATE_DIR` in settings)
+### Multi-App Django Structure
+```
+nmtsa_lms/                          # Django project root
+├── nmtsa_lms/                      # Core project module
+│   ├── settings.py                 # Auth0 config, custom User model, apps
+│   ├── urls.py                     # Root URL routing (includes app URLs)
+│   ├── views.py                    # Auth0 OAuth flow (login/callback/logout)
+│   ├── static/css/                 # Tailwind input/output (npm run dev/build)
+│   └── templates/                  # Base templates + components
+│       ├── base.html               # Theme system (4 themes, font controls)
+│       ├── landing.html            # Public homepage
+│       └── components/             # Reusable UI (navbar, sidebar, cards)
+├── authentication/                 # Custom User + profiles
+│   ├── models.py                   # User, TeacherProfile, StudentProfile, Enrollment
+│   ├── decorators.py               # RBAC (@teacher_required, @student_required, @admin_required)
+│   ├── middleware.py               # Auth0UserSyncMiddleware (syncs session ↔ DB)
+│   ├── views.py                    # Onboarding (select_role, teacher/student onboarding)
+│   └── admin_views.py              # Admin username/password login
+├── teacher_dash/                   # Teacher features
+│   ├── models.py                   # Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
+│   ├── views.py                    # Course CRUD, lesson upload, review workflow
+│   ├── forms.py                    # Course/lesson forms with validation
+│   └── management/commands/        # seed_demo_courses, import_courses
+├── student_dash/                   # Student features (enrollment, progress)
+├── admin_dash/                     # Admin verification + course review
+└── lms/                            # Shared LMS logic
+    └── models.py                   # CompletedLesson, VideoProgress
+```
 
-### Authentication Architecture
-- **Auth0 Integration**: Uses Authlib for OAuth2/OpenID Connect with Auth0
-- **Session Management**: User data stored in Django sessions after Auth0 callback
-- **OAuth Flow**: login → Auth0 → callback → session storage → redirect to index
-- **Key files**: 
-  - Views handle OAuth flow in `views.py`
-  - Environment variables in `.env` (AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET)
+### Key Conventions
+- **Custom User Model**: `authentication.User` (extends `AbstractUser`) - set as `AUTH_USER_MODEL` in settings
+- **Templates**: Centralized in `nmtsa_lms/templates/` + app-specific in `{app}/templates/{app}/`
+- **Media Files**: Uploaded to `media/` (videos, resumes, certifications, blog images)
+- **Static Assets**: Tailwind CSS compiled via `npm run dev/build` from `input.css` → `output.css`
 
-## Development Environment
+## Authentication System (Critical)
 
-### Python Setup
-- **Python Version**: 3.13 (specified in `.python-version`)
-- **Package Manager**: uv (has `uv.lock` file)
-- **Virtual Environment**: `.venv/` directory
-- **Dependencies**: Defined in `pyproject.toml` with Django 5.2.7, Authlib, DRF, python-dotenv
+### Dual Auth Architecture
+1. **OAuth (Auth0)** → Students & Teachers
+   - Flow: `/login` → Auth0 → `/callback` → role selection → onboarding → dashboard
+   - Session key: `request.session['user']` (contains `userinfo`, `role`, `onboarding_complete`)
+   - Middleware: `Auth0UserSyncMiddleware` syncs Auth0 data to local `User` model on every request
+   
+2. **Django Admin** → Admins only
+   - Separate login at `/auth/admin-login/` using `django.contrib.auth.authenticate()`
+   - Admins CANNOT use OAuth (blocked in role selection)
+   - Uses `@admin_required` decorator (checks `request.user.is_authenticated` + `role='admin'`)
 
-### Key Dependencies
-```toml
-django>=5.2.7
-authlib>=1.6.5
-django-restframework>=0.0.1
-python-dotenv>=1.1.1
+### OAuth Flow Details
+```python
+# nmtsa_lms/views.py
+oauth = OAuth()  # Global instance - DO NOT recreate
+oauth.register("auth0", ...)  # Configured with AUTH0_* env vars
+
+# Login: oauth.auth0.authorize_redirect()
+# Callback: Checks user.role + onboarding_complete → redirects:
+#   - No role → select_role
+#   - Role but not onboarded → teacher_onboarding / student_onboarding
+#   - Onboarded → teacher_dashboard / student_dashboard
+```
+
+### RBAC Decorators (Use These!)
+```python
+from authentication.decorators import (
+    login_required,              # OAuth session check
+    student_required,            # Role = student
+    teacher_required,            # Role = teacher
+    admin_required,              # Django auth + role = admin
+    teacher_verified_required,   # Teacher + verification_status = approved
+    onboarding_complete_required # user.onboarding_complete = True
+)
+
+# Example usage
+@teacher_required
+@onboarding_complete_required
+def create_course(request):
+    teacher = _get_logged_in_teacher(request)  # Helper in teacher_dash/views.py
+    # ... course creation logic
+```
+
+### Teacher Verification Workflow
+1. Teacher completes onboarding → `TeacherProfile.verification_status = 'pending'`
+2. Admin reviews at `/admin-dash/verify-teachers/` → approves/rejects
+3. Only **approved** teachers can create/edit courses (checked via `_check_teacher_approval()`)
+
+## Course & Lesson Management
+
+### Data Model Hierarchy
+```
+Course (teacher_dash.Course)
+├── is_published (bool)
+├── is_submitted_for_review (bool)
+├── admin_approved (bool)
+├── is_paid (bool) + price
+├── modules (M2M → Module)
+└── discussions (FK ← DiscussionPost)
+
+Module
+└── lessons (M2M → Lesson)
+
+Lesson (base)
+├── lesson_type ('video' | 'blog')
+├── duration (minutes)
+└── OneToOne → VideoLesson OR BlogLesson
+
+VideoLesson
+├── video_file (FileField → media/videos/)
+└── transcript (TextField)
+
+BlogLesson
+├── content (TextField)
+└── images (ImageField → media/blog_images/)
+```
+
+### Course Review Workflow (Important!)
+1. Teacher creates course → `is_published=False`, `is_submitted_for_review=False`
+2. Teacher submits → `is_submitted_for_review=True` (cannot edit while in review)
+3. Admin reviews at `/admin-dash/review-courses/` → approves/rejects with feedback
+4. If approved → `admin_approved=True`, teacher can publish
+5. **If teacher edits published course** → automatically unpublished + resubmitted for review (see `_handle_course_content_change()`)
+
+### Video Handling
+- Videos stored in `media/videos/` via `VideoLesson.video_file`
+- Progress tracked in `lms.VideoProgress` (last_position_seconds, completed_percentage)
+- Use `moviepy` (in dependencies) for video processing if needed
+
+## Student Progress Tracking
+
+### Enrollment & Completion
+```python
+# authentication/models.py
+Enrollment (Student ↔ Course)
+├── progress_percentage (auto-calculated)
+├── completed (bool)
+└── completed_lessons (FK ← lms.CompletedLesson)
+
+# lms/models.py
+CompletedLesson (Enrollment ↔ Lesson)  # Unique together
+VideoProgress (Enrollment ↔ Lesson)     # Resume video playback
+```
+
+## Frontend (Autism-Friendly Design)
+
+### Theme System (base.html)
+- 4 themes: Light, Dark, High Contrast, Minimal
+- Font size controls: Small, Medium, Large
+- JavaScript persistence via `localStorage.getItem/setItem('nmtsa-theme')`
+- **Zero animations/auto-play** (WCAG 2.1 AAA)
+
+### Component Usage
+```django
+{# Include reusable components #}
+{% include 'components/navbar.html' %}
+{% include 'components/sidebar.html' %}
+{% include 'components/card.html' with title="Course Title" %}
+{% include 'components/button.html' with text="Enroll" style="primary" %}
+```
+
+### Tailwind Workflow
+```bash
+cd nmtsa_lms
+npm install                  # Install tailwindcss
+npm run dev                  # Watch mode (development)
+npm run build                # Minified (production)
 ```
 
 ## Development Workflow
 
-### Running the Project
+### Environment Setup
 ```bash
-# Activate virtual environment (if not using uv automatically)
-.venv\Scripts\activate
+# 1. Activate virtual env (uv manages automatically or manual):
+.venv/Scripts/activate  # Windows
+source .venv/bin/activate  # Linux/Mac
 
-# Run development server
+# 2. Set up .env file (root directory):
+AUTH0_DOMAIN=your-tenant.us.auth0.com
+AUTH0_CLIENT_ID=...
+AUTH0_CLIENT_SECRET=...
+
+# 3. Apply migrations:
 cd nmtsa_lms
+python manage.py migrate
+
+# 4. Create admin superuser:
+python manage.py createsuperuser
+# Then in Django admin: set role='admin', onboarding_complete=True
+
+# 5. Run dev server:
 python manage.py runserver
 ```
 
-### Environment Configuration
-- **Required**: Create `.env` file with Auth0 credentials
-- **Location**: Root directory (loaded via `python-dotenv`)
-- **Variables**: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET
+### Testing User Flows
+```bash
+# Seed demo data:
+python manage.py seed_demo_courses  # Creates sample courses
 
-### Database
-- **Default**: SQLite (`db.sqlite3` in nmtsa_lms/)
-- **Migrations**: Standard Django migrations (none exist yet)
+# Test as different roles:
+# 1. Student: Sign up via OAuth → select "Student/Family" → onboard → dashboard
+# 2. Teacher: Sign up via OAuth → select "Educator/Therapist" → upload credentials → pending verification
+# 3. Admin: Log in at /auth/admin-login/ → verify teacher → review courses
+```
 
-## Code Conventions
+### Common Gotchas
+1. **Session vs User model**: OAuth decorators check `request.session['user']`, admin decorator checks `request.user.is_authenticated`
+2. **Template paths**: Use app prefixes (`{% extends "base.html" %}` works, app templates need `app/template.html`)
+3. **Media files**: Must add `+ static(settings.MEDIA_URL, ...)` to `urlpatterns` in DEBUG mode (already done)
+4. **Course editing**: Published courses auto-unpublish on edit (see `_handle_course_content_change()`)
+5. **Teacher verification**: Check `_check_teacher_approval()` before allowing course operations
 
-### URL Patterns
-- **Root URLs**: All defined in `nmtsa_lms/urls.py`
-- **Pattern**: Function-based views imported from same module
-- **Auth routes**: `/login`, `/logout`, `/callback` for Auth0 flow
+## Key Files to Reference
 
-### View Structure
-- **File**: Single `views.py` contains all view logic
-- **OAuth instance**: Global `oauth` object configured for Auth0
-- **Session access**: `request.session.get("user")` for user data
-- **Template context**: Includes both raw session and pretty-printed JSON
+- **Auth flow**: `nmtsa_lms/views.py` (OAuth), `authentication/views.py` (onboarding)
+- **RBAC logic**: `authentication/decorators.py`, `authentication/middleware.py`
+- **Course operations**: `teacher_dash/views.py` (1000+ lines, well-documented helpers)
+- **Models**: `authentication/models.py`, `teacher_dash/models.py`, `lms/models.py`
+- **UI components**: `nmtsa_lms/templates/components/` (navbar, sidebar, cards, etc.)
 
-### Template Organization
-- **Location**: `nmtsa_lms/templates/` (non-standard location)
-- **Current**: Single `index.html` with conditional auth display
-- **Context**: Expects `session` and `pretty` variables from views
+## Chat System with Supermemory AI
 
-## Integration Points
+### Architecture
+- **Frontend**: Single-file modular JavaScript (`static/js/chat.js`)
+- **Backend**: REST APIs in `lms/views.py`
+- **AI Engine**: Supermemory for memory-enhanced responses
+- **Availability**: All users (authenticated or not)
 
-### Auth0 Configuration
-- **Callback URL**: Must match Django's `/callback` route
-- **Scopes**: "openid profile email" 
-- **Discovery**: Uses Auth0's `.well-known/openid-configuration` endpoint
+### Key Files
+- **Chat Component**: `templates/components/chat.html`
+- **Chat Manager**: `static/js/chat.js` (ChatManager class)
+- **Backend APIs**: `lms/views.py` (chat_*, search_courses_semantic)
+- **Supermemory Client**: `lms/supermemory_client.py`
+- **Course Memory**: `lms/course_memory.py` (sync courses to memory)
 
-### Session Management
-- **Storage**: Django's default session backend
-- **Data**: Complete Auth0 token response stored as `user` key
-- **Logout**: Clears Django session + redirects to Auth0 logout
+### API Endpoints
+```
+GET  /lms/api/chat/rooms/                    # List chat rooms
+GET  /lms/api/chat/rooms/<id>/messages/      # Get message history
+POST /lms/api/chat/rooms/<id>/send/          # Send message (triggers AI response)
+POST /lms/api/chat/rooms/<id>/typing/        # Update typing indicator
+GET  /lms/api/chat/rooms/<id>/typing/status/ # Get who's typing
+POST /lms/api/courses/search/                # Semantic course search
+```
 
-## Important Notes for AI Agents
+### Supermemory Integration
+```python
+from lms.supermemory_client import get_supermemory_client
 
-1. **Template Path**: Templates are in `nmtsa_lms/templates/`, not the standard `app/templates/` structure
-2. **Environment Variables**: Always check `.env` exists and has Auth0 credentials before testing auth flows
-3. **OAuth State**: The `oauth` object is globally configured - don't recreate it in views
-4. **Session Data**: User info is nested as `session.userinfo` in templates (from Auth0 token structure)
+supermemory = get_supermemory_client()
 
-# Project Plan and Requirements
+# AI chat completion with memory
+response = supermemory.chat_completion(
+    messages=[{'role': 'user', 'content': 'Help me find courses'}],
+    use_memory=True
+)
 
-## LMS Platform Architecture, Modules, Features, and Hackathon Priority
+# Add to memory (auto-context for future queries)
+supermemory.add_memory(
+    content="User enrolled in NMT Basics",
+    metadata={'type': 'enrollment', 'user_id': user.id}
+)
 
-Each component is rated (1–10) by hackathon implementation priority for the NMTSA scenario, considering time constraints, impact on staff/admin workload, critical user experience for healthcare and family audiences, and revenue/education focus.
+# Semantic search courses
+courses = supermemory.search_courses(query="autism therapy", limit=10)
+```
 
-***
+### Adding Courses to Memory
+```python
+from lms.course_memory import add_course_to_memory
 
-## 1. Authentication and User Management
+# When creating/updating courses
+add_course_to_memory({
+    'id': course.id,
+    'title': course.title,
+    'description': course.description,
+    'tags': list(course.tags.names()),
+    'modules': [{'title': m.title} for m in course.modules.all()]
+})
+```
 
-### 1.1 Authentication **(10)**
-- Essential for secure access
-- Minimal but robust user signup and login, support for healthcare pro & client groups
+### Environment Setup
+```bash
+# Add to .env
+SUPERMEMORY_API_KEY=your-api-key
+SUPERMEMORY_BASE_URL=https://api.supermemory.ai
+SUPERMEMORY_PROJECT_ID=nmtsa-lms
+```
 
-### 1.2 Profile Management **(7)**
-- Important for onboarding users, tracking key info for professional credits or family status
-
-### 1.3 Payments Manager **(9)**
-- Direct revenue stream; enables premium course access, invoices, and integration with Stripe/PayPal
-
-***
-
-## 2. Course and Lesson Management
-
-### 2.1 Courses Manager **(10)**
-- Critical to organize, publish, and track core training/professional courses for NMTSA and clients
-
-### 2.2 Lessons Manager **(8)**
-- Enables granular management of learning units (videos, docs); supports certification and credits
-
-***
-
-## 3. Role-Based Access Control
-
-### 3.1 RBAC Dashboard **(8)**
-- Needed for admin control, segmented access for healthcare pros, clients/families, and internal staff
-
-***
-
-## 4. Dashboards
-
-### 4.1 Teacher Dashboard **(8)**
-- Optimizes instructor workflow (uploading courses, content, videos) to reduce staff burden
-
-### 4.2 Student Dashboard **(9)**
-- Core for healthcare pro/client experience: enroll, track progress, get credits/certificates
-
-### 4.3 Admin Dashboard **(7)**
-- Reduces manual moderation, staff review—a key administrative benefit for NMTSA
-
-***
-
-## 5. Core LMS Features
-
-### 5.1 Learning Experience **(10)**
-- Course discovery and enrollment, progress tracking—must-have for learners and certification
-
-### 5.2 Multimedia Content (Video Player) **(10)**
-- Stored video streaming is vital for training, therapy, and education delivery
-- Blog Reader **(5)** — nice-to-have for additional resources, less critical
-
-***
-
-## 6. AI and External Integrations
-
-### 6.1 Supermemory Chat Integration **(5)**
-- Adds support/feedback features; helpful but can be simplified/added later if needed
-
-***
-
-## 7. Profiles and User Flows
-
-### 7.1 Profiles Component **(7)**
-- As above, important for onboarding and credential management; not 100% urgent
-
-***
-
-## 8. Modular Summary Reference (Priority Breakdown)
-
-- **Authentication (10):** Must be implemented for secure multi-user access
-- **Profile Management (7):** Onboarding users, capturing credential/role info
-- **Payments Manager (9):** Enable paid course access, automate receipts
-- **Courses Manager (10):** Create, edit, organize courses for both user groups
-- **Lessons Manager (8):** Upload, group, and deliver educational modules
-- **RBAC Dashboard (8):** Control user/group permissions and platform segmentation
-- **Teacher Dashboard (8):** Fast onboarding, course/video upload, admin-reducing workflows
-- **Student Dashboard (9):** Discover, enroll, complete courses, access free/paid material
-- **Admin Dashboard (7):** Moderate content/applications, automate staff workflows
-- **Learning Experience (10):** Course discovery, enrollment, tracking, certificates
-- **Multimedia - Video Player (10):** On-demand video streaming for core education/training
-- **Blog Reader (5):** Supports additional context/resources
-- **AI/Chat Integration (5):** Helpful support, optional under time constraints
-
-***
-
-*This plan identifies and prioritizes features for maximized impact and rapid execution targeted at NMTSA’s dual audience and urgent organizational needs in a 24-hour hackathon.*
+## Project Goals (Context)
+Built for 24-hour hackathon targeting NMTSA's dual audience:
+- **Healthcare professionals**: Continuing education, certification tracking
+- **Families/caregivers**: Special needs resources, therapy education
+- **Priority features**: Auth (10/10), Course management (10/10), Student progress (9/10), Video player (10/10), AI Chat (10/10)
