@@ -233,7 +233,7 @@
 {% block content %}
 <div class="preview-container">
     <!-- Back Button -->
-    <a href="{% url 'teacher_course_detail' course.id %}"
+    <a href="{% url 'teacher_course_detail' course.slug %}"
        style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="m15 18-6-6 6-6"/>

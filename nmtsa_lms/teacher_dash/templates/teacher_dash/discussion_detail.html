@@ -9,16 +9,16 @@
     <nav class="text-sm mb-4 text-gray-600">
         <a href="{% url 'teacher_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
         <span class="mx-2">/</span>
-        <a href="{% url 'teacher_course_detail' course.id %}" class="hover:text-blue-600">{{ course.title }}</a>
+        <a href="{% url 'teacher_course_detail' course.slug %}" class="hover:text-blue-600">{{ course.title }}</a>
         <span class="mx-2">/</span>
-        <a href="{% url 'teacher_course_discussions' course.id %}" class="hover:text-blue-600">Discussions</a>
+        <a href="{% url 'teacher_course_discussions' course.slug %}" class="hover:text-blue-600">Discussions</a>
         <span class="mx-2">/</span>
         <span class="text-gray-900 font-medium">Post</span>
     </nav>
 
     <!-- Back Button -->
     <div class="mb-6">
-        <a href="{% url 'teacher_course_discussions' course.id %}" class="text-blue-600 hover:text-blue-700 font-medium">
+        <a href="{% url 'teacher_course_discussions' course.slug %}" class="text-blue-600 hover:text-blue-700 font-medium">
             ← Back to Discussions
         </a>
     </div>
@@ -183,7 +183,7 @@
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
                     Post Reply
                 </button>
-                <a href="{% url 'teacher_course_discussions' course.id %}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
+                <a href="{% url 'teacher_course_discussions' course.slug %}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition">
                     Cancel
                 </a>
             </div>

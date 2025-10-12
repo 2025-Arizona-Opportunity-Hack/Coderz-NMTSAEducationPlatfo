@@ -183,7 +183,7 @@
 
     <div class="form-actions" style="margin-top: var(--spacing-xl);">
         <button type="submit" class="btn btn-primary">Save Course</button>
-        <a href="{% if course %}{% url 'teacher_course_detail' course.id %}{% else %}{% url 'teacher_dashboard' %}{% endif %}" class="btn btn-outline">Cancel</a>
+        <a href="{% if course %}{% url 'teacher_course_detail' course.slug %}{% else %}{% url 'teacher_dashboard' %}{% endif %}" class="btn btn-outline">Cancel</a>
     </div>
 </form>
     </main>

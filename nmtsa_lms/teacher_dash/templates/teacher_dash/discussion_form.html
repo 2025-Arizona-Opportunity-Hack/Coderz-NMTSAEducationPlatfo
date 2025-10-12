@@ -9,9 +9,9 @@
     <nav class="text-sm mb-4 text-gray-600">
         <a href="{% url 'teacher_dashboard' %}" class="hover:text-blue-600">Dashboard</a>
         <span class="mx-2">/</span>
-        <a href="{% url 'teacher_course_detail' course.id %}" class="hover:text-blue-600">{{ course.title }}</a>
+        <a href="{% url 'teacher_course_detail' course.slug %}" class="hover:text-blue-600">{{ course.title }}</a>
         <span class="mx-2">/</span>
-        <a href="{% url 'teacher_course_discussions' course.id %}" class="hover:text-blue-600">Discussions</a>
+        <a href="{% url 'teacher_course_discussions' course.slug %}" class="hover:text-blue-600">Discussions</a>
         <span class="mx-2">/</span>
         <span class="text-gray-900 font-medium">
             {% if action == 'create' %}New Discussion{% else %}Edit Post{% endif %}
@@ -71,7 +71,7 @@
                         Save Changes
                     {% endif %}
                 </button>
-                <a href="{% if post %}{% url 'teacher_discussion_detail' course.id post.id %}{% else %}{% url 'teacher_course_discussions' course.id %}{% endif %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium">
+                <a href="{% if post %}{% url 'teacher_discussion_detail' course.id post.id %}{% else %}{% url 'teacher_course_discussions' course.slug %}{% endif %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium">
                     Cancel
                 </a>
             </div>

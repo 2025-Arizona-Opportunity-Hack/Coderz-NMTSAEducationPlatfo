@@ -189,7 +189,7 @@
 
                         <!-- Action Buttons -->
                         <div style="display: flex; gap: var(--spacing-md);">
-                            <a href="{% url 'student_course_detail' enrollment.course.id %}"
+                            <a href="{% url 'student_course_detail' enrollment.course.slug %}"
                                style="padding: var(--spacing-sm) var(--spacing-lg); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: opacity 0.2s; display: inline-block;">
                                 {% if enrollment.is_completed %}
                                     Review Course
@@ -199,7 +199,7 @@
                             </a>
 
                             {% if enrollment.is_completed %}
-                            <a href="{% url 'student_certificate' enrollment.course.id %}"
+                            <a href="{% url 'student_certificate' enrollment.course.slug %}"
                                style="padding: var(--spacing-sm) var(--spacing-lg); background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: background 0.2s; display: inline-flex; align-items: center; gap: var(--spacing-sm);">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <circle cx="12" cy="8" r="7"/>
