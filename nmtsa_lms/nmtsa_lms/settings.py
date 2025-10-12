@@ -40,9 +40,14 @@ if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
     import warnings
     warnings.warn("PayPal credentials not configured. Payment features will not work.")
 
+# Supermemory AI Configuration
 SUPERMEMORY_API_KEY = os.getenv('SUPERMEMORY_API_KEY', '')
 SUPERMEMORY_BASE_URL = os.getenv('SUPERMEMORY_BASE_URL', 'https://api.supermemory.ai')
 SUPERMEMORY_PROJECT_ID = os.getenv('SUPERMEMORY_PROJECT_ID', '')
+
+# Google Gemini Configuration (free tier available)
+# Get your free API key: https://makersuite.google.com/app/apikey
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Application definition
 
