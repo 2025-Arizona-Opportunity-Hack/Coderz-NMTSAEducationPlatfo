@@ -99,61 +99,49 @@
             <div style="display: grid; gap: var(--spacing-lg);">
                 <!-- Special Needs -->
                 <div>
-                    <label for="special_needs" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Special Needs or Conditions
+                    <label for="{{ form.special_needs.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.special_needs.label }}
                     </label>
-                    <textarea
-                        id="special_needs"
-                        name="special_needs"
-                        rows="3"
-                        placeholder="Tell us about any special needs, conditions, or considerations (e.g., autism, sensory sensitivities, communication challenges)"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.special_needs }}</textarea>
+                    {{ form.special_needs }}
                     <p style="font-size: calc(0.875rem * var(--font-scale)); color: var(--text-secondary); margin-top: var(--spacing-sm);">
                         This helps us recommend the most relevant courses
                     </p>
+                    {% for error in form.special_needs.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Learning Goals -->
                 <div>
-                    <label for="learning_goals" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        What do you hope to learn?
+                    <label for="{{ form.learning_goals.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.learning_goals.label }}
                     </label>
-                    <textarea
-                        id="learning_goals"
-                        name="learning_goals"
-                        rows="3"
-                        placeholder="What skills or knowledge are you looking to gain? (e.g., improve communication, reduce anxiety, develop motor skills)"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.learning_goals }}</textarea>
+                    {{ form.learning_goals }}
+                    {% for error in form.learning_goals.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Interests -->
                 <div>
-                    <label for="interests" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Areas of Interest
+                    <label for="{{ form.interests.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.interests.label }}
                     </label>
-                    <textarea
-                        id="interests"
-                        name="interests"
-                        rows="3"
-                        placeholder="What topics interest you most? (e.g., music therapy techniques, sensory activities, behavioral strategies)"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.interests }}</textarea>
+                    {{ form.interests }}
+                    {% for error in form.interests.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
 
                 <!-- Accessibility Needs -->
                 <div>
-                    <label for="accessibility_needs" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                        Accessibility Requirements
+                    <label for="{{ form.accessibility_needs.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                        {{ form.accessibility_needs.label }}
                     </label>
-                    <textarea
-                        id="accessibility_needs"
-                        name="accessibility_needs"
-                        rows="3"
-                        placeholder="Do you have any accessibility needs for learning? (e.g., captions, audio descriptions, simplified language)"
-                        style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-                    >{{ student_profile.accessibility_needs }}</textarea>
+                    {{ form.accessibility_needs }}
+                    {% for error in form.accessibility_needs.errors %}
+                    <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

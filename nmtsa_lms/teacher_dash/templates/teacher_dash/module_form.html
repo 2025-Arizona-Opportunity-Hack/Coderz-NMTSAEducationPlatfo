@@ -37,7 +37,7 @@
 
     <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-xl);">
         <button type="submit" class="btn btn-primary">Save Module</button>
-        <a href="{% url 'teacher_module_detail' course.id module.id %}" class="btn btn-outline">Cancel</a>
+        <a href="{% url 'teacher_module_detail' course.id module.slug %}" class="btn btn-outline">Cancel</a>
     </div>
 </form>
 {% endblock %}

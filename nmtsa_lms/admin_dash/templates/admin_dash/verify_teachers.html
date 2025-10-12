@@ -2,7 +2,21 @@
 
 {% block title %}Verify Teachers - Admin Dashboard{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_admin.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <section style="max-width: 1200px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
     <div style="margin-bottom: var(--spacing-2xl);">
         <h1 style="font-size: calc(2.5rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
@@ -92,4 +106,8 @@
     </div>
     {% endif %}
 </section>
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

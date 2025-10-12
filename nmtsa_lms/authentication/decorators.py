@@ -34,7 +34,7 @@ def role_required(*roles):
             user_role = user.get('role')
             if user_role not in roles:
                 messages.error(request, f'This page is only accessible to {", ".join(roles)}.')
-                return redirect('index')
+                return redirect('landing')
 
             return view_func(request, *args, **kwargs)
         return wrapper

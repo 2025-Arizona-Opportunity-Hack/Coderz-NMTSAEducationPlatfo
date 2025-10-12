@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-header">
-    <a href="{% url 'teacher_course_detail' course.id %}" class="btn btn-link">← Back to Course</a>
+    <a href="{% url 'teacher_course_detail' course.slug %}" class="btn btn-link">← Back to Course</a>
     <h1 class="page-title">Analytics</h1>
     <p class="page-description">High-level metrics for {{ course.title }}.</p>
 </div>

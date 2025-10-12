@@ -27,10 +27,11 @@ from teacher_dash.forms import (
     LessonForm,
     ModuleForm,
     VideoLessonForm,
+    PDFLessonForm,
     DiscussionPostForm,
     DiscussionReplyForm,
 )
-from teacher_dash.models import BlogLesson, Course, Lesson, Module, VideoLesson, DiscussionPost
+from teacher_dash.models import BlogLesson, Course, Lesson, Module, VideoLesson, PDFLesson, DiscussionPost
 
 User = get_user_model()
 
@@ -287,10 +288,11 @@ def module_detail(request: HttpRequest, course_slug: str, module_slug: str) -> H
     module = Module.objects.prefetch_related("lessons").get(pk=module.pk)
     teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
     is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
-    
+
     lesson_form = LessonForm()
     video_form = VideoLessonForm()
     blog_form = BlogLessonForm()
+    pdf_form = PDFLessonForm()
     return render(
         request,
         "teacher_dash/module_detail.html",
@@ -300,6 +302,7 @@ def module_detail(request: HttpRequest, course_slug: str, module_slug: str) -> H
             "lesson_form": lesson_form,
             "video_form": video_form,
             "blog_form": blog_form,
+            "pdf_form": pdf_form,
             "is_teacher_approved": is_teacher_approved,
         },
     )
@@ -322,11 +325,12 @@ def module_delete(request: HttpRequest, course_slug: str, module_slug: str) -> H
     return redirect("teacher_course_detail", course_slug=course.slug)
 
 
-def _get_lesson_forms(request: HttpRequest, instance: Lesson | None = None) -> Tuple[LessonForm, VideoLessonForm, BlogLessonForm]:
+def _get_lesson_forms(request: HttpRequest, instance: Lesson | None = None) -> Tuple[LessonForm, VideoLessonForm, BlogLessonForm, PDFLessonForm]:
     lesson_form = LessonForm(request.POST or None, instance=instance)
     video_form = VideoLessonForm(request.POST or None, request.FILES or None, instance=getattr(instance, "video", None))
     blog_form = BlogLessonForm(request.POST or None, request.FILES or None, instance=getattr(instance, "blog", None))
-    return lesson_form, video_form, blog_form
+    pdf_form = PDFLessonForm(request.POST or None, request.FILES or None, instance=getattr(instance, "pdf", None))
+    return lesson_form, video_form, blog_form, pdf_form
 
 
 def _extract_video_duration_minutes(file_field: Any) -> Tuple[int | None, str | None]:
@@ -383,12 +387,12 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
     course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
     module = _get_module_by_slug_or_404(course, module_slug)
 
-    lesson_form, video_form, blog_form = _get_lesson_forms(request)
+    lesson_form, video_form, blog_form, pdf_form = _get_lesson_forms(request)
 
     if request.method == "POST":
         lesson_valid = lesson_form.is_valid()
         lesson_type = lesson_form.cleaned_data.get("lesson_type") if lesson_valid else None
-        video_valid = blog_valid = True
+        video_valid = blog_valid = pdf_valid = True
         video_duration: int | None = None
         extraction_error: str | None = None
 
@@ -419,8 +423,10 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
                         pass
         elif lesson_valid and lesson_type == "blog":
             blog_valid = blog_form.is_valid()
+        elif lesson_valid and lesson_type == "pdf":
+            pdf_valid = pdf_form.is_valid()
 
-        if lesson_valid and video_valid and blog_valid and lesson_type:
+        if lesson_valid and video_valid and blog_valid and pdf_valid and lesson_type:
             with transaction.atomic():
                 lesson = lesson_form.save(commit=False)
                 if lesson_type == "video":
@@ -433,17 +439,28 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
 
                 if lesson_type == "video":
                     BlogLesson.objects.filter(lesson=lesson).delete()
+                    PDFLesson.objects.filter(lesson=lesson).delete()
                     video = video_form.save(commit=False)
                     video.lesson = lesson
                     video.save()
-                else:
+                elif lesson_type == "blog":
                     VideoLesson.objects.filter(lesson=lesson).delete()
+                    PDFLesson.objects.filter(lesson=lesson).delete()
                     blog = blog_form.save(commit=False)
                     blog.lesson = lesson
                     blog.save()
+                elif lesson_type == "pdf":
+                    VideoLesson.objects.filter(lesson=lesson).delete()
+                    BlogLesson.objects.filter(lesson=lesson).delete()
+                    pdf = pdf_form.save(commit=False)
+                    pdf.lesson = lesson
+                    pdf.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
             return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
+
+        teacher_profile = TeacherProfile.objects.filter(user=teacher).first()
+        is_teacher_approved = teacher_profile and teacher_profile.verification_status == "approved"
 
         messages.error(request, "Please correct the errors below.")
         return render(
@@ -455,6 +472,8 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
                 "lesson_form": lesson_form,
                 "video_form": video_form,
                 "blog_form": blog_form,
+                "pdf_form": pdf_form,
+                "is_teacher_approved": is_teacher_approved,
             },
             status=400,
         )
@@ -471,6 +490,7 @@ def lesson_create(request: HttpRequest, course_slug: str, module_slug: str) -> H
             "lesson_form": lesson_form,
             "video_form": video_form,
             "blog_form": blog_form,
+            "pdf_form": pdf_form,
             "is_teacher_approved": is_teacher_approved,
         },
     )
@@ -487,12 +507,12 @@ def lesson_edit(request: HttpRequest, course_slug: str, module_slug: str, lesson
     module = _get_module_by_slug_or_404(course, module_slug)
     lesson = _get_lesson_by_slug_or_404(module, lesson_slug)
 
-    lesson_form, video_form, blog_form = _get_lesson_forms(request, instance=lesson)
+    lesson_form, video_form, blog_form, pdf_form = _get_lesson_forms(request, instance=lesson)
 
     if request.method == "POST":
         lesson_valid = lesson_form.is_valid()
         lesson_type = lesson_form.cleaned_data.get("lesson_type") if lesson_valid else None
-        video_valid = blog_valid = True
+        video_valid = blog_valid = pdf_valid = True
         video_duration: int | None = None
         extraction_error: str | None = None
 
@@ -506,8 +526,10 @@ def lesson_edit(request: HttpRequest, course_slug: str, module_slug: str, lesson
                     video_valid = False
         elif lesson_valid and lesson_type == "blog":
             blog_valid = blog_form.is_valid()
+        elif lesson_valid and lesson_type == "pdf":
+            pdf_valid = pdf_form.is_valid()
 
-        if lesson_valid and video_valid and blog_valid and lesson_type:
+        if lesson_valid and video_valid and blog_valid and pdf_valid and lesson_type:
             with transaction.atomic():
                 lesson = lesson_form.save(commit=False)
                 if lesson_type == "video":
@@ -519,14 +541,22 @@ def lesson_edit(request: HttpRequest, course_slug: str, module_slug: str, lesson
 
                 if lesson_type == "video":
                     BlogLesson.objects.filter(lesson=lesson).delete()
+                    PDFLesson.objects.filter(lesson=lesson).delete()
                     video = video_form.save(commit=False)
                     video.lesson = lesson
                     video.save()
-                else:
+                elif lesson_type == "blog":
                     VideoLesson.objects.filter(lesson=lesson).delete()
+                    PDFLesson.objects.filter(lesson=lesson).delete()
                     blog = blog_form.save(commit=False)
                     blog.lesson = lesson
                     blog.save()
+                elif lesson_type == "pdf":
+                    VideoLesson.objects.filter(lesson=lesson).delete()
+                    BlogLesson.objects.filter(lesson=lesson).delete()
+                    pdf = pdf_form.save(commit=False)
+                    pdf.lesson = lesson
+                    pdf.save()
             success_message = _handle_course_content_change(course)
             messages.success(request, success_message)
             return redirect("teacher_module_detail", course_slug=course.slug, module_slug=module.slug)
@@ -545,6 +575,7 @@ def lesson_edit(request: HttpRequest, course_slug: str, module_slug: str, lesson
             "lesson_form": lesson_form,
             "video_form": video_form,
             "blog_form": blog_form,
+            "pdf_form": pdf_form,
             "lesson": lesson,
             "is_teacher_approved": is_teacher_approved,
         },
@@ -576,7 +607,7 @@ def course_preview(request: HttpRequest, course_slug: str) -> HttpResponse:
     teacher = _get_logged_in_teacher(request)
     course = _get_course_by_slug_or_404(course_slug, published_by=teacher)
 
-    modules = course.modules.prefetch_related("lessons", "lessons__video", "lessons__blog")
+    modules = course.modules.prefetch_related("lessons", "lessons__video", "lessons__blog", "lessons__pdf")
     context = {
         "course": course,
         "modules": modules,
@@ -628,7 +659,7 @@ def lesson_preview(request: HttpRequest, course_slug: str, module_slug: str, les
         except VideoLesson.DoesNotExist:
             response_data["video_url"] = None
             response_data["transcript"] = None
-    else:
+    elif lesson.lesson_type == "blog":
         try:
             blog = lesson.blog
             response_data["content"] = blog.content
@@ -636,6 +667,18 @@ def lesson_preview(request: HttpRequest, course_slug: str, module_slug: str, les
         except BlogLesson.DoesNotExist:
             response_data["content"] = None
             response_data["image_url"] = None
+    elif lesson.lesson_type == "pdf":
+        try:
+            pdf = lesson.pdf
+            if pdf.pdf_file:
+                pdf_url = f"/teacher/pdfs/{pdf.pdf_file.name}"
+                response_data["pdf_url"] = request.build_absolute_uri(pdf_url)
+            else:
+                response_data["pdf_url"] = None
+            response_data["description"] = pdf.description
+        except PDFLesson.DoesNotExist:
+            response_data["pdf_url"] = None
+            response_data["description"] = None
 
     return JsonResponse(response_data)
 
@@ -791,6 +834,38 @@ def serve_video(request: HttpRequest, video_path: str) -> FileResponse | HttpRes
         response['Accept-Ranges'] = 'bytes'
 
         return response
+
+
+def serve_pdf(request: HttpRequest, pdf_path: str) -> FileResponse | HttpResponse:
+    """Serve PDF files for inline viewing"""
+    import mimetypes
+
+    # Build full file path
+    file_path = os.path.join(settings.MEDIA_ROOT, pdf_path)
+
+    # Security: Ensure file exists and is within MEDIA_ROOT
+    real_media_root = os.path.realpath(settings.MEDIA_ROOT)
+    real_file_path = os.path.realpath(file_path)
+
+    if not os.path.exists(real_file_path) or not real_file_path.startswith(real_media_root):
+        return HttpResponse("PDF not found", status=404)
+
+    # Get file size
+    file_size = os.path.getsize(real_file_path)
+
+    # Determine content type
+    content_type, _ = mimetypes.guess_type(real_file_path)
+    content_type = content_type or 'application/pdf'
+
+    # Serve PDF with inline disposition for browser viewing
+    response = FileResponse(open(real_file_path, 'rb'), content_type=content_type)
+    response['Content-Length'] = str(file_size)
+    response['Content-Disposition'] = 'inline'
+    # Add headers to help with iframe/object embedding on localhost
+    response['X-Frame-Options'] = 'SAMEORIGIN'
+    response['Content-Security-Policy'] = "frame-ancestors 'self'"
+
+    return response
 
 
 # ===== Discussion Board Views for Teachers =====

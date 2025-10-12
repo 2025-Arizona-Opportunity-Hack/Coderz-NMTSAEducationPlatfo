@@ -2,7 +2,21 @@
 
 {% block title %}Review Teacher Application - Admin Dashboard{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_admin.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <section style="max-width: 1000px; margin: 0 auto; padding: var(--spacing-2xl) var(--spacing-xl);">
     <div style="margin-bottom: var(--spacing-2xl);">
         <a href="{% url 'admin_verify_teachers' %}" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg);">
@@ -51,7 +65,7 @@
         <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
             Professional Bio
         </h3>
-        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.bio }}</p>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.bio|safe }}</p>
     </div>
 
     <!-- Credentials -->
@@ -59,7 +73,7 @@
         <h3 style="font-size: calc(1.25rem * var(--font-scale)); margin-bottom: var(--spacing-lg); color: var(--text-primary);">
             Professional Credentials
         </h3>
-        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.credentials }}</p>
+        <p style="color: var(--text-secondary); line-height: 1.8; margin: 0; white-space: pre-wrap;">{{ teacher_profile.credentials|safe }}</p>
     </div>
 
     <!-- Supporting Documents -->
@@ -116,24 +130,28 @@
 
         <!-- Admin Notes -->
         <div style="margin-bottom: var(--spacing-xl);">
-            <label for="notes" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
-                Admin Notes (Optional)
+            <label for="{{ form.notes.id_for_label }}" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text-primary);">
+                {{ form.notes.label }}
             </label>
-            <textarea
-                id="notes"
-                name="notes"
-                rows="4"
-                placeholder="Add any notes about this verification decision..."
-                style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: calc(1rem * var(--font-scale)); line-height: 1.6; resize: vertical;"
-            ></textarea>
+            {{ form.notes }}
+            {% for error in form.notes.errors %}
+            <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+            {% endfor %}
         </div>
 
         <!-- Action Buttons -->
+        <div style="margin-bottom: var(--spacing-xl);">
+            {{ form.action }}
+            {% for error in form.action.errors %}
+            <p style="color: var(--error); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-sm);">{{ error }}</p>
+            {% endfor %}
+        </div>
+
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="submit" name="action" value="approve" class="btn btn-success btn-lg" style="min-width: 200px;">
-                ✓ Approve Teacher
+            <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">
+                Submit Decision
             </button>
-            <button type="submit" name="action" value="reject" class="btn btn-danger btn-lg" style="min-width: 200px;">
+            <a href="{% url 'admin_verify_teachers' %}" class="btn btn-outline btn-lg" style="min-width: 200px; text-decoration: none;">
                 ✗ Reject Application
             </button>
         </div>
@@ -143,4 +161,8 @@
         </p>
     </form>
 </section>
+    </main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

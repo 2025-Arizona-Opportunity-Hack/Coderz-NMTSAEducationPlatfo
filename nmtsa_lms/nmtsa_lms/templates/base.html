@@ -97,7 +97,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 
+    <!-- CKEditor Theme Integration -->
+    <link rel="stylesheet" href="{% static 'css/ckeditor-theme.css' %}">
+
     {% block extra_css %}{% endblock %}
+    
+    <!-- Form Media (for CKEditor and other form widgets) -->
+    {% block form_media %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col bg-primary text-primary">
     <!-- Skip Navigation Links for Screen Readers -->

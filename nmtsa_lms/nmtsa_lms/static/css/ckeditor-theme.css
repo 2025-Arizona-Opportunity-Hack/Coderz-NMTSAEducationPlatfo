@@ -1,0 +1,217 @@
+/* CKEditor Theme Integration for NMTSA LMS - Autism-Friendly Design */
+
+/* Apply theme variables to CKEditor */
+.ck.ck-editor {
+    --ck-color-base-background: var(--bg-card);
+    --ck-color-base-foreground: var(--bg-secondary);
+    --ck-color-base-border: var(--border-color);
+    --ck-color-base-text: var(--text-primary);
+    --ck-color-focus-border: var(--primary);
+    --ck-border-radius: var(--radius-md);
+}
+
+/* Toolbar styling */
+.ck.ck-toolbar {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+    padding: var(--spacing-sm) !important;
+}
+
+/* Editor content area */
+.ck.ck-editor__main > .ck-editor__editable {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    min-height: 200px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md) !important;
+    padding: var(--spacing-md) !important;
+}
+
+/* Focus state (accessibility) */
+.ck.ck-editor__editable:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(204, 147, 0, 0.1) !important;
+    outline: none !important;
+}
+
+/* Buttons in toolbar */
+.ck.ck-button {
+    color: var(--text-primary) !important;
+}
+
+.ck.ck-button:hover:not(.ck-disabled) {
+    background: var(--bg-hover) !important;
+}
+
+.ck.ck-button.ck-on {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+}
+
+/* Font size scaling for accessibility */
+.ck.ck-editor__editable {
+    font-size: calc(1rem * var(--font-scale));
+    line-height: 1.6;
+}
+
+/* Dropdown styling */
+.ck.ck-dropdown__panel {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+.ck.ck-list__item:hover {
+    background: var(--bg-hover) !important;
+}
+
+/* High contrast mode support */
+[data-theme="high-contrast"] .ck.ck-editor__editable {
+    border: 3px solid var(--border-color) !important;
+}
+
+[data-theme="high-contrast"] .ck.ck-toolbar {
+    border-bottom: 3px solid var(--border-color) !important;
+}
+
+[data-theme="high-contrast"] .ck.ck-button:hover:not(.ck-disabled) {
+    border: 2px solid var(--text-primary) !important;
+}
+
+/* Minimal theme - simpler toolbar */
+[data-theme="minimal"] .ck.ck-toolbar {
+    padding: calc(var(--spacing-sm) * 0.5) !important;
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="minimal"] .ck.ck-button {
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .ck.ck-editor__editable {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar {
+    background: var(--bg-secondary) !important;
+}
+
+/* Ensure proper spacing in forms */
+.form-field .ck.ck-editor,
+.form-grid .ck.ck-editor {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+}
+
+/* Loading state */
+.ck.ck-editor__editable.ck-blurred::before {
+    color: var(--text-muted) !important;
+}
+
+/* Placeholder text */
+.ck.ck-editor__editable.ck-placeholder::before {
+    color: var(--text-muted) !important;
+    opacity: 0.6;
+}
+
+/* Error state integration */
+.has-error .ck.ck-editor__main > .ck-editor__editable {
+    border-color: var(--error) !important;
+}
+
+.has-error .ck.ck-editor__editable:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+}
+
+/* Disabled state */
+.ck.ck-editor__editable[contenteditable="false"] {
+    background: var(--bg-secondary) !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ck.ck-toolbar {
+        flex-wrap: wrap;
+    }
+    
+    .ck.ck-editor__main > .ck-editor__editable {
+        min-height: 150px;
+    }
+}
+
+/* Image upload styling */
+.ck.ck-file-dialog-button {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
+.ck.ck-file-dialog-button:hover:not(.ck-disabled) {
+    background: var(--primary-dark) !important;
+}
+
+/* Table styling within editor */
+.ck.ck-editor__editable table {
+    border-collapse: collapse;
+}
+
+.ck.ck-editor__editable table td,
+.ck.ck-editor__editable table th {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-sm);
+}
+
+/* Link styling within editor */
+.ck.ck-editor__editable a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+/* Code block styling */
+.ck.ck-editor__editable pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    overflow-x: auto;
+}
+
+/* Blockquote styling */
+.ck.ck-editor__editable blockquote {
+    border-left: 4px solid var(--primary);
+    padding-left: var(--spacing-md);
+    margin-left: 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* List styling */
+.ck.ck-editor__editable ul,
+.ck.ck-editor__editable ol {
+    padding-left: var(--spacing-xl);
+}
+
+/* Ensure smooth transitions */
+.ck.ck-button,
+.ck.ck-editor__editable {
+    transition: all 0.2s ease;
+}
+
+/* Focus visible for keyboard navigation */
+.ck.ck-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Screen reader only text for accessibility */
+.ck.ck-button .ck-button__label:not(.ck-button__label_visible) {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}

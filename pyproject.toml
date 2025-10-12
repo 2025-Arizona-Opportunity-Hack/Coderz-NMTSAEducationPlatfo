@@ -16,4 +16,6 @@ dependencies = [
     "supermemory>=3.4.0",
     "paypal-checkout-serversdk>=1.0.1",
     "openai>=2.3.0",
+    "django-ckeditor-5>=0.2.18",
+    "pypdf2>=3.0.1",
 ]

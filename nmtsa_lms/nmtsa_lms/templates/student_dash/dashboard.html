@@ -29,16 +29,6 @@
                     </a>
                 </li>
                 <li style="margin-bottom: var(--spacing-sm);">
-                    <a href="/student/catalog/"
-                       style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                        <span>Browse Catalog</span>
-                    </a>
-                </li>
-                <li style="margin-bottom: var(--spacing-sm);">
                     <a href="/auth/profile/settings/"
                        style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px;">
                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -148,7 +138,7 @@
                         </div>
 
                         <!-- Continue Button -->
-                        <a href="{% url 'student_course_detail' enrollment.course.id %}"
+                        <a href="{% url 'student_course_detail' enrollment.course.slug %}"
                            style="display: block; width: 100%; padding: var(--spacing-md); background: var(--primary); color: white; text-align: center; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; transition: background 0.2s;">
                             Continue Learning
                         </a>
@@ -209,7 +199,7 @@
                         </div>
 
                         <!-- View Button -->
-                        <a href="{% url 'student_course_detail' course.id %}"
+                        <a href="{% url 'student_course_detail' course.slug %}"
                            style="display: block; width: 100%; padding: var(--spacing-sm) var(--spacing-md); background: var(--bg-secondary); color: var(--text-primary); text-align: center; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; border: 1px solid var(--border-color); transition: background 0.2s;">
                             View Course
                         </a>

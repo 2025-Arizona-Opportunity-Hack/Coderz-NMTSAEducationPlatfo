@@ -1,0 +1,93 @@
+/* TEAM */
+
+Developer & Designer: NMTSA Development Team
+Contact: dev [at] nmtsalearning.com
+Location: Arizona, USA
+
+/* THANKS */
+
+Special thanks to:
+- NMTSA Staff and Instructors
+- Healthcare professionals providing feedback
+- Families and caregivers in our community
+- Open source contributors
+
+/* SITE */
+
+Last update: 2025/10/11
+Standards: HTML5, CSS3, WCAG 2.1 AAA
+Components: Django, Tailwind CSS, PostgreSQL
+Software: VS Code, Python, Node.js
+Accessibility: Autism-friendly design, keyboard navigation
+Themes: Light, Dark, High Contrast, Minimal
+
+/* TECHNOLOGY STACK */
+
+Backend:
+- Django 5.2.7
+- Python 3.11+
+- PostgreSQL
+- Auth0 OAuth
+- PayPal SDK
+
+Frontend:
+- Tailwind CSS 3.4
+- Vanilla JavaScript
+- Responsive Design
+- PWA Ready
+
+AI Integration:
+- Supermemory AI
+- Semantic Search
+- Memory-Enhanced Chat
+
+Hosting:
+- TBD (Production)
+- Static Files: AWS S3 / Cloudflare
+- Video Streaming: Optimized delivery
+
+/* DESIGN PHILOSOPHY */
+
+Built with accessibility at the core:
+- Zero animations (autism-friendly)
+- High contrast options
+- Clear navigation
+- Predictable interactions
+- Sensory-aware design
+- WCAG AAA compliance
+
+Colors:
+- Gold: #CC9300
+- Orange: #CB6000  
+- Purple: #3C0182
+
+Typography:
+- System fonts for familiarity
+- Adjustable font sizes
+- Clear hierarchy
+
+/* ATTRIBUTION */
+
+Icons: System default + custom
+Images: Stock + original photography
+Music Therapy Resources: NMTSA proprietary content
+
+/* CONTACT */
+
+General: info [at] nmtsalearning.com
+Support: support [at] nmtsalearning.com
+Business: business [at] nmtsalearning.com
+
+/* RECOGNITION */
+
+Built for the 24-hour hackathon challenge
+Focus: Healthcare education + autism support
+Mission: Accessible therapy education for all
+
+                 _   _ __  __ _____ ____    _    
+                | \ | |  \/  |_   _/ ___|  / \   
+                |  \| | |\/| | | | \___ \ / _ \  
+                | |\  | |  | | | |  ___) / ___ \ 
+                |_| \_|_|  |_| |_| |____/_/   \_\
+                                                  
+        Neurologic Music Therapy Services of Arizona

@@ -7,11 +7,127 @@ from authentication.decorators import login_required
 import json
 from datetime import datetime, timedelta
 import time
+import re
 from .supermemory_client import get_supermemory_client
 
 # Mock data storage (replace with database queries in production)
 MOCK_MESSAGES = []
 MOCK_TYPING_USERS = {}
+
+
+def process_ai_response_urls(response_text: str, supermemory_client=None) -> str:
+	"""
+	Process AI response to replace URL placeholders with actual slugs.
+	
+	Detects patterns like:
+	- /courses/{COURSE:Introduction to NMT}/
+	- /student/courses/{COURSE:Advanced Techniques}/learn/
+	- /student/courses/{COURSE:NMT Basics}/modules/{MODULE:Module 1}/
+	
+	Fetches course data from Supermemory and replaces with actual slugs.
+	
+	Args:
+		response_text: AI response text with potential URL placeholders
+		supermemory_client: Supermemory client instance (optional)
+		
+	Returns:
+		Processed response with actual slugs replacing placeholders
+	"""
+	if not response_text:
+		return response_text
+	
+	# Get Supermemory client if not provided
+	if not supermemory_client:
+		supermemory_client = get_supermemory_client()
+	
+	if not supermemory_client:
+		# If Supermemory unavailable, remove placeholders gracefully
+		return re.sub(r'\{COURSE:[^}]+\}|\{MODULE:[^}]+\}|\{LESSON:[^}]+\}', '[SLUG]', response_text)
+	
+	# Pattern to match {COURSE:title}, {MODULE:title}, {LESSON:title}
+	course_pattern = r'\{COURSE:([^}]+)\}'
+	module_pattern = r'\{MODULE:([^}]+)\}'
+	lesson_pattern = r'\{LESSON:([^}]+)\}'
+	
+	# Cache for looked-up slugs to avoid duplicate searches
+	slug_cache = {}
+	
+	def replace_course_placeholder(match):
+		"""Replace {COURSE:title} with actual course slug"""
+		course_title = match.group(1).strip()
+		
+		# Check cache first
+		if course_title in slug_cache:
+			return slug_cache[course_title]
+		
+		try:
+			# Search for course in Supermemory using semantic search
+			# This searches the 'nmtsa-courses' container with course metadata
+			memories = supermemory_client.search_memories(
+				query=course_title,
+				limit=5,
+				container_tags=['nmtsa-courses']
+			)
+			
+			if memories:
+				# Filter to only course type (not modules or lessons)
+				course_memories = [
+					m for m in memories 
+					if m.get('metadata', {}).get('type') == 'course'
+				]
+				
+				if course_memories:
+					# Find best match (highest relevance score)
+					best_match = max(course_memories, key=lambda m: m.get('score', 0))
+					
+					# Get course ID from metadata
+					course_id = best_match.get('metadata', {}).get('course_id')
+					if course_id:
+						# Import here to avoid circular imports
+						from teacher_dash.models import Course
+						try:
+							course = Course.objects.get(id=course_id, is_published=True)
+							slug = course.slug
+							slug_cache[course_title] = slug
+							print(f"[URL Processor] Resolved '{course_title}' -> slug: {slug}")
+							return slug
+						except Course.DoesNotExist:
+							print(f"[URL Processor] Course ID {course_id} not found in database")
+			
+			# Fallback: return placeholder if no match found
+			print(f"[URL Processor] No course found for '{course_title}'")
+			slug_cache[course_title] = "[course-slug]"
+			return "[course-slug]"
+			
+		except Exception as e:
+			print(f"[URL Processor] Error replacing course slug: {e}")
+			return "[course-slug]"
+	
+	def replace_module_placeholder(match):
+		"""Replace {MODULE:title} with actual module slug"""
+		module_title = match.group(1).strip()
+		
+		# Note: Module slug lookup would require knowing the parent course
+		# For now, return a generic placeholder
+		# In a full implementation, you'd need to:
+		# 1. Extract the course from the URL context
+		# 2. Search modules within that course
+		# 3. Return the matching module slug
+		return "[module-slug]"
+	
+	def replace_lesson_placeholder(match):
+		"""Replace {LESSON:title} with actual lesson slug"""
+		lesson_title = match.group(1).strip()
+		
+		# Similar to modules, lesson lookup requires course + module context
+		return "[lesson-slug]"
+	
+	# Process replacements
+	processed_text = re.sub(course_pattern, replace_course_placeholder, response_text)
+	processed_text = re.sub(module_pattern, replace_module_placeholder, processed_text)
+	processed_text = re.sub(lesson_pattern, replace_lesson_placeholder, processed_text)
+	
+	return processed_text
 
 
 @require_http_methods(["GET"])
@@ -187,6 +303,9 @@ def chat_send_message(request, room_id):
 					
 					if chat_response.get('success'):
 						ai_response_content = chat_response.get('response')
+						
+						# Process URLs in AI response to replace placeholders with actual slugs
+						ai_response_content = process_ai_response_urls(ai_response_content, supermemory)
 						
 						# Store this interaction in memory for future context
 						# Using user-specific container tag for personalized memory

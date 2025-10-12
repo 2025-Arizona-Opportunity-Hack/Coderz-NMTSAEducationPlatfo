@@ -159,7 +159,7 @@
     .modal-content {
         background: var(--bg-card);
         border-radius: var(--radius-xl);
-        max-width: 800px;
+        max-width: 1200px;
         width: 100%;
         max-height: 90vh;
         overflow-y: auto;
@@ -233,7 +233,7 @@
 {% block content %}
 <div class="preview-container">
     <!-- Back Button -->
-    <a href="{% url 'teacher_course_detail' course.id %}"
+    <a href="{% url 'teacher_course_detail' course.slug %}"
        style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); text-decoration: none; margin-bottom: var(--spacing-lg); font-size: calc(0.875rem * var(--font-scale));">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="m15 18-6-6 6-6"/>
@@ -268,7 +268,7 @@
     <!-- Course Description -->
     <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
         <h2 style="margin-bottom: var(--spacing-lg); font-size: calc(1.5rem * var(--font-scale)); margin-top: 0;">About This Course</h2>
-        <p style="color: var(--text-primary); line-height: 1.8; white-space: pre-line;">{{ course.description }}</p>
+        <p style="color: var(--text-primary); line-height: 1.8; white-space: pre-line;">{{ course.description|safe }}</p>
 
         <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color);">
             <strong>Price:</strong>
@@ -302,14 +302,14 @@
 
             <div class="module-content">
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); line-height: 1.6;">
-                    {{ module.description }}
+                    {{ module.description|safe }}
                 </p>
 
                 <!-- Lessons in Module -->
                 {% if module.lessons.all %}
                 <ul class="lesson-list">
                     {% for lesson in module.lessons.all %}
-                    <li class="lesson-item" onclick="openLessonPreview({{ lesson.id }}, '{{ lesson.lesson_type }}', '{{ lesson.title|escapejs }}', {{ module.id }}, {{ course.id }})">
+                    <li class="lesson-item" onclick="openLessonPreview('{{ lesson.slug }}', '{{ lesson.lesson_type }}', '{{ lesson.title|escapejs }}', '{{ module.slug }}', '{{ course.slug }}')">
                         <div class="lesson-icon">
                             {% if lesson.lesson_type == 'video' %}
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -357,7 +357,7 @@
 </div>
 
 <script>
-function openLessonPreview(lessonId, lessonType, lessonTitle, moduleId, courseId) {
+function openLessonPreview(lessonSlug, lessonType, lessonTitle, moduleSlug, courseSlug) {
     const modal = document.getElementById('lessonModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
@@ -368,7 +368,7 @@ function openLessonPreview(lessonId, lessonType, lessonTitle, moduleId, courseId
     modal.classList.add('active');
 
     // Fetch lesson content
-    fetch(`/teacher/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/preview/`)
+    fetch(`/teacher/courses/${courseSlug}/modules/${moduleSlug}/lessons/${lessonSlug}/preview/`)
         .then(response => {
             if (!response.ok) {
                 // If the preview endpoint doesn't exist, show a basic preview
@@ -396,6 +396,43 @@ function openLessonPreview(lessonId, lessonType, lessonTitle, moduleId, courseId
                         </div>
                     ` : ''}
                 `;
+            } else if (lessonType === 'pdf') {
+                modalContent.innerHTML = `
+                    <div class="lesson-meta">
+                        <span><strong>Type:</strong> PDF Lesson</span>
+                        <span><strong>Duration:</strong> ${data.duration || '--'} minutes</span>
+                    </div>
+                    ${data.description ? `
+                        <div style="margin-top: var(--spacing-lg);">
+                            <h4>Description</h4>
+                            <div style="line-height: 1.8; color: var(--text-secondary);">${data.description}</div>
+                        </div>
+                    ` : ''}
+                    ${data.pdf_url ? `
+                        <div style="margin-top: var(--spacing-lg);">
+                            <div style="margin-bottom: var(--spacing-md); display: flex; gap: var(--spacing-md); align-items: center;">
+                                <a href="${data.pdf_url}" target="_blank" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-sm);">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Open PDF
+                                </a>
+                            </div>
+                            <object data="${data.pdf_url}" type="application/pdf" style="width: 100%; height: 600px; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                                <div style="padding: var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-md); text-align: center;">
+                                    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+                                        Your browser cannot display PDFs inline.
+                                    </p>
+                                    <a href="${data.pdf_url}" target="_blank" class="btn btn-outline" style="text-decoration: none;">
+                                        Open PDF in New Tab
+                                    </a>
+                                </div>
+                            </object>
+                        </div>
+                    ` : '<p style="color: var(--text-muted); margin-top: var(--spacing-lg);">PDF file not available for preview.</p>'}
+                `;
             } else {
                 modalContent.innerHTML = `
                     <div class="lesson-meta">
@@ -410,15 +447,27 @@ function openLessonPreview(lessonId, lessonType, lessonTitle, moduleId, courseId
         })
         .catch(error => {
             // Show basic preview without server data
+            let lessonTypeLabel = 'Lesson';
+            let fallbackMessage = 'This lesson content will be available to students once the course is published.';
+            
+            if (lessonType === 'video') {
+                lessonTypeLabel = 'Video Lesson';
+                fallbackMessage = 'This video lesson will be available to students once the course is published.';
+            } else if (lessonType === 'pdf') {
+                lessonTypeLabel = 'PDF Lesson';
+                fallbackMessage = 'This PDF lesson will be available to students once the course is published.';
+            } else if (lessonType === 'blog') {
+                lessonTypeLabel = 'Blog Lesson';
+                fallbackMessage = 'This blog lesson content will be available to students once the course is published.';
+            }
+            
             modalContent.innerHTML = `
                 <div class="lesson-meta">
-                    <span><strong>Type:</strong> ${lessonType === 'video' ? 'Video' : 'Blog'} Lesson</span>
+                    <span><strong>Type:</strong> ${lessonTypeLabel}</span>
                 </div>
                 <div style="margin-top: var(--spacing-lg); padding: var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-md); text-align: center;">
                     <p style="color: var(--text-secondary);">
-                        ${lessonType === 'video'
-                            ? 'This video lesson will be available to students once the course is published.'
-                            : 'This blog lesson content will be available to students once the course is published.'}
+                        ${fallbackMessage}
                     </p>
                     <p style="color: var(--text-muted); font-size: calc(0.875rem * var(--font-scale)); margin-top: var(--spacing-md);">
                         To see the full lesson content, view it from the module detail page.

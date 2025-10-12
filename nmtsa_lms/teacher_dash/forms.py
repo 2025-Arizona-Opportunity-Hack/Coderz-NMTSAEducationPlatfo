@@ -4,9 +4,10 @@ from typing import Any
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django_ckeditor_5.widgets import CKEditor5Widget
 from taggit.forms import TagField
 
-from .models import Course, Module, Lesson, VideoLesson, BlogLesson, DiscussionPost
+from .models import Course, Module, Lesson, VideoLesson, BlogLesson, PDFLesson, DiscussionPost
 
 
 class CourseForm(forms.ModelForm):
@@ -16,7 +17,10 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ["title", "description", "price", "is_paid"]
         widgets = {
-            "description": forms.Textarea(attrs={"rows": 4}),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -56,7 +60,10 @@ class ModuleForm(forms.ModelForm):
         model = Module
         fields = ["title", "description"]
         widgets = {
-            "description": forms.Textarea(attrs={"rows": 3}),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -84,7 +91,7 @@ class LessonForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields["tags"].initial = ", ".join(self.instance.tags.names())
         self.fields["duration"].required = False
-        self.fields["duration"].help_text = "Required for blog lessons. Video lessons will auto-calculate."
+        self.fields["duration"].help_text = "Required for blog/PDF lessons. Video lessons will auto-calculate."
 
     def save(self, commit: bool = True):
         lesson = super().save(commit=commit)
@@ -105,9 +112,9 @@ class LessonForm(forms.ModelForm):
         cleaned = super().clean()
         lesson_type = cleaned.get("lesson_type")
         duration = cleaned.get("duration")
-        if lesson_type == "blog" and not duration:
-            raise ValidationError({"duration": "Duration is required for blog lessons."})
-        if lesson_type == "blog" and duration is not None and duration <= 0:
+        if lesson_type in ("blog", "pdf") and not duration:
+            raise ValidationError({"duration": f"Duration is required for {lesson_type} lessons."})
+        if lesson_type in ("blog", "pdf") and duration is not None and duration <= 0:
             raise ValidationError({"duration": "Duration must be a positive number."})
         if lesson_type == "video":
             cleaned["duration"] = None
@@ -119,9 +126,16 @@ class VideoLessonForm(forms.ModelForm):
 
     class Meta:
         model = VideoLesson
-        fields = ["video_file", "transcript"]
+        fields = ["video_file", "transcript", "description"]
         widgets = {
-            "transcript": forms.Textarea(attrs={"rows": 4}),
+            "transcript": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -137,8 +151,45 @@ class BlogLessonForm(forms.ModelForm):
         model = BlogLesson
         fields = ["content", "images"]
         widgets = {
-            "content": forms.Textarea(attrs={"rows": 8, "class": "rich-text"}),
+            "content": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
         }
+
+
+class PDFLessonForm(forms.ModelForm):
+    pdf_file = forms.FileField(required=False)
+
+    class Meta:
+        model = PDFLesson
+        fields = ["pdf_file", "description"]
+        widgets = {
+            "description": CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"}, 
+                config_name='extends'
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        has_existing = bool(self.instance and getattr(self.instance, "pdf_file", None))
+        self.fields["pdf_file"].required = not has_existing
+        self.fields["pdf_file"].help_text = "Upload a PDF file (max 50MB, .pdf only)"
+
+    def clean_pdf_file(self):
+        pdf_file = self.cleaned_data.get("pdf_file")
+        if pdf_file:
+            # Check file extension
+            if not pdf_file.name.lower().endswith('.pdf'):
+                raise ValidationError("Only PDF files are allowed.")
+
+            # Check file size (50MB max)
+            max_size = 50 * 1024 * 1024  # 50MB in bytes
+            if pdf_file.size > max_size:
+                raise ValidationError(f"PDF file size cannot exceed 50MB. Current size: {pdf_file.size / (1024 * 1024):.2f}MB")
+
+        return pdf_file
 
 
 class DiscussionPostForm(forms.ModelForm):
@@ -149,10 +200,8 @@ class DiscussionPostForm(forms.ModelForm):
         fields = ["content"]
         widgets = {
             "content": forms.Textarea(attrs={
-                "rows": 6,
-                "class": "discussion-textarea",
+                "rows": 5,
                 "placeholder": "Share your thoughts, ask a question, or start a discussion...",
-                "maxlength": "2000",
             }),
         }
         labels = {
@@ -170,10 +219,7 @@ class DiscussionPostForm(forms.ModelForm):
         if len(content) > 2000:
             raise ValidationError("Your post must be no more than 2000 characters long.")
 
-        # Basic XSS protection - escape HTML
-        import html
-        content = html.escape(content)
-
+        # XSS protection handled by CKEditor
         return content
 
 
@@ -186,9 +232,7 @@ class DiscussionReplyForm(forms.ModelForm):
         widgets = {
             "content": forms.Textarea(attrs={
                 "rows": 4,
-                "class": "discussion-reply-textarea",
                 "placeholder": "Write your reply...",
-                "maxlength": "2000",
             }),
         }
         labels = {
@@ -206,8 +250,5 @@ class DiscussionReplyForm(forms.ModelForm):
         if len(content) > 2000:
             raise ValidationError("Your reply must be no more than 2000 characters long.")
 
-        # Basic XSS protection - escape HTML
-        import html
-        content = html.escape(content)
-
+        # XSS protection handled by CKEditor
         return content

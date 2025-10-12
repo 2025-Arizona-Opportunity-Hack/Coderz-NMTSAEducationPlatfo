@@ -4,6 +4,7 @@ from django.utils import timezone
 from authentication.decorators import admin_required
 from authentication.models import User, TeacherProfile
 from teacher_dash.models import Course
+from .forms import CourseReviewForm, TeacherVerificationForm
 
 
 @admin_required
@@ -50,34 +51,39 @@ def verify_teacher_action(request, teacher_id):
     teacher_profile = get_object_or_404(TeacherProfile, id=teacher_id)
 
     if request.method == 'POST':
-        action = request.POST.get('action')
-        notes = request.POST.get('notes', '')
+        form = TeacherVerificationForm(request.POST)
+        if form.is_valid():
+            action = form.cleaned_data['action']
+            notes = form.cleaned_data['notes']
 
-        session_user = request.session.get('user')
-        admin_user_id = session_user.get('user_id')
-        admin_user = User.objects.get(id=admin_user_id)
+            session_user = request.session.get('user')
+            admin_user_id = session_user.get('user_id')
+            admin_user = User.objects.get(id=admin_user_id)
 
-        if action == 'approve':
-            teacher_profile.verification_status = 'approved'
-            teacher_profile.verified_at = timezone.now()
-            teacher_profile.verified_by = admin_user
-            teacher_profile.verification_notes = notes
-            teacher_profile.save()
+            if action == 'approve':
+                teacher_profile.verification_status = 'approved'
+                teacher_profile.verified_at = timezone.now()
+                teacher_profile.verified_by = admin_user
+                teacher_profile.verification_notes = notes
+                teacher_profile.save()
 
-            messages.success(request, f'Teacher {teacher_profile.user.get_full_name()} has been approved!')
+                messages.success(request, f'Teacher {teacher_profile.user.get_full_name()} has been approved!')
 
-        elif action == 'reject':
-            teacher_profile.verification_status = 'rejected'
-            teacher_profile.verification_notes = notes
-            teacher_profile.save()
+            elif action == 'reject':
+                teacher_profile.verification_status = 'rejected'
+                teacher_profile.verification_notes = notes
+                teacher_profile.save()
 
-            messages.warning(request, f'Teacher {teacher_profile.user.get_full_name()} has been rejected.')
+                messages.warning(request, f'Teacher {teacher_profile.user.get_full_name()} has been rejected.')
 
-        return redirect('admin_verify_teachers')
+            return redirect('admin_verify_teachers')
+    else:
+        form = TeacherVerificationForm()
 
     # GET request - show teacher details
     context = {
         'teacher_profile': teacher_profile,
+        'form': form,
     }
     return render(request, 'admin_dash/verify_teacher_detail.html', context)
 
@@ -94,22 +100,26 @@ def review_course_action(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
     if request.method == 'POST':
-        action = request.POST.get('action')
-        feedback = request.POST.get('feedback', '').strip()
+        form = CourseReviewForm(request.POST)
+        if form.is_valid():
+            action = form.cleaned_data['action']
+            feedback = form.cleaned_data['feedback']
 
-        if action == 'approve':
-            course.is_published = True
-            course.is_submitted_for_review = False
-            course.admin_review_feedback = feedback
-            course.save(update_fields=['is_published', 'is_submitted_for_review', 'admin_review_feedback'])
-            messages.success(request, f"Approved course '{course.title}'.")
-        elif action == 'reject':
-            course.is_published = False
-            course.is_submitted_for_review = False
-            course.admin_review_feedback = feedback
-            course.save(update_fields=['is_published', 'is_submitted_for_review', 'admin_review_feedback'])
-            messages.info(request, f"Sent course '{course.title}' back to draft.")
-        return redirect('admin_review_courses')
+            if action == 'approve':
+                course.is_published = True
+                course.is_submitted_for_review = False
+                course.admin_review_feedback = feedback
+                course.save(update_fields=['is_published', 'is_submitted_for_review', 'admin_review_feedback'])
+                messages.success(request, f"Approved course '{course.title}'.")
+            elif action == 'reject':
+                course.is_published = False
+                course.is_submitted_for_review = False
+                course.admin_review_feedback = feedback
+                course.save(update_fields=['is_published', 'is_submitted_for_review', 'admin_review_feedback'])
+                messages.info(request, f"Sent course '{course.title}' back to draft.")
+            return redirect('admin_review_courses')
+    else:
+        form = CourseReviewForm()
 
     # GET request - show review page with course details
     modules = course.modules.prefetch_related('lessons')
@@ -119,6 +129,7 @@ def review_course_action(request, course_slug):
         'course': course,
         'modules': modules,
         'total_lessons': total_lessons,
+        'form': form,
     }
     return render(request, 'admin_dash/review_course_detail.html', context)
 

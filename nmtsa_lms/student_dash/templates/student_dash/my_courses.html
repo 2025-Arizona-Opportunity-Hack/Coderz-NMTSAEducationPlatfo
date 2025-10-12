@@ -2,7 +2,21 @@
 
 {% block title %}My Courses - NMTSA Learning{% endblock %}
 
+{% block extra_css %}
+{% include 'components/drawer_styles.html' %}
+{% endblock %}
+
 {% block content %}
+{% include 'components/drawer_toggle.html' %}
+
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+        {% include 'components/sidebar_student.html' %}
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
 <div class="page-header">
     <h1 class="page-title">My Courses</h1>
     <p class="page-description">Track your progress and continue learning</p>
@@ -149,4 +163,8 @@ function filterCourses(status) {
 // Initialize with all courses
 filterCourses('all');
 </script>
+</main>
+</div>
+
+{% include 'components/drawer_script.html' %}
 {% endblock %}

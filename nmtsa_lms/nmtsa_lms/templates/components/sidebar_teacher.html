@@ -1,0 +1,52 @@
+<!-- Teacher Dashboard Sidebar Navigation -->
+<nav aria-label="Teacher Dashboard navigation">
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="margin-bottom: var(--spacing-sm);">
+            <a href="/teacher/"
+               class="sidebar-link {% if request.path == '/teacher/' %}sidebar-link-active{% endif %}"
+               style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px; {% if request.path == '/teacher/' %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li style="margin-bottom: var(--spacing-sm);">
+            <a href="/teacher/courses/"
+               class="sidebar-link {% if '/teacher/courses' in request.path and '/create' not in request.path %}sidebar-link-active{% endif %}"
+               style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px; {% if '/teacher/courses' in request.path and '/create' not in request.path %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span>My Courses</span>
+            </a>
+        </li>
+        {% if is_teacher_approved %}
+        <li style="margin-bottom: var(--spacing-sm);">
+            <a href="/teacher/courses/create/"
+               class="sidebar-link {% if '/create' in request.path %}sidebar-link-active{% endif %}"
+               style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px; {% if '/create' in request.path %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <span>Create Course</span>
+            </a>
+        </li>
+        {% endif %}
+        <li style="margin-bottom: var(--spacing-sm);">
+            <a href="/auth/profile/settings/"
+               class="sidebar-link {% if '/auth/profile/settings' in request.path %}sidebar-link-active{% endif %}"
+               style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); text-decoration: none; color: var(--text-primary); border-radius: 6px; {% if '/auth/profile/settings' in request.path %}background: #E8F1F8; color: #7FA8C9; font-weight: 600;{% endif %}">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m8.66-10a9 9 0 0 1 0 8m-17.32 0a9 9 0 0 1 0-8"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </li>
+    </ul>
+</nav>
