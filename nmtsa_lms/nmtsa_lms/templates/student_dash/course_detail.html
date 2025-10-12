@@ -191,9 +191,9 @@
                 {% else %}
                     <!-- Anonymous user - Show sign in to enroll -->
                     <div style="background: #FFF3E0; border: 2px solid #FF9800; border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); text-align: center;">
-                        <p style="color: #E65100; font-weight: 600; margin-bottom: var(--spacing-md);">
+                        {% comment %} <p style="color: #E65100; font-weight: 600; margin-bottom: var(--spacing-md);">
                             Sign in to enroll in this course
-                        </p>
+                        </p> {% endcomment %}
                         <a href="{% url 'login' %}?next={{ request.path }}"
                            style="display: inline-block; padding: var(--spacing-md) var(--spacing-2xl); background: var(--primary); color: white; border-radius: var(--radius-md); text-decoration: none; font-weight: 600;">
                             Sign In to Enroll
