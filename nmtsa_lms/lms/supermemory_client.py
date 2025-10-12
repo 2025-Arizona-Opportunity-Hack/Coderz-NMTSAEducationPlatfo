@@ -69,7 +69,7 @@ class SupermemoryClient:
             response = self.client.search.execute(
                 q=query,
                 limit=limit,
-                container_tag=container_tag
+                container_tags=[container_tag]
             )
             
             # Convert response to list of dicts
@@ -78,10 +78,10 @@ class SupermemoryClient:
                 for memory in response.results:
                     # Handle both object and dict responses
                     if hasattr(memory, 'to_dict'):
-                        results.append(memory.to_dict())
+                        memory = memory.to_dict()
                     elif hasattr(memory, '__dict__'):
-                        results.append(vars(memory))
-                    else:
+                        memory = vars(memory)
+                    if memory['score'] > 0.60:
                         results.append(memory)
             
             return results
@@ -114,13 +114,13 @@ class SupermemoryClient:
             payload = {'content': content}
             
             if container_tag:
-                payload['containerTag'] = container_tag
+                payload['container_tag'] = container_tag
             
             if metadata:
                 payload['metadata'] = metadata
             
             if custom_id:
-                payload['customId'] = custom_id
+                payload['custom_id'] = custom_id
             
             # Use SDK's documents endpoint (method name may vary - adjust if needed)
             if hasattr(self.client, 'documents') and hasattr(self.client.documents, 'create'):

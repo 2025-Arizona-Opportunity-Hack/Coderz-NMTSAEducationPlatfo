@@ -1140,6 +1140,9 @@ def public_catalog(request):
     q = request.GET.get('q', '').strip()
     price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')
+    price_types = request.GET.getlist('price')  # free, paid
+    categories = request.GET.getlist('category')  # therapy, family, professional, certification
+    durations = request.GET.getlist('duration')  # short, medium, long
     tag = request.GET.get('tag', '').strip()
     sort = request.GET.get('sort', 'newest')
 
@@ -1245,6 +1248,33 @@ def public_catalog(request):
     if tag:
         qs = qs.filter(tags__name__iexact=tag)
 
+    # Apply price type filters (free/paid)
+    if price_types:
+        price_q = Q()
+        if 'free' in price_types:
+            price_q |= Q(price=0) | Q(is_paid=False)
+        if 'paid' in price_types:
+            price_q |= Q(price__gt=0) & Q(is_paid=True)
+        qs = qs.filter(price_q)
+
+    # Apply category filters (using tags)
+    if categories:
+        category_mapping = {
+            'therapy': ['therapy', 'nmt', 'music therapy', 'neurologic music therapy'],
+            'family': ['family', 'caregiver', 'parent', 'home'],
+            'professional': ['professional', 'healthcare', 'training', 'education'],
+            'certification': ['certification', 'certificate', 'credentials', 'accredited']
+        }
+        
+        category_q = Q()
+        for category in categories:
+            if category in category_mapping:
+                for tag_name in category_mapping[category]:
+                    category_q |= Q(tags__name__icontains=tag_name)
+        
+        if category_q:
+            qs = qs.filter(category_q)
+
     # Apply sorting (only when not using Supermemory search)
     if not q or not get_supermemory_client():
         if sort == 'popular':
@@ -1276,6 +1306,9 @@ def public_catalog(request):
             'q': q,
             'price_min': price_min or '',
             'price_max': price_max or '',
+            'price_types': price_types,
+            'categories': categories,
+            'durations': durations,
             'tag': tag,
             'sort': sort,
         },

@@ -64,7 +64,6 @@
                     <span class="filter-text">Certification Programs</span>
                 </label>
             </div>
-        </div>
 
         <!-- Duration Filter -->
         <div class="filter-section">
@@ -83,11 +82,10 @@
                     <span class="filter-text">5+ hours</span>
                 </label>
             </div>
-        </div>
 
         <button type="button" onclick="window.location.reload()" class="clear-filters-btn">
             Clear All Filters
-        </button>
+        </a>
     </aside>
 
     <!-- Courses Grid -->
@@ -101,7 +99,7 @@
                            placeholder="Search courses by title or description..."
                            class="form-input"
                            style="padding-left: 48px;"
-                           value="{{ search_query }}">
+                           value="{{ filters.q }}">
                     <svg width="20" height="20" fill="none" stroke="var(--text-muted)" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; left: 16px; top: 14px;">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
@@ -302,7 +300,7 @@ function updateResultsCount(count) {
 
 // Add hover effect to cards (only on desktop, autism-friendly on mobile)
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.course-card');
+    const cards = document.querySelectorAll('.card');
 
     if (window.innerWidth > 768) {
         cards.forEach(card => {
