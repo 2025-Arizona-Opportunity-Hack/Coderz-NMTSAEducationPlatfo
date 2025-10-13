@@ -72,7 +72,7 @@ On Windows using bash.exe (Git Bash/WSL-friendly commands below).
 1) Clone and create a virtual environment
 
 ```bash
-git clone <your-repo-url> nmtsaeducationlms
+git clone https://github.com/2025-Arizona-Opportunity-Hack/Coderz-NMTSAEducationPlatfo.git nmtsaeducationlms
 cd nmtsaeducationlms
 python -m venv .venv
 source .venv/Scripts/activate
