@@ -24,12 +24,10 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "nmtsa_lms", "templates")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-iner)2sk+($v44c%-c*9rpz9&mp+&@l+z&7bda=omx6^1_u$p4'
+SECRET_KEY = 'django-insecure-iner)2sk+($v44c%-c*9rpz9&mp+&@l+z&7bda=omx6^1_u$p4' #Replace with your own when you deploy!!
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.environ.get("PAYPAL_CLIENT_SECRET")
@@ -54,8 +52,8 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'coderz-nmtsaeducationplatfo.onrender.com',
-    '0.0.0.0',
+    'coderz-nmtsaeducationplatfo.onrender.com', # No longer live
+    '0.0.0.0', # ONLY FOR TESTING. REMOVE WHEN YOU ARE READY TO DEPLOY
 ]
 
 INSTALLED_APPS = [
